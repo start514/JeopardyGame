@@ -43,6 +43,7 @@ public class UIGameController : MonoBehaviour
     public int openAnswerDelay = 0, closeAnswerDelay = 6;
     public AmountSlot[] allSlots;
     public CatagorySlot[] allCatagories;
+    public Color[] playerShadowColors, playerBodyColors, playerNameColors, playerAmountBgColors;
     // delete later
     public Button final, doubleBtn;
     public bool isPaused = false;
