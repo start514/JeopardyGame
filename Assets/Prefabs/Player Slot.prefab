@@ -759,6 +759,10 @@ MonoBehaviour:
   nameTxt: {fileID: 253118686}
   amountTxt: {fileID: 800988968}
   tint: {fileID: 810674703683137607}
+  playerAmountBg: {fileID: 874954309}
+  playerAmountShadowBg: {fileID: 1614561286}
+  playerShadowBg: {fileID: 1671033255}
+  playerBodyBg: {fileID: 2139971378}
 --- !u!1 &8854322420074718345
 GameObject:
   m_ObjectHideFlags: 0

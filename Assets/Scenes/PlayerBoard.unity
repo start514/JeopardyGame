@@ -4373,6 +4373,11 @@ MonoBehaviour:
   clientAnswerCatagotyTxt: {fileID: 2019518303}
   remeiningQuestions: {fileID: 4056482341950031839}
   hostPlayerContainerTxt: {fileID: 862562861379016297}
+  hostPlayerNameTxt: {fileID: 233673520}
+  clientPlayerAmountBg: {fileID: 920479147}
+  clientPlayerAmountShadowBg: {fileID: 1657248744}
+  clientPlayerShadowBg: {fileID: 1633823305}
+  clientPlayerBodyBg: {fileID: 2104919260}
   hostRightAnswerTxt: {fileID: 7457687518914698281}
   hostInputAnswerTxt: {fileID: 7457687520196223772}
   whereIsDailyDouble: {fileID: 192755442}

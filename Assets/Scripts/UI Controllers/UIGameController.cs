@@ -11,7 +11,8 @@ public class UIGameController : MonoBehaviour
 
     [Header("UI")]
     public TMP_Text clientQuestionTimerText, hostTimerText, answerTimerText, amountChoserText, clientQuestionAmountTxt, hostQuestionAmountTxt,
-        clientAnswerAmountText, clientQuestionText, clientAnswerTxt, hostQuestionText, hostCatagotyTxt, clientQuestionCatagotyTxt, clientAnswerCatagotyTxt, remeiningQuestions, hostPlayerContainerTxt;
+        clientAnswerAmountText, clientQuestionText, clientAnswerTxt, hostQuestionText, hostCatagotyTxt, clientQuestionCatagotyTxt, clientAnswerCatagotyTxt, remeiningQuestions, hostPlayerContainerTxt, hostPlayerNameTxt;
+    public Image clientPlayerAmountBg, clientPlayerAmountShadowBg, clientPlayerShadowBg, clientPlayerBodyBg;
     public Text hostRightAnswerTxt, hostInputAnswerTxt;
     public Text whereIsDailyDouble;
     public InputField inputFieldAnswer;
@@ -114,6 +115,12 @@ public class UIGameController : MonoBehaviour
                 localPlayer.PlayerOpenFinalJeopardyPanalToAll();
             }
             hostPlayerContainerTxt.text = localPlayer.playerName;
+        } else {
+            hostPlayerNameTxt.color = playerNameColors[localPlayer.playerColor];
+            clientPlayerShadowBg.color = playerShadowColors[localPlayer.playerColor];
+            clientPlayerBodyBg.color = playerBodyColors[localPlayer.playerColor];
+            clientPlayerAmountBg.color = playerAmountBgColors[localPlayer.playerColor];
+            clientPlayerAmountShadowBg.color = playerShadowColors[localPlayer.playerColor];
         }
     }
 
