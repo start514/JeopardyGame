@@ -1,0 +1,54 @@
+Tasks:
+- active the line "playerName = participanteController.participanteName;"  and the update in GameContainer script before building 
+- make the player slots in the concst side panal update when the game starts by the parficipents
+- add the color chooser in ParticipentConteiner
+- for tomorrow: 
+- cpnnect the ui to the multiplayer logic - OpenJoinGamePanal
+ - לשאול את ליעד מה אמור לקרות אם הוא לוחץ על im reay אבל עדיין אין מספיק שחקנים
+- follow part 3 of the video
+
+- כעושים hover על כפתור שיהיה צבע יותר כהה 
+
+for me- 
+timer starts but stops right after
+1 ,5 ,6 ,7 ,8 ,9 ,10, 13, 14, 15
+If none of the contestants gives a correct answer, the host reads the correct answer and the contestant who has most recently given a correct answer to a previous question chooses the next question.
+
+To Do:
+- transfer the game name to header logo
+- handel winning methods
+- when player cancels a join check that the containers are the correct color
+- Show game name on header
+- Make the dailyDouble, time to buzz and time to submit timer
+- Disconnection managment
+- Turn managment for the game
+- Add minimume of maximum ammount of players before starting the game
+- Give host possibility to cancel join for a player in the lobby (the x by the name)
+- Players names will be updated in the side containers, and will be tinted when needed 
+- Add color picker - Player will be able to choose his color and will be set the container with that color
+- Final jeopardy will not be for all players, only 3 top winner
+- change the name of the player that has answered in host open question panal
+- Make setting panal not static
+- Make winner panal not static
+- Add leaderboard
+- Enexpected error solving, exporting and testing (20 hours, just in case)
+
+At start-
+StartServer()
+StartClient()
+client connects to server automatically 
+
+On UI-
+Player can choose if to join or host
+
+On Host-
+Client enters game name and game size
+game name and game size goes to data transper on start game button click
+player host() is called
+need to add a game container to all other player in the network which are on the lobby panal
+
+On Join- 
+player will click on a game container
+player will click "join game" button
+player join game will be called
+if suscsfuul, join game panal with the righ participent controllers will be open

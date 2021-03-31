@@ -1,0 +1,484 @@
+{
+  "Categories": [
+    {
+      "Name": "A Stitch in Time",
+      "Levels": {
+        "One": [
+          {
+            "Question": "By changing this I could blow a sprint.",
+            "Answer": "What is.. The amount of story points?"
+          }
+        ],
+        "Two": [
+          {
+            "Question": "This is used to assess the velocity of a team",
+            "Answer": "What is.. Story Points?"
+          }
+        ],
+        "Three": [
+          {
+            "Question": "Selecting this criteria is always my top priority",
+            "Answer": "What is.. Delivering Business Value?"
+          }
+        ],
+        "Four": [
+          {
+            "Question": "Doing this ensures team understanding of sprint planning outcomes",
+            "Answer": "What is.. Backlog Refinement?"
+          }
+        ],
+        "Five": [
+          {
+            "Question": "This unit of business value is of monumental proportion",
+            "Answer": "What is.. An Epic?"
+          }
+        ],
+        "Six": [],
+        "Seven": [],
+        "Eight": [],
+        "Nine": [],
+        "Ten": []
+      }
+    },
+    {
+      "Name": "Build No Bunk",
+      "Levels": {
+        "One": [
+          {
+            "Question": "An agile team crosses skill-set lines to become this",
+            "Answer": "What is.. Cross-functional?"
+          }
+        ],
+        "Two": [
+          {
+            "Question": "The ❞What❞ and ❞When❞ is the Product Owner, the ❞How❞ is this",
+            "Answer": "What is.. The Development Team"
+          }
+        ],
+        "Three": [
+          {
+            "Question": "A high performing team has these to deliver a finished product",
+            "Answer": "What is.. All skills required to build the product?"
+          }
+        ],
+        "Four": [
+          {
+            "Question": "Software becomes potentially shippable when it reaches this state",
+            "Answer": "What is.. The Team's Definition of Done?"
+          }
+        ],
+        "Five": [
+          {
+            "Question": "This person is ultimately responsible to stakeholders",
+            "Answer": "What is.. Chief Product Owner/ Product Owner?"
+          }
+        ],
+        "Six": [],
+        "Seven": [],
+        "Eight": [],
+        "Nine": [],
+        "Ten": []
+      }
+    },
+    {
+      "Name": "Where'd My Sprint Go?",
+      "Levels": {
+        "One": [
+          {
+            "Question": "When a PO is unsure of what to do next, they should reach out to this person",
+            "Answer": "What is.. Chief Product Owner?"
+          }
+        ],
+        "Two": [
+          {
+            "Question": "Challenges across tribal lines are best solved by this technique",
+            "Answer": "What is.. Collaboration?"
+          }
+        ],
+        "Three": [
+          {
+            "Question": "Engaging these specialists will ensure software built by the team is shippable",
+            "Answer": "What is.. UAT?"
+          }
+        ],
+        "Four": [
+          {
+            "Question": "Engaging these specialists ensures that users will know how to use the software",
+            "Answer": "What is.. Change Management?"
+          }
+        ],
+        "Five": [
+          {
+            "Question": "This technique prevents me from being over-burdened",
+            "Answer": "What is.. Delegation?"
+          }
+        ],
+        "Six": [],
+        "Seven": [],
+        "Eight": [],
+        "Nine": [],
+        "Ten": []
+      }
+    },
+    {
+      "Name": "You Complete Me",
+      "Levels": {
+        "One": [
+          {
+            "Question": "These can only be entered in Aha! and not in ADO",
+            "Answer": "What is.. Epics and Features?"
+          }
+        ],
+        "Two": [
+          {
+            "Question": "If not associated with an Epic or Feature a requirement becomes this",
+            "Answer": "What is.. Orphaned?"
+          }
+        ],
+        "Three": [
+          {
+            "Question": "Scrum Master, Stakeholder, Dev Team. To complete the list, this role is missing",
+            "Answer": "What is.. Product Owner?"
+          }
+        ],
+        "Four": [
+          {
+            "Question": "Product Owner can reprioritise the product backlog but must not change this",
+            "Answer": "What is.. Sprint Backlog?"
+          }
+        ],
+        "Five": [
+          {
+            "Question": "Unlike waterfall, agile does not require me to have this to proceed",
+            "Answer": "What is.. All the answers?"
+          }
+        ],
+        "Six": [],
+        "Seven": [],
+        "Eight": [],
+        "Nine": [],
+        "Ten": []
+      }
+    },
+    {
+      "Name": "What's the Plan, Stan?",
+      "Levels": {
+        "One": [
+          {
+            "Question": "This person can provide technical guidance on how to build the solution",
+            "Answer": "What is.. Tech Lead?"
+          }
+        ],
+        "Two": [
+          {
+            "Question": "This meeting is a required initial step prior to Sprint Planning",
+            "Answer": "What is.. Backlog Refinement?"
+          }
+        ],
+        "Three": [
+          {
+            "Question": "It's a bad idea to carry this forward into the next sprint",
+            "Answer": "What is.. Technical Debt?"
+          }
+        ],
+        "Four": [
+          {
+            "Question": "High-level planning in Scrum is also called this",
+            "Answer": "What is.. Release Planning?"
+          }
+        ],
+        "Five": [
+          {
+            "Question": "Only this person can decide if the sprint can be cancelled",
+            "Answer": "What is.. Product Owner?"
+          }
+        ],
+        "Six": [],
+        "Seven": [],
+        "Eight": [],
+        "Nine": [],
+        "Ten": []
+      }
+    },
+    {
+      "Name": "Pot Pourri",
+      "Levels": {
+        "One": [
+          {
+            "Question": "Who should lead the Sprint review/demo?",
+            "Answer": "What is.. Product Owner?"
+          }
+        ],
+        "Two": [
+          {
+            "Question": "A decomposed PBI with acceptance criteria & estimate, meets this",
+            "Answer": "What is.. Definition of Ready?"
+          }
+        ],
+        "Three": [
+          {
+            "Question": "This role decides if more items can be added to the sprint",
+            "Answer": "What is.. Development Team?"
+          }
+        ],
+        "Four": [
+          {
+            "Question": "This is the primary measure of progress in Scrum?",
+            "Answer": "What is.. Working Software?"
+          }
+        ],
+        "Five": [
+          {
+            "Question": "This oxymoron describes the Scrum Master",
+            "Answer": "What is.. Servant Leader?"
+          }
+        ],
+        "Six": [],
+        "Seven": [],
+        "Eight": [],
+        "Nine": [],
+        "Ten": []
+      }
+    },
+    {
+      "Name": "Knowing the Unknown",
+      "Levels": {
+        "One": [],
+        "Two": [],
+        "Three": [],
+        "Four": [],
+        "Five": [],
+        "Six": [
+          {
+            "Question": "This project management approach requires me to know all the answers up front",
+            "Answer": "What is.. Waterfall?"
+          }
+        ],
+        "Seven": [
+          {
+            "Question": "Complete this: Refinement, Daily Scrum, Sprint Demo, and <blank>",
+            "Answer": "What is.. Retrospective?"
+          }
+        ],
+        "Eight": [
+          {
+            "Question": "Description of what happens when more work is added to the current sprint",
+            "Answer": "What is.. Scope Creep?"
+          }
+        ],
+        "Nine": [
+          {
+            "Question": "This is a group of related projects contributing to a common business initiative",
+            "Answer": "What is.. A Program?"
+          }
+        ],
+        "Ten": [
+          {
+            "Question": "This comes from any source, in any form to adversely impact sprint velocity",
+            "Answer": "What is.. an Impediment?"
+          }
+        ]
+      }
+    },
+    {
+      "Name": "Stand and Deliver!",
+      "Levels": {
+        "One": [],
+        "Two": [],
+        "Three": [],
+        "Four": [],
+        "Five": [],
+        "Six": [
+          {
+            "Question": "1,2,3,5,8,11…",
+            "Answer": "What is.. Fibonnacci Sequence?"
+          }
+        ],
+        "Seven": [
+          {
+            "Question": "A 3-dimensional cube used to store temporal content",
+            "Answer": "What is.. Timebox?"
+          }
+        ],
+        "Eight": [
+          {
+            "Question": "A time cycle for delivering potentially shippable software",
+            "Answer": "What is.. Sprint?"
+          }
+        ],
+        "Nine": [
+          {
+            "Question": "Typically not longer than 15 minutes, this ceremony keeps you on your feet",
+            "Answer": "What is.. Daily Standup?"
+          }
+        ],
+        "Ten": [
+          {
+            "Question": "This critical milestone is not knowable at the start of the project",
+            "Answer": "What is.. Go-Live Date?"
+          }
+        ]
+      }
+    },
+    {
+      "Name": "Tribal Warfare",
+      "Levels": {
+        "One": [],
+        "Two": [],
+        "Three": [],
+        "Four": [],
+        "Five": [],
+        "Six": [
+          {
+            "Question": "This concept makes transcending departmental lines possible",
+            "Answer": "What is.. Cross-functional collaboration?"
+          }
+        ],
+        "Seven": [
+          {
+            "Question": "When the developers are done with internal testing, this group takes a peek",
+            "Answer": "What is.. UAT?"
+          }
+        ],
+        "Eight": [
+          {
+            "Question": "This group helps the product owner get the word out",
+            "Answer": "What is.. Change Management?"
+          }
+        ],
+        "Nine": [
+          {
+            "Question": "This group provides early insight into what users like",
+            "Answer": "What is.. Consumer Experience?"
+          }
+        ],
+        "Ten": [
+          {
+            "Question": "Can you see the future? This group can!",
+            "Answer": "What is.. UI?"
+          }
+        ]
+      }
+    },
+    {
+      "Name": "Wry Humor",
+      "Levels": {
+        "One": [],
+        "Two": [],
+        "Three": [],
+        "Four": [],
+        "Five": [],
+        "Six": [
+          {
+            "Question": "This fuels business requirements to be translated into working code",
+            "Answer": "What is.. Coffee?"
+          }
+        ],
+        "Seven": [
+          {
+            "Question": "The more you put into it, the smaller it gets",
+            "Answer": "What is.. Requirement?"
+          }
+        ],
+        "Eight": [
+          {
+            "Question": "The more you get out of it, the bigger it gets",
+            "Answer": "What is.. A Hole?"
+          }
+        ],
+        "Nine": [
+          {
+            "Question": "Only one company can make this game",
+            "Answer": "What is.. Monopoly?"
+          }
+        ],
+        "Ten": [
+          {
+            "Question": "The only time nothing is negative is..",
+            "Answer": "What is.. Under a Christmas tree?"
+          }
+        ]
+      }
+    },
+    {
+      "Name": "Knock, knock!",
+      "Levels": {
+        "One": [],
+        "Two": [],
+        "Three": [],
+        "Four": [],
+        "Five": [],
+        "Six": [
+          {
+            "Question": "Done! Done who?",
+            "Answer": "What is.. Depends on who you ask?"
+          }
+        ],
+        "Seven": [
+          {
+            "Question": "Carrie. Carrie who?",
+            "Answer": "What is.. Carrie over to next sprint?"
+          }
+        ],
+        "Eight": [
+          {
+            "Question": "Processes and tools. Processes and tools who?",
+            "Answer": "What is.. See, I told you we are Agile?"
+          }
+        ],
+        "Nine": [
+          {
+            "Question": "UAT. UAT who?",
+            "Answer": "What is.. You add it to phase 2?"
+          }
+        ],
+        "Ten": [
+          {
+            "Question": "Scope creep. Scope creep who?",
+            "Answer": "What is.. Every business stakeholder I've met?"
+          }
+        ]
+      }
+    },
+    {
+      "Name": "Who's on first, what's on second?",
+      "Levels": {
+        "One": [],
+        "Two": [],
+        "Three": [],
+        "Four": [],
+        "Five": [],
+        "Six": [
+          {
+            "Question": "This role removes impediments for the development team",
+            "Answer": "What is.. Scrum Master?"
+          }
+        ],
+        "Seven": [
+          {
+            "Question": "Collaboration works best in this mode",
+            "Answer": "What is.. Face-to-face?"
+          }
+        ],
+        "Eight": [
+          {
+            "Question": "QA work falls under this Scrum role",
+            "Answer": "What is.. The Development Team?"
+          }
+        ],
+        "Nine": [
+          {
+            "Question": "Product ideas for the team are entered into this system",
+            "Answer": "What is.. Aha!?"
+          }
+        ],
+        "Ten": [
+          {
+            "Question": "Impediments are escalated to this leadership team",
+            "Answer": "What is.. EAT?"
+          }
+        ]
+      }
+    }
+  ]
+}
