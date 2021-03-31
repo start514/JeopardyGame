@@ -23,7 +23,7 @@ public class UIPlayerController : MonoBehaviour
             instance = this;
         }
         Debug.Log("Starting UI player");
-        buttonAmountText.text = Player.localPlayer.playerAmount.ToString("C");
+        buttonAmountText.text = Player.localPlayer.playerAmount.ToString("C0");
         buttonNameText.text = Player.localPlayer.playerName;
         /*
         // setting the players name to the one he has put in the input field in the lobby scene

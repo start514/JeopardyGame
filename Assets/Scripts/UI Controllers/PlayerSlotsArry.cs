@@ -23,7 +23,7 @@ public class PlayerSlotsArry : MonoBehaviour
         for(var i = 0; i < players.Length; i++) {
             var player = players[i];
             if(player.matchID == Player.localPlayer.matchID && !player.isHost) {
-                playerSlots[idx].amountTxt.text = player.playerAmount.ToString("C");
+                playerSlots[idx].amountTxt.text = player.playerAmount.ToString("C0");
                 playerSlots[idx].nameTxt.text = player.playerName;
                 playerSlots[idx].gameObject.SetActive(true);
                 idx++;

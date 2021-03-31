@@ -112,6 +112,7 @@ public class UIGameController : MonoBehaviour
             {
                 localPlayer.PlayerOpenFinalJeopardyPanalToAll();
             }
+            hostPlayerContainerTxt.text = localPlayer.playerName;
         }
     }
 
