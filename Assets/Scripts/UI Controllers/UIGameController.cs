@@ -34,7 +34,6 @@ public class UIGameController : MonoBehaviour
     [Header("Values")]
     public bool timerRunning;
     public int jumpsAmount = 100;
-    private float timeToAnswer = 120, timeToBuzz = 120;
     internal Coroutine buzzTimer, submitTimer, backToBoard;
     internal string finalQuestion, finalAnswer;
     public string currentQuestion, currentCorrectAnswer, currentInputAnswer;
@@ -73,8 +72,8 @@ public class UIGameController : MonoBehaviour
         isPaused = false;
         //buzzTimer = ActivateTimer(timeToBuzz, false); 
         //submitTimer = ActivateTimer(timeToAnswer, true);
-        submitTimer = StartCoroutine(ActivateTimer(timeToAnswer, true));
-        buzzTimer = StartCoroutine(ActivateTimer(timeToBuzz, false));
+        submitTimer = StartCoroutine(ActivateTimer(TransferDataToGame.instance.timeToAnswer, true));
+        buzzTimer = StartCoroutine(ActivateTimer(TransferDataToGame.instance.timeToBuzz, false));
         StopTimerCoroutine();
         //backToBoard = GoBackToBoard(closeAnswerDelay);
 
@@ -214,10 +213,10 @@ public class UIGameController : MonoBehaviour
             StartTimerCoroutine(false);
             localPlayer.PlayerStartTimerForHost(false);
 
-            if (Mathf.FloorToInt(timeToBuzz % 60) == 0)
-                clientQuestionTimerText.text = Mathf.FloorToInt(timeToBuzz / 60) + ":00";
+            if (Mathf.FloorToInt(TransferDataToGame.instance.timeToBuzz % 60) == 0)
+                clientQuestionTimerText.text = Mathf.FloorToInt(TransferDataToGame.instance.timeToBuzz / 60) + ":00";
             else
-                clientQuestionTimerText.text = Mathf.FloorToInt(timeToBuzz / 60) + ":" + Mathf.FloorToInt(timeToBuzz % 60);
+                clientQuestionTimerText.text = Mathf.FloorToInt(TransferDataToGame.instance.timeToBuzz / 60) + ":" + Mathf.FloorToInt(TransferDataToGame.instance.timeToBuzz % 60);
         }
         
         if (dailyPanel.activeSelf == true)
@@ -517,9 +516,9 @@ public class UIGameController : MonoBehaviour
         StopTimerCoroutine();
         timerRunning = true;
         if(answer)
-        submitTimer = StartCoroutine(ActivateTimer(timeToAnswer, true));
+        submitTimer = StartCoroutine(ActivateTimer(TransferDataToGame.instance.timeToAnswer, true));
         else
-            buzzTimer = StartCoroutine(ActivateTimer(timeToBuzz, false));
+            buzzTimer = StartCoroutine(ActivateTimer(TransferDataToGame.instance.timeToBuzz, false));
     }
     internal IEnumerator ActivateTimer(float duration, bool shouldSubmitWhenTimerEnds)
     {

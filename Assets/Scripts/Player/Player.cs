@@ -483,9 +483,6 @@ public class Player : NetworkBehaviour
     {
         //MatchMaker.instance.BegineGame(matchID);
         Match thisMatch = MatchMaker.instance.FindMatchById(id);
-        thisMatch.timeToAnswer = timeToAnswer;
-        thisMatch.timeToBuzz = timeToBuzz;
-        thisMatch.shouldActicateDailyDouble = dailyDouble;
         for (int i = 0; i < thisMatch.playersInThisMatch.Count; i++)
         {
             TargetBeginGame(thisMatch.playersInThisMatch[i].GetComponent<NetworkIdentity>().connectionToClient, MatchMaker.RegularIDToGUI(id));

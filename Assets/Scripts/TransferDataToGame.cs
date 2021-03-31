@@ -4,19 +4,20 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System;
+using Mirror;
 
-public class TransferDataToGame : MonoBehaviour
+public class TransferDataToGame : NetworkBehaviour
 {
     public static TransferDataToGame instance;
 
     internal int participantesNumber= -1;
     public string participanteName = "";
     internal string hosteName= "";
-    public string gameName;
-    public int  gameSize;
-    public bool  dailyDouble;
-    public int timeToAnswer;
-    public int timeToBuzz;
+    [SyncVar] public string gameName;
+    [SyncVar] public int  gameSize;
+    [SyncVar] public bool  dailyDouble;
+    [SyncVar] public int timeToAnswer;
+    [SyncVar] public int timeToBuzz;
 
     // Update is called once per frame
 
