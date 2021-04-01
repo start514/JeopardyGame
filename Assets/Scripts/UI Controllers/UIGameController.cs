@@ -19,11 +19,11 @@ public class UIGameController : MonoBehaviour
     public CustomButton submitButton, buzzButton;
     public CustomInputField answerInput;
     public GameObject HostBottom;
-    public CustomButton correctButton, incorrectButton;
+    public CustomButton correctButton, incorrectButton, hostContinueButton;
     public GameObject singleIcon, doubleIcon;
     [Header("Sprites")]
     public Sprite notGreyedOutSlot, greyedOutSlot, singleCatagory, doubleCatagory;
-    public Button hostContinueButton, hostPauseBtn,hostUnpauseBtn;
+    public Button hostPauseBtn,hostUnpauseBtn;
     public GameObject hostPauseImg;
     [Header("Scripts")]
     public static UIGameController instance;
@@ -170,11 +170,10 @@ public class UIGameController : MonoBehaviour
         }
         if (localPlayer.isHost)
         {
-            hostContinueButton.gameObject.SetActive(false);
+            hostContinueButton.SetEnable(false);
             localPlayer.canDecide = false;
             localPlayer.canContinue = false;
             hostPauseBtn.interactable = false;
-
         }
         else
         {
@@ -480,14 +479,14 @@ public class UIGameController : MonoBehaviour
     }
     public void HostCorrectButton()
     {
-        hostContinueButton.gameObject.SetActive(true);
+        hostContinueButton.SetEnable(true);
         correctButton.SetEnable(false);
         incorrectButton.SetEnable(false);
         localPlayer.PlayerHostDecided(true);
     }
     public void HostWrongButton()
     {
-        hostContinueButton.gameObject.SetActive(true);
+        hostContinueButton.SetEnable(true);
         correctButton.SetEnable(false);
         incorrectButton.SetEnable(false);
         localPlayer.PlayerHostDecided(false);

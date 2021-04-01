@@ -387,31 +387,31 @@ public class Player : NetworkBehaviour
             DeleteParticipentContainer(id, playerId);
             CountParticipentContainers(id);
             this.playerIndex = -1;
-            TargetCancelJoin(true, id, MatchMaker.instance.FindMatchById(id));
+            TargetCancelJoin(true, id, MatchMaker.instance.FindMatchById(id).playersInThisMatch.Count, MatchMaker.instance.FindMatchById(id).maxGameSize);
             Debug.Log("Server - Sucssesfly canceled a joining");
         }
         else
         {
-            TargetCancelJoin(false, id,MatchMaker.instance.FindMatchById(id));
+            TargetCancelJoin(false, id, MatchMaker.instance.FindMatchById(id).playersInThisMatch.Count, MatchMaker.instance.FindMatchById(id).maxGameSize);
             Debug.LogError("Server- Couldn't cancel join game", this);
         }
     }
 
     [TargetRpc] // the server will run this on a specific client
-    void TargetCancelJoin(bool success, string id, Match match)
+    void TargetCancelJoin(bool success, string id, int currentPlayerCount, int maxGameSize)
     {
         if (success)
         {
             //localPlayer.gameObject.GetComponent<NetworkMatchChecker>().matchId = new Guid();
             //CmdUpdateMatchChecker(new Guid());
-            Debug.Log("Client - Sucssesfly cancaled joining");
+            Debug.Log($"Client - Sucssesfly cancaled joining");
             localPlayer.uiLobby.hostGamePanal.SetActive(false);
             localPlayer.uiLobby.joinGamePanal.SetActive(false);
             localPlayer.uiLobby.lobbyPanal.SetActive(true);
             localPlayer.matchID = null;
             localPlayer.uiLobby.ClearJoinContainers();
             CmdUpdateMatchID(localPlayer.matchID);
-            uiLobby.ChangeGamecontainerParticipentNumTxt(id, match.playersInThisMatch.Count, match.maxGameSize);
+            uiLobby.ChangeGamecontainerParticipentNumTxt(id, currentPlayerCount, maxGameSize);
             //Player.localPlayer.CmdUpdateGameRoomList();
 
             /*// if we were supposed to be the last player and the match maker script has deleted the game container, add it back in
