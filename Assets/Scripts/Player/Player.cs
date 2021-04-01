@@ -273,7 +273,6 @@ public class Player : NetworkBehaviour
             this.isReady = false;
             this.playerName = "";
 
-            Debug.LogError(MatchMaker.instance.FindMatchById(id).playersInThisMatch.Count);
             Debug.Log("Server- Sucssesfly joined game");
             TargetJoinGame(true, id, MatchMaker.instance.FindMatchById(id), MatchMaker.RegularIDToGUI(id), MatchMaker.instance.FindMatchById(id).playersInThisMatch.Count - 1);
             CountParticipentContainers(id);
@@ -488,16 +487,8 @@ public class Player : NetworkBehaviour
             TargetBeginGame(thisMatch.playersInThisMatch[i].GetComponent<NetworkIdentity>().connectionToClient, MatchMaker.RegularIDToGUI(id));
         }
         RpcDeleteGameContainer(id);
-        if (MatchMaker.instance.DeleteMatch(id))
-        // if valadation passed
-        {
-            RcpCountGameContainers();
-            Debug.Log("Server - Sucssesfly canceled a hosting");
-        }
-        else
-        {
-            Debug.LogError("Server- Couldn't host game", this);
-        }
+        thisMatch.started = true;
+        RcpCountGameContainers();
     }
 
     [TargetRpc] // the server will run this on a specific client
@@ -576,7 +567,6 @@ public class Player : NetworkBehaviour
         Debug.Log(MatchMaker.instance.FindMatchById(id) == null);
         Debug.Log(id);
         SyncListGameObject playersInThisMatch = MatchMaker.instance.FindMatchById(id).playersInThisMatch;
-        Debug.Log(playersInThisMatch.Count);
         for (int i = 0; i < playersInThisMatch.Count; i++)
         {
             // add my contaniner to everyone else
@@ -656,7 +646,9 @@ public class Player : NetworkBehaviour
 
         for (int i = 0; i < instance.allGames.Count; i++)
         {
-            TargetUpdateGameRoomList(instance.allGames[i].matchId, instance.allGames[i].gameName, instance.allGames[i].playersInThisMatch.Count, instance.allGames[i].maxGameSize);
+            if(instance.allGames[i].started == false) {
+                TargetUpdateGameRoomList(instance.allGames[i].matchId, instance.allGames[i].gameName, instance.allGames[i].playersInThisMatch.Count, instance.allGames[i].maxGameSize);
+            }
         }
     }
     [TargetRpc]
@@ -1210,7 +1202,7 @@ public class Player : NetworkBehaviour
     [Command]
     void CmdPlaceDailyDouble(string id)
     {
-        if (MatchMaker.instance.FindMatchById(id).shouldActicateDailyDouble)
+        if (TransferDataToGame.instance.dailyDouble)
         {
             // choose a random spot to place the daily double and tell eveyone to do so
             int rnd = UnityEngine.Random.Range(0, 29);
@@ -1490,12 +1482,12 @@ public class Player : NetworkBehaviour
         {
             localPlayer.isSumbiting = false;
             localPlayer.isBuzzing = false;
-            if (localPlayer.uiGame.buzzButton.gameObject.activeSelf && localPlayer.uiGame.buzzButton.enableButton)
+            if (localPlayer.uiGame.buzzButton.gameObject.activeSelf && localPlayer.uiGame.buzzButton.isEnabled)
             {
                 localPlayer.isBuzzing = true;
                 localPlayer.uiGame.CantBuzz();
             }
-            if (localPlayer.uiGame.submitButton.gameObject.activeSelf && localPlayer.uiGame.submitButton.enableButton)
+            if (localPlayer.uiGame.submitButton.gameObject.activeSelf && localPlayer.uiGame.submitButton.isEnabled)
             {
                 localPlayer.isSumbiting = true;
                 localPlayer.uiGame.CantSumbit();
@@ -1507,15 +1499,15 @@ public class Player : NetworkBehaviour
             if(localPlayer.uiGame.hostQuestionPanel.activeSelf)
             {
                 localPlayer.canContinue = false;
-                if (localPlayer.uiGame.hostContinueButton.gameObject.activeSelf)
+                if (localPlayer.uiGame.hostContinueButton.isEnabled)
                 {
                     localPlayer.canContinue = true;
-                    localPlayer.uiGame.hostContinueButton.gameObject.SetActive(false);
+                    localPlayer.uiGame.hostContinueButton.SetEnable(false);
 
                 }
                 // if the player was able to submit before, bring it back after unpausing 
                 localPlayer.canDecide = false;
-                if (localPlayer.uiGame.correctButton.enableButton)
+                if (localPlayer.uiGame.correctButton.isEnabled)
                 {
                     canDecide = true;
                     localPlayer.uiGame.correctButton.SetEnable(false);
@@ -1549,10 +1541,10 @@ public class Player : NetworkBehaviour
             localPlayer.uiGame.hostPauseImg.SetActive(false);
             if (localPlayer.canContinue)
             {
-                localPlayer.uiGame.hostContinueButton.gameObject.SetActive(true);
+                localPlayer.uiGame.hostContinueButton.SetEnable(true);
             }
             else
-                localPlayer.uiGame.hostContinueButton.gameObject.SetActive(false);
+                localPlayer.uiGame.hostContinueButton.SetEnable(false);
             if (localPlayer.canDecide)
             {
                 localPlayer.uiGame.correctButton.SetEnable(true);
@@ -1608,10 +1600,11 @@ public class Player : NetworkBehaviour
         localPlayer.PlayerCancelJoin(localPlayer.matchID);
     }
     void OnDestroy() {
-        if(isHost)
-            localPlayer.PlayerCancelJoin(matchID);
-        else if(localPlayer.isHost) {
-            localPlayer.KickPlayer(playerID);
-        }
+        Debug.LogWarning($"Player object destroyed Name: {this.playerName}");
+        // if(isHost)
+        //     localPlayer.PlayerCancelJoin(matchID);
+        // else if(localPlayer != null && localPlayer.isHost) {
+        //     localPlayer.KickPlayer(playerID);
+        // }
     }
 }

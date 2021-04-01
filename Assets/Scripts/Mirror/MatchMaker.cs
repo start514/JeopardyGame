@@ -24,14 +24,14 @@ public class Match
     public SyncListGameObject playersInThisMatch = new SyncListGameObject();
     public int timeToAnswer, timeToBuzz;
     public bool shouldActicateDailyDouble = true;
+    public bool started = false;
     public Match(string matchId, string gamaName, int maxGameSize, GameObject player)
     {
         this.matchId = matchId;
         this.gameName = gamaName;
         this.maxGameSize = maxGameSize;
         this.playersInThisMatch.Add(player);
-
-
+        this.started = false;
     }
     public Match() { }
 }
