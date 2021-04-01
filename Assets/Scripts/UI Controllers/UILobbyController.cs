@@ -403,6 +403,7 @@ public class UILobbyController : MonoBehaviour
     }
     #endregion
     void Update() {
+        CountGameContainers();
         if(joinGamePanal!=null && joinGamePanal.activeSelf) {
             ParticipentConteiner[] participents = joinGamePanal.GetComponentsInChildren<ParticipentConteiner>();
             for(int i=0; i<participents.Length; i++) {
