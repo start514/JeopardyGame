@@ -15803,7 +15803,7 @@ PrefabInstance:
     - target: {fileID: 5874394709511425841, guid: ea3b9063bf69f904b93719d6d4322c2d,
         type: 3}
       propertyPath: maxConnections
-      value: 7
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 5874394709511425841, guid: ea3b9063bf69f904b93719d6d4322c2d,
         type: 3}

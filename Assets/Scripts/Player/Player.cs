@@ -480,6 +480,10 @@ public class Player : NetworkBehaviour
     [Command] // call this from a client to run it on the server
     void CmdBeginGame(string id, bool dailyDouble, int timeToAnswer, int timeToBuzz)
     {
+        TransferDataToGame.instance.dailyDouble = dailyDouble;
+        TransferDataToGame.instance.timeToAnswer = timeToAnswer;
+        TransferDataToGame.instance.timeToBuzz = timeToBuzz;
+
         //MatchMaker.instance.BegineGame(matchID);
         Match thisMatch = MatchMaker.instance.FindMatchById(id);
         for (int i = 0; i < thisMatch.playersInThisMatch.Count; i++)
@@ -1600,7 +1604,6 @@ public class Player : NetworkBehaviour
         localPlayer.PlayerCancelJoin(localPlayer.matchID);
     }
     void OnDestroy() {
-        Debug.LogWarning($"Player object destroyed Name: {this.playerName}");
         // if(isHost)
         //     localPlayer.PlayerCancelJoin(matchID);
         // else if(localPlayer != null && localPlayer.isHost) {

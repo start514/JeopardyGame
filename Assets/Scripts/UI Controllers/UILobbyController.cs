@@ -146,7 +146,6 @@ public class UILobbyController : MonoBehaviour
     }
     public void AddGameContainer(string id, string gameName, int currentPlayers, int maxPlayers)
     {
-        Debug.LogError("Adding game container for id " + id + "with name " + gameName, this);
         GameObject container = Instantiate(gameConteinerPrefab, availableGameContent.transform);
         GameContainer script = container.GetComponent<GameContainer>();
         script.gameId = id;
@@ -206,7 +205,6 @@ public class UILobbyController : MonoBehaviour
         updateHostPanelPlayerReady(false, false);
         if (string.IsNullOrEmpty(playerId))
         {
-            Debug.LogError("Join Participent Container not found ", this);
             return;
         }
         bool found = false;
@@ -224,8 +222,6 @@ public class UILobbyController : MonoBehaviour
                 }
             }
         }
-        if (!found)
-            Debug.LogError("id to delete not found, id: " + playerId, this);
     }
     public void AddJoinParticipentConteiner(string id, bool host, string name, int color, string playerID)
     {
@@ -319,7 +315,6 @@ public class UILobbyController : MonoBehaviour
     {
         if (string.IsNullOrEmpty(playerId))
         {
-            Debug.LogError("Join Participent Container not found ", this);
             return;
         }
 
@@ -338,8 +333,6 @@ public class UILobbyController : MonoBehaviour
                 }
             }
         }
-        if (!found)
-            Debug.LogError("id to delete not found to delete join participent, id: " + playerId, this);
     }
     public void UpdateJoinContainerName(string playerId, string newName)
     {
@@ -392,7 +385,6 @@ public class UILobbyController : MonoBehaviour
                 playersCount ++;
             }
         } 
-        Debug.LogError($"Full: {gameFull} AllReady: {allReady} Total: {playersCount}");
         if(allReady && gameFull && playersCount!=1) {
             hostGameBtn.SetEnable(true);
         } else {
