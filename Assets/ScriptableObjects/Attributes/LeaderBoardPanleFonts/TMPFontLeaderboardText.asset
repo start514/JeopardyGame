@@ -15,5 +15,5 @@ MonoBehaviour:
   Font: {fileID: 11400000, guid: 7d6aceb013e1a4fe381528084396d515, type: 2}
   FontSize: 28
   FontColor: {r: 1, g: 1, b: 1, a: 1}
-  FontStyle: 1
+  FontStyle: 0
   FontCapitalization: 16
