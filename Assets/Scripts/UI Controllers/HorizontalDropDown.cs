@@ -34,4 +34,9 @@ public class HorizontalDropDown : MonoBehaviour
         }
     }
 
+    public void Reset() {
+        currentOption = 0;
+        txt.text = allOptions[currentOption].text;
+    }
+
 }

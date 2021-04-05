@@ -1481,7 +1481,7 @@ public class Player : NetworkBehaviour
     [ClientRpc]
     void RpcPauseGameForAll()
     {
-        bool stopTimer = false;
+        // bool stopTimer = false;
         if (!localPlayer.isHost)
         {
             localPlayer.isSumbiting = false;

@@ -49,11 +49,15 @@ public class GameContainer : NetworkBehaviour, ISelectHandler, IDeselectHandler
         RectTransform rectTransform = joinBtn.GetComponent<RectTransform>();
         if (!RectTransformUtility.RectangleContainsScreenPoint(rectTransform, Input.mousePosition, camera))
         {
-            uiLobby.DectivateJoinGameButton();
             uiLobby.pressedContainerId = null;
-            gameNameTxt.color = color;//new Color (89/255f,88/255f,89/255f,1/255f);
-            numOfPlayersTxt.color = color;
+            uiLobby.DectivateJoinGameButton();
+        } else {
+            // EventSystem.current.SetSelectedGameObject(null);
+            // EventSystem.current.SetSelectedGameObject(this.gameObject);
+            ExecuteEvents.Execute(this.gameObject, eventData, ExecuteEvents.selectHandler);
         }
+        gameNameTxt.color = color;//new Color (89/255f,88/255f,89/255f,1/255f);
+        numOfPlayersTxt.color = color;
 
     }
 }

@@ -207,7 +207,6 @@ public class UILobbyController : MonoBehaviour
         {
             return;
         }
-        bool found = false;
         ParticipentConteiner[] children = hostParticipentContent.GetComponentsInChildren<ParticipentConteiner>();
         for (int i = 1; i < children.Length; i++)
         {
@@ -215,9 +214,7 @@ public class UILobbyController : MonoBehaviour
             {
                 if (children[i].GetComponent<ParticipentConteiner>().playerID == playerId)
                 {
-                    Debug.Log("Delete participent controller with id " + playerId);
                     Destroy(children[i].gameObject);
-                    found = true;
                     break;
                 }
             }
@@ -318,7 +315,6 @@ public class UILobbyController : MonoBehaviour
             return;
         }
 
-        bool found = false;
         ParticipentConteiner[] children = joinParticipentContent.GetComponentsInChildren<ParticipentConteiner>();
         for (int i = 1; i < children.Length; i++)
         {
@@ -326,9 +322,7 @@ public class UILobbyController : MonoBehaviour
             {
                 if (children[i].GetComponent<ParticipentConteiner>().playerID == playerId)
                 {
-                    Debug.Log("Delete participent controller with id " + playerId);
                     Destroy(children[i].gameObject);
-                    found = true;
                     break;
                 }
             }
@@ -406,5 +400,6 @@ public class UILobbyController : MonoBehaviour
             }
             readyGameBtn.SetEnable(!Player.localPlayer.isReady);
         }
+        //Update Game Container Texts
     }
 }

@@ -50,7 +50,7 @@ public class MatchMaker : NetworkBehaviour
     // all of the matches (games) currently available and running
     public SyncListMatch allGames = new SyncListMatch();
     // all of the ids that are being used 
-    public SyncListString allGamesIDs = new SyncListString();
+    public SyncList<string> allGamesIDs = new SyncList<string>();
     [SerializeField]
     private GameObject turnManagerPrefab;
     public void Awake()
