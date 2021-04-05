@@ -8,7 +8,6 @@ public class MouseCursor : MonoBehaviour
     public static MouseCursor instance;
     void Start()
     {
-        DontDestroyOnLoad(this);
         Cursor.visible = false;
         cursorRenderer = GetComponent<Image>();
     }

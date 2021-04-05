@@ -166,7 +166,8 @@ public class UILobbyController : MonoBehaviour
         {
             if(children[i].gameId == gameId)
             {
-                children[i].numOfPlayersTxt.text = (currentPlayers - 1) + " / " + maxPlayers;//(current - 1) - 1 because we don't iclude the host as a participent
+                children[i].maxPlayers = maxPlayers;
+                children[i].currentPlayers = currentPlayers;
             }
         }
 
@@ -401,5 +402,15 @@ public class UILobbyController : MonoBehaviour
             readyGameBtn.SetEnable(!Player.localPlayer.isReady);
         }
         //Update Game Container Texts
+        GameContainer[] containers = availableGameContent.GetComponentsInChildren<GameContainer>();
+        Player[] players = GameObject.FindObjectsOfType<Player>();
+        foreach(var container in containers) {
+            container.currentPlayers = 0;
+            foreach(var player in players) {
+                if(container.gameId == player.matchID) {
+                    container.currentPlayers++;
+                }
+            }
+        }
     }
 }

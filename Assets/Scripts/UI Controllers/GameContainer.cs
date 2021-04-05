@@ -11,8 +11,8 @@ public class GameContainer : NetworkBehaviour, ISelectHandler, IDeselectHandler
     public Text numOfPlayersTxt, emptyTxt;
     private Color color;
     private UILobbyController uiLobby;
-    private Camera camera;
     private GameObject joinBtn;
+    public int maxPlayers, currentPlayers;
     private void Start()
     {
         // When we are spawned on the client,
@@ -26,7 +26,6 @@ public class GameContainer : NetworkBehaviour, ISelectHandler, IDeselectHandler
         color = gameNameTxt.color;
         uiLobby = GameObject.Find("UI Lobby Controller").GetComponent<UILobbyController>();
         Canvas canvas = GameObject.Find("Canvas").GetComponent<Canvas>();
-        camera = canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : camera;
     } 
     private void TransferId( )
     {
@@ -47,7 +46,7 @@ public class GameContainer : NetworkBehaviour, ISelectHandler, IDeselectHandler
         if (joinBtn == null)
             joinBtn = GameObject.Find("Join game Button");
         RectTransform rectTransform = joinBtn.GetComponent<RectTransform>();
-        if (!RectTransformUtility.RectangleContainsScreenPoint(rectTransform, Input.mousePosition, camera))
+        if (!RectTransformUtility.RectangleContainsScreenPoint(rectTransform, Input.mousePosition, null))
         {
             uiLobby.pressedContainerId = null;
             uiLobby.DectivateJoinGameButton();
@@ -59,5 +58,9 @@ public class GameContainer : NetworkBehaviour, ISelectHandler, IDeselectHandler
         gameNameTxt.color = color;//new Color (89/255f,88/255f,89/255f,1/255f);
         numOfPlayersTxt.color = color;
 
+    }
+
+    public void Update() {
+        numOfPlayersTxt.text = (currentPlayers - 1) + " / " + maxPlayers;//(current - 1) - 1 because we don't iclude the host as a participent
     }
 }
