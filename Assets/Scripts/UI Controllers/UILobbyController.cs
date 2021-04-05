@@ -411,6 +411,7 @@ public class UILobbyController : MonoBehaviour
                     container.currentPlayers++;
                 }
             }
+            container.gameObject.SetActive(container.currentPlayers != 0);
         }
     }
 }
