@@ -8,7 +8,7 @@ public class PlayerSlotsArry : MonoBehaviour
     public static PlayerSlotsArry instance;
     void Awake()
     {
-        DontDestroyOnLoad(this);
+        // DontDestroyOnLoad(this);
         if (instance != null && instance != this)
             Destroy(instance);
         else

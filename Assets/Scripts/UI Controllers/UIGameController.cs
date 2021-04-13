@@ -544,9 +544,9 @@ public class UIGameController : MonoBehaviour
             if (Mathf.FloorToInt(t % 60) == 0)
             {
                 if (isHost)
-                    hostTimerText.text = Mathf.FloorToInt(t / 60) + ":00";
+                    hostTimerText.text = padding(Mathf.FloorToInt(t / 60)) + ":00";
                 else
-                    clientQuestionTimerText.text = Mathf.FloorToInt(t / 60) + ":00";
+                    clientQuestionTimerText.text = padding(Mathf.FloorToInt(t / 60)) + ":00";
 
             }
             else
