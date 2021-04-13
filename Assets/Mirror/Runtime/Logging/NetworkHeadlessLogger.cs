@@ -17,7 +17,7 @@ namespace Mirror.Logging
         void Awake()
         {
 #if UNITY_SERVER
-            LogFactory.ReplaceLogHandler(new ConsoleColorLogHandler(showExceptionStackTrace));
+        //     LogFactory.ReplaceLogHandler(new ConsoleColorLogHandler(showExceptionStackTrace));
 #endif
         }
     }

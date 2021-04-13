@@ -213,9 +213,9 @@ public class UIGameController : MonoBehaviour
             localPlayer.PlayerStartTimerForHost(false);
 
             if (Mathf.FloorToInt(TransferDataToGame.instance.timeToBuzz % 60) == 0)
-                clientQuestionTimerText.text = Mathf.FloorToInt(TransferDataToGame.instance.timeToBuzz / 60) + ":00";
+                clientQuestionTimerText.text = padding(Mathf.FloorToInt(TransferDataToGame.instance.timeToBuzz / 60)) + ":00";
             else
-                clientQuestionTimerText.text = Mathf.FloorToInt(TransferDataToGame.instance.timeToBuzz / 60) + ":" + Mathf.FloorToInt(TransferDataToGame.instance.timeToBuzz % 60);
+                clientQuestionTimerText.text = padding(Mathf.FloorToInt(TransferDataToGame.instance.timeToBuzz / 60)) + ":" + padding(Mathf.FloorToInt(TransferDataToGame.instance.timeToBuzz % 60));
         }
         
         if (dailyPanel.activeSelf == true)
@@ -508,6 +508,8 @@ public class UIGameController : MonoBehaviour
         timerRunning = false;
         StopCoroutine(submitTimer);
         StopCoroutine(buzzTimer);
+        hostTimerText.text = "00:00";
+        clientQuestionTimerText.text = "00:00";
     }
     public void StartTimerCoroutine(bool answer)
     {
@@ -518,6 +520,12 @@ public class UIGameController : MonoBehaviour
         submitTimer = StartCoroutine(ActivateTimer(TransferDataToGame.instance.timeToAnswer, true));
         else
             buzzTimer = StartCoroutine(ActivateTimer(TransferDataToGame.instance.timeToBuzz, false));
+    }
+    string padding(int text) {
+        if(text<10) {
+            return "0" + text;
+        }
+        return text.ToString();
     }
     internal IEnumerator ActivateTimer(float duration, bool shouldSubmitWhenTimerEnds)
     {
@@ -544,9 +552,9 @@ public class UIGameController : MonoBehaviour
             else
             {
                 if (isHost)
-                    hostTimerText.text = Mathf.FloorToInt(t / 60) + ":" + Mathf.FloorToInt(t % 60);
+                    hostTimerText.text = padding(Mathf.FloorToInt(t / 60)) + ":" + padding(Mathf.FloorToInt(t % 60));
                 else
-                clientQuestionTimerText.text = Mathf.FloorToInt(t / 60) + ":" + Mathf.FloorToInt(t % 60);
+                clientQuestionTimerText.text = padding(Mathf.FloorToInt(t / 60)) + ":" + padding(Mathf.FloorToInt(t % 60));
 
             }
             yield return null;
@@ -575,9 +583,9 @@ public class UIGameController : MonoBehaviour
             else
             {
                 if (isHost)
-                    hostTimerText.text = Mathf.FloorToInt(t / 60) + ":" + Mathf.FloorToInt(t % 60);
+                    hostTimerText.text = padding(Mathf.FloorToInt(t / 60)) + ":" + padding(Mathf.FloorToInt(t % 60));
                 else
-                    answerTimerText.text = Mathf.FloorToInt(t / 60) + ":" + Mathf.FloorToInt(t % 60);
+                    answerTimerText.text = padding(Mathf.FloorToInt(t / 60)) + ":" + padding(Mathf.FloorToInt(t % 60));
             }
 
             yield return null;
@@ -596,9 +604,9 @@ public class UIGameController : MonoBehaviour
         {
             t -= Time.deltaTime;
             if (Mathf.FloorToInt(t % 60) == 0)
-                clientQuestionTimerText.text = Mathf.FloorToInt(t / 60) + ":00";
+                clientQuestionTimerText.text = padding(Mathf.FloorToInt(t / 60)) + ":00";
             else
-                clientQuestionTimerText.text = Mathf.FloorToInt(t / 60) + ":" + Mathf.FloorToInt(t % 60);
+                clientQuestionTimerText.text = padding(Mathf.FloorToInt(t / 60)) + ":" + padding(Mathf.FloorToInt(t % 60));
 
             yield return null;
         }
