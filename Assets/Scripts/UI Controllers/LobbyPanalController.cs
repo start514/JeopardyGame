@@ -9,7 +9,9 @@ public class LobbyPanalController : NetworkBehaviour
     {
         // clearing all already existing containers
         // showing the update
-        if (isClient && isServer == false && Player.localPlayer != null)
+        if (isClient && isServer == false && Player.localPlayer != null) {
+            Player.localPlayer.ClearGameContainer();
             Player.localPlayer.CmdUpdateGameRoomList();
+        }
     }
 }

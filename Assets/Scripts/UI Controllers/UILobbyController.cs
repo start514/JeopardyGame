@@ -54,7 +54,7 @@ public class UILobbyController : MonoBehaviour
     }*/
     private void Start()
     {
-       // DontDestroyOnLoad(this);
+        // DontDestroyOnLoad(this);
     }
     private void OnEnable()
     {
@@ -68,9 +68,9 @@ public class UILobbyController : MonoBehaviour
         Player.localPlayer.playerName = name;
         // update the name to everyone in the same game id
         //if (join)
-            Player.localPlayer.CmdUpdateMyHostContainerName(id, Player.localPlayer.playerID, name);
+        Player.localPlayer.CmdUpdateMyHostContainerName(id, Player.localPlayer.playerID, name);
         //else
-            Player.localPlayer.CmdUpdateMyJoinContainerName(id, Player.localPlayer.playerID, name);
+        Player.localPlayer.CmdUpdateMyJoinContainerName(id, Player.localPlayer.playerID, name);
 
     }
 
@@ -122,7 +122,7 @@ public class UILobbyController : MonoBehaviour
     }
     void OpenHostGamePanal(int max)
     {
-        hostParticipentNumTxt.text =  "0 / " + max; //(current - 1) - 1 because we don't iclude the host as a participent
+        hostParticipentNumTxt.text = "0 / " + max; //(current - 1) - 1 because we don't iclude the host as a participent
         AddHostParticipentConteinerWithInput(Player.localPlayer.matchID, Player.localPlayer.playerID);
         newGamePanal.SetActive(false);
         hostGamePanal.SetActive(true);
@@ -157,14 +157,23 @@ public class UILobbyController : MonoBehaviour
         else
             container.GetComponent<Image>().color = greyColor;
         container.GetComponent<Button>().enabled = true;
+        container.SetActive(false);
         CountGameContainers();
     }
-    public void ChangeGamecontainerParticipentNumTxt(string gameId,int currentPlayers, int maxPlayers)
+    public void ClearGameContainer()
     {
-        GameContainer []children = availableGameContent.gameObject.GetComponentsInChildren<GameContainer>();
+        var allChildren = availableGameContent.GetComponentsInChildren<Button>(true);
+        for (var ac = 0; ac < allChildren.Length; ac++)
+        {
+            Destroy(allChildren[ac].gameObject);
+        }
+    }
+    public void ChangeGamecontainerParticipentNumTxt(string gameId, int currentPlayers, int maxPlayers)
+    {
+        GameContainer[] children = availableGameContent.gameObject.GetComponentsInChildren<GameContainer>();
         for (int i = 0; i < children.Length; i++)
         {
-            if(children[i].gameId == gameId)
+            if (children[i].gameId == gameId)
             {
                 children[i].maxPlayers = maxPlayers;
                 children[i].currentPlayers = currentPlayers;
@@ -242,7 +251,7 @@ public class UILobbyController : MonoBehaviour
         // add the color chooser
         // set the color of the container
         SetJoinContainerColor();
-        
+
     }
 
     public void SetJoinContainerColor()
@@ -295,7 +304,7 @@ public class UILobbyController : MonoBehaviour
         SetJoinContainerColor();
 
     }
-    
+
     public void AddHostParticipentConteinerWithInput(string id, string playerId)
     {
         GameObject container = Instantiate(hostContainerWithInput, hostParticipentContent.transform);
@@ -304,7 +313,7 @@ public class UILobbyController : MonoBehaviour
         script.role.sprite = hostRole;
         script.playerID = playerId;
         script.matchID = id;
-        if(Player.localPlayer.isHost) script.color.gameObject.SetActive(false);
+        if (Player.localPlayer.isHost) script.color.gameObject.SetActive(false);
         else script.color.sprite = colors[Player.localPlayer.playerColor];
         // add the color chooser
         SetHostContainerColor();
@@ -370,31 +379,43 @@ public class UILobbyController : MonoBehaviour
     }
     #endregion
     #region I AM READY
-    public void updateJoinPanelIAmReady() {
+    public void updateJoinPanelIAmReady()
+    {
     }
-    public void updateHostPanelPlayerReady(bool gameFull, bool allReady) {
+    public void updateHostPanelPlayerReady(bool gameFull, bool allReady)
+    {
         Player[] players = GameObject.FindObjectsOfType<Player>();
         int playersCount = 0;
-        for(int i=0; i<players.Length; i++) {
-            if(players[i].matchID == Player.localPlayer.matchID) {
-                playersCount ++;
+        for (int i = 0; i < players.Length; i++)
+        {
+            if (players[i].matchID == Player.localPlayer.matchID)
+            {
+                playersCount++;
             }
-        } 
-        if(allReady && gameFull && playersCount!=1) {
+        }
+        if (allReady && gameFull && playersCount != 1)
+        {
             hostGameBtn.SetEnable(true);
-        } else {
+        }
+        else
+        {
             hostGameBtn.SetEnable(false);
         }
     }
-    public void updateJoinPanelPlayerReady(string playerID) {
+    public void updateJoinPanelPlayerReady(string playerID)
+    {
     }
     #endregion
-    void Update() {
+    void Update()
+    {
         CountGameContainers();
-        if(joinGamePanal!=null && joinGamePanal.activeSelf) {
+        if (joinGamePanal != null && joinGamePanal.activeSelf)
+        {
             ParticipentConteiner[] participents = joinGamePanal.GetComponentsInChildren<ParticipentConteiner>();
-            for(int i=0; i<participents.Length; i++) {
-                if(participents[i].playerID == Player.localPlayer.playerID) {//It's me
+            for (int i = 0; i < participents.Length; i++)
+            {
+                if (participents[i].playerID == Player.localPlayer.playerID)
+                {//It's me
                     participents[i].inputBG.enabled = !Player.localPlayer.isReady;
                     participents[i].inputField.enabled = !Player.localPlayer.isReady;
                 }
@@ -404,10 +425,13 @@ public class UILobbyController : MonoBehaviour
         //Update Game Container Texts
         GameContainer[] containers = availableGameContent.GetComponentsInChildren<GameContainer>(true);
         Player[] players = GameObject.FindObjectsOfType<Player>();
-        foreach(var container in containers) {
+        foreach (var container in containers)
+        {
             container.currentPlayers = 0;
-            foreach(var player in players) {
-                if(container.gameId == player.matchID) {
+            foreach (var player in players)
+            {
+                if (container.gameId == player.matchID)
+                {
                     container.currentPlayers++;
                 }
             }

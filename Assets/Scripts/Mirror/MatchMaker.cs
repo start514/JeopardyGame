@@ -108,7 +108,6 @@ public class MatchMaker : NetworkBehaviour
                 id += (rnd - 26).ToString(); // subtracting to make it into a number 
             }
         }
-        Debug.Log("Random ID is " + id);
         return id;
     }
     public static Guid RegularIDToGUI(string id)

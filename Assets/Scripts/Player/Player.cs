@@ -41,8 +41,10 @@ public class Player : NetworkBehaviour
             CmdUpdatePlayerId(this.playerID);
             this.uiLobby = GameObject.Find("UI Lobby Controller").GetComponent<UILobbyController>();
             this.playerAmount = 0;
-            if (isClient && this.uiLobby != null && this.uiLobby.lobbyPanal.activeSelf)
+            if (isClient && this.uiLobby != null && this.uiLobby.lobbyPanal.activeSelf) {
+                this.uiLobby.ClearGameContainer();
                 CmdUpdateGameRoomList();
+            }
             // for testing purpeses, if we are startubg from the game and not the lobby
             else
             {
@@ -75,7 +77,6 @@ public class Player : NetworkBehaviour
                 id += (rnd - 26).ToString(); // subtracting to make it into a number 
             }
         }
-        Debug.Log("Random ID is " + id);
         return id;
     }
 
@@ -519,6 +520,9 @@ public class Player : NetworkBehaviour
     #endregion
 
     #region CONTAINERS
+    public void ClearGameContainer() {
+        localPlayer.uiLobby.ClearGameContainer();
+    }
     [Command]
     internal void CmdAddGameContainer(string id, string gameName, int maxPlayers, Guid guid)
     {
