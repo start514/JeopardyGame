@@ -402,7 +402,7 @@ public class UILobbyController : MonoBehaviour
             readyGameBtn.SetEnable(!Player.localPlayer.isReady);
         }
         //Update Game Container Texts
-        GameContainer[] containers = availableGameContent.GetComponentsInChildren<GameContainer>();
+        GameContainer[] containers = availableGameContent.GetComponentsInChildren<GameContainer>(true);
         Player[] players = GameObject.FindObjectsOfType<Player>();
         foreach(var container in containers) {
             container.currentPlayers = 0;

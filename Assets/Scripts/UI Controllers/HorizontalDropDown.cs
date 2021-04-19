@@ -9,7 +9,7 @@ public class HorizontalDropDown : MonoBehaviour
     public Text txt;
     private Text[] allOptions;
     private int currentOption=0;
-    void Start()
+    void Awake()
     {
         allOptions = options.GetComponentsInChildren<Text>(true);
         txt.text = allOptions[currentOption].text;
@@ -35,6 +35,8 @@ public class HorizontalDropDown : MonoBehaviour
     }
 
     public void Reset() {
+        if(allOptions.Length == 0) return;
+        if(txt == null) return;
         currentOption = 0;
         txt.text = allOptions[currentOption].text;
     }

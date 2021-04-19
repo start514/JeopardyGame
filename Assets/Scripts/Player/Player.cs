@@ -1124,6 +1124,7 @@ public class Player : NetworkBehaviour
         {
             localPlayer.uiGame.correctButton.SetEnable(true);
             localPlayer.uiGame.incorrectButton.SetEnable(true);
+            localPlayer.uiGame.hostPauseBtn.interactable = false;
             localPlayer.uiGame.hostInputAnswerTxt.text = answer;
         }
     }
@@ -1265,7 +1266,7 @@ public class Player : NetworkBehaviour
         Debug.Log("Player didn't buzz in, everyone answered = " + everyoneAnswered);
         // if no player has buzzed in, reveal the answer to everyone
         localPlayer.PlayerDeductAmount(localPlayer.uiGame.currentQuestionAmount);
-        localPlayer.PlayerGiveTryTo();
+        // localPlayer.PlayerGiveTryTo();
         localPlayer.PlayerSetHasAnswered(true);
     }
 

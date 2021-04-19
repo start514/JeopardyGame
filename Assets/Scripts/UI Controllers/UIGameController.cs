@@ -357,6 +357,10 @@ public class UIGameController : MonoBehaviour
             CantBuzz();
             // once you set the buttons to active there is no way to go farward, so open the next screen after a few seconds
             localPlayer.PlayerDidntBuzz();
+            if(localPlayer.isHost) {
+                hostPauseBtn.interactable = false;
+                hostContinueButton.SetEnable(true);
+            }
         }
 
         // when a player has buzzed, Light the player slot of the one who has buzzed
@@ -419,6 +423,10 @@ public class UIGameController : MonoBehaviour
             // same as submited wrong
             localPlayer.PlayerHostDecided(false);
             // once you set the buttons to active there is no way to go farward, so open the next screen after a few seconds
+            if(localPlayer.isHost) {
+                hostPauseBtn.interactable = false;
+                hostContinueButton.SetEnable(true);
+            }
         }
         CantSumbit();
         // change tint
