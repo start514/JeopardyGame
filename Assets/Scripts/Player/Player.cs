@@ -906,8 +906,9 @@ public class Player : NetworkBehaviour
     [ClientRpc]
     void RpcOpenAnswerPanalToAll()
     {
-        if (localPlayer.isHost)
-            localPlayer.uiGame.OpenHostQuesionPanel();
+        if (localPlayer.isHost) {
+            // localPlayer.uiGame.OpenHostQuesionPanel();
+        }
         else
             localPlayer.uiGame.OpenClientAnswerPanel();
     }
@@ -1110,17 +1111,17 @@ public class Player : NetworkBehaviour
     }
 
     // current input answer
-    internal void PlayerSetCurrentInputAnswer(string answer)
+    internal void PlayerSetCurrentInputAnswer(string who, string answer)
     {
-        CmdSetCurrentInputAnswer(answer);
+        CmdSetCurrentInputAnswer(who, answer);
     }
     [Command]
-    void CmdSetCurrentInputAnswer( string answer)
+    void CmdSetCurrentInputAnswer(string who, string answer)
     {
-        RpcSetCurrentInputAnswer( answer);
+        RpcSetCurrentInputAnswer(who, answer);
     }
     [ClientRpc]
-    void RpcSetCurrentInputAnswer(string answer)
+    void RpcSetCurrentInputAnswer(string who, string answer)
     {
         localPlayer.uiGame.currentInputAnswer = answer;
         Debug.LogError("Current input answer hase been changed to: " + localPlayer.uiGame.currentInputAnswer);
@@ -1130,6 +1131,7 @@ public class Player : NetworkBehaviour
             localPlayer.uiGame.incorrectButton.SetEnable(true);
             localPlayer.uiGame.hostPauseBtn.interactable = false;
             localPlayer.uiGame.hostInputAnswerTxt.text = answer;
+            localPlayer.uiGame.hostAnswerer.text = who;
         }
     }
 
@@ -1279,7 +1281,7 @@ public class Player : NetworkBehaviour
     internal void PlayerSumbited(string answer)
     {
         this.PlayerSetNowAnswering(localPlayer.playerIndex);
-        localPlayer.PlayerSetCurrentInputAnswer(answer);
+        localPlayer.PlayerSetCurrentInputAnswer(localPlayer.playerName, answer);
     }
     internal void PlayerHostDecided(bool correct)
     {

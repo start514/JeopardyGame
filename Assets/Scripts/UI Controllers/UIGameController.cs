@@ -6,12 +6,14 @@ using System.Collections;
 public class UIGameController : MonoBehaviour
 {
     [Header("Panels")]
-    public GameObject finalPanal, dailyPanel, winnerPanel, slotsPanel, clientQuestionPanel, clientAnswerPanel, hostQuestionPanel, amountChoser, clientBottonPanal;
+    public GameObject finalPanal;
+    public GameObject dailyPanel, winnerPanel, slotsPanel, clientQuestionPanel, clientAnswerPanel, hostQuestionPanel, amountChoser, clientBottonPanal;
 
 
     [Header("UI")]
-    public TMP_Text clientQuestionTimerText, hostTimerText, answerTimerText, amountChoserText, clientQuestionAmountTxt, hostQuestionAmountTxt,
-        clientAnswerAmountText, clientQuestionText, clientAnswerTxt, hostQuestionText, hostCatagotyTxt, clientQuestionCatagotyTxt, clientAnswerCatagotyTxt, remeiningQuestions, hostPlayerContainerTxt, hostPlayerNameTxt;
+    public TMP_Text clientQuestionTimerText;
+    public TMP_Text hostTimerText, answerTimerText, amountChoserText, clientQuestionAmountTxt, hostQuestionAmountTxt,
+        clientAnswerAmountText, clientQuestionText, clientAnswerTxt, hostQuestionText, hostAnswerer, hostCatagotyTxt, clientQuestionCatagotyTxt, clientAnswerCatagotyTxt, remeiningQuestions, hostPlayerContainerTxt, hostPlayerNameTxt;
     public Image clientPlayerAmountBg, clientPlayerAmountShadowBg, clientPlayerShadowBg, clientPlayerBodyBg;
     public Text hostRightAnswerTxt, hostInputAnswerTxt;
     public Text whereIsDailyDouble;
@@ -236,6 +238,7 @@ public class UIGameController : MonoBehaviour
         //wiring the qestion text 
         hostQuestionText.text = currentQuestion;
         hostInputAnswerTxt.text = "";
+        hostAnswerer.text = "Nobody answered yet...";
         hostPauseBtn.interactable = true;
         hostRightAnswerTxt.text = currentCorrectAnswer;
         hostQuestionAmountTxt.text = "$"+currentQuestionAmount.ToString();
