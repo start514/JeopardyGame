@@ -487,7 +487,10 @@ public class UIGameController : MonoBehaviour
             else
                 localPlayer.PlayerOpenWinnerPanal();
         } else { //If answer was incorrect
-            localPlayer.PlayerOpenQuestionPanalToUnansweredPlayers();
+            if(isDailyDoubleNow)
+                localPlayer.PlayerOpenSlotsPanalToAll();
+            else
+                localPlayer.PlayerOpenQuestionPanalToUnansweredPlayers();
         }
         localPlayer.UntintAll();
     }
