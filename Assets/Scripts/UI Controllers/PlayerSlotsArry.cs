@@ -21,17 +21,18 @@ public class PlayerSlotsArry : MonoBehaviour
         UIGameController uiGame = GameObject.FindObjectOfType<UIGameController>();
         var idx = 0;
         var players = GameObject.FindObjectsOfType<Player>();
+        System.Array.Reverse(players);
         for(var i = 0; i < players.Length; i++) {
             var player = players[i];
             if(player.matchID == Player.localPlayer.matchID && !player.isHost) {
-                playerSlots[idx].amountTxt.text = player.playerAmount.ToString("C0");
-                playerSlots[idx].nameTxt.text = player.playerName;                
-                playerSlots[idx].nameTxt.color = uiGame.playerNameColors[player.playerColor];
-                playerSlots[idx].playerShadowBg.color = uiGame.playerShadowColors[player.playerColor];
-                playerSlots[idx].playerBodyBg.color = uiGame.playerBodyColors[player.playerColor];
-                playerSlots[idx].playerAmountBg.color = uiGame.playerAmountBgColors[player.playerColor];
-                playerSlots[idx].playerAmountShadowBg.color = uiGame.playerShadowColors[player.playerColor];
-                playerSlots[idx].gameObject.SetActive(true);
+                playerSlots[player.playerIndex].amountTxt.text = player.playerAmount.ToString("C0");
+                playerSlots[player.playerIndex].nameTxt.text = player.playerName;                
+                playerSlots[player.playerIndex].nameTxt.color = uiGame.playerNameColors[player.playerColor];
+                playerSlots[player.playerIndex].playerShadowBg.color = uiGame.playerShadowColors[player.playerColor];
+                playerSlots[player.playerIndex].playerBodyBg.color = uiGame.playerBodyColors[player.playerColor];
+                playerSlots[player.playerIndex].playerAmountBg.color = uiGame.playerAmountBgColors[player.playerColor];
+                playerSlots[player.playerIndex].playerAmountShadowBg.color = uiGame.playerShadowColors[player.playerColor];
+                playerSlots[player.playerIndex].gameObject.SetActive(true);
                 idx++;
             }
         }

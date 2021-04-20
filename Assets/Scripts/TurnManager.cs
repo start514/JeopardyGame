@@ -5,7 +5,9 @@ public class TurnManager : NetworkBehaviour
 {
     // int startingPlayer;
     public static TurnManager instance;
-    [SyncVar ]public  int nowAnswering;
+    [SyncVar] public  int nowAnswering;
+    [SyncVar] public  int cardChooser;
+    [SyncVar] public  int lastCardWinner;
     void Awake()
     {
         DontDestroyOnLoad(this);
@@ -18,6 +20,12 @@ public class TurnManager : NetworkBehaviour
             instance = this;
         }
     }
+    public int RandomlyChooseStartingPlayer(int playerCount)
+    {
+        int rnd = Random.Range(0, playerCount - 1);
+        cardChooser = rnd;
+        return rnd;
+    }
 
     /*
     public Player NextTurn()
@@ -29,13 +37,7 @@ public class TurnManager : NetworkBehaviour
         }
         return allPlayers[currentPlayerInList].GetComponent<Player>();
     }
-    public int RandomlyChooseStartingPlayer()
-    {
-        int count = allPlayers.Count; // number of players
-        int rnd = Random.Range(0, count);
-        return rnd;
-
-    }*/
+    */
     public static bool CheckIfEveryoneAnswered(SyncListGameObject allPlayers)
     {
        

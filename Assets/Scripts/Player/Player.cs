@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using Mirror;
 using System;
 using UnityEngine.SceneManagement;
@@ -17,14 +18,14 @@ public class Player : NetworkBehaviour
     [SyncVar] public string matchID;
     [SyncVar] public string playerID;
     [SyncVar] public bool hasAnswered;
-    int playerIndex;
+    [SyncVar] public int playerIndex;
     private UILobbyController uiLobby;
 
     [Header("Game")]
     UIPlayerController uiPlayer;
     NetworkMatchChecker matchChecker;
     internal UIGameController uiGame;
-    internal bool isSumbiting,isBuzzing, canDecide, canContinue;
+    internal bool isSumbiting, isBuzzing, canDecide, canContinue;
 
     void Start()
     {
@@ -41,7 +42,8 @@ public class Player : NetworkBehaviour
             CmdUpdatePlayerId(this.playerID);
             this.uiLobby = GameObject.Find("UI Lobby Controller").GetComponent<UILobbyController>();
             this.playerAmount = 0;
-            if (isClient && this.uiLobby != null && this.uiLobby.lobbyPanal.activeSelf) {
+            if (isClient && this.uiLobby != null && this.uiLobby.lobbyPanal.activeSelf)
+            {
                 this.uiLobby.ClearGameContainer();
                 CmdUpdateGameRoomList();
             }
@@ -120,19 +122,24 @@ public class Player : NetworkBehaviour
         }
         CmdHostGame(id, int.Parse(uiLobby.gameSizeTxt.text), gameName, localPlayer.gameObject);
     }
-    public void ChangeColor() {
+    public void ChangeColor()
+    {
         CmdChangeColor(this.matchID, this.playerID, this.playerColor);
     }
     [Command]
-    void CmdChangeColor(string matchID, string playerID, int playerColor) {
+    void CmdChangeColor(string matchID, string playerID, int playerColor)
+    {
         Match match = MatchMaker.instance.FindMatchById(matchID);
-        for(int i=0; i<match.playersInThisMatch.Count; i++) {
+        for (int i = 0; i < match.playersInThisMatch.Count; i++)
+        {
             TargetCmdChangeColor(match.playersInThisMatch[i].GetComponent<NetworkIdentity>().connectionToClient, matchID, playerID, playerColor);
         }
     }
     [TargetRpc]
-    void TargetCmdChangeColor(NetworkConnection target, string matchID, string playerID, int playerColor) {
-        if(localPlayer.playerID != playerID || localPlayer.matchID != matchID) {
+    void TargetCmdChangeColor(NetworkConnection target, string matchID, string playerID, int playerColor)
+    {
+        if (localPlayer.playerID != playerID || localPlayer.matchID != matchID)
+        {
             Debug.LogError(playerID + "'s color = " + playerColor, this);
         }
     }
@@ -147,6 +154,7 @@ public class Player : NetworkBehaviour
             this.playerColor = -1;
             this.isReady = true;
             this.playerName = "";
+            this.playerIndex = -1; //Host is not a player in sidebars
             CountParticipentContainers(id);
             TargetHostGame(true, id, gameSize, gameName, MatchMaker.RegularIDToGUI(id));
             Debug.Log("Server - Sucssesfly hosted a game");
@@ -164,7 +172,6 @@ public class Player : NetworkBehaviour
     {
         if (success)
         {
-            this.playerIndex = 1;
             localPlayer.isHost = true;
             CmdUpdateIsHost(true, id, localPlayer.matchID);
             CmdAddGameContainer(id, gameName, gameSize, guid);
@@ -219,7 +226,6 @@ public class Player : NetworkBehaviour
         if (success)
         {
 
-            this.playerIndex = -1;
             //localPlayer.gameObject.GetComponent<NetworkMatchChecker>().matchId = new Guid();
             //CmdUpdateMatchChecker(new Guid());
             localPlayer.matchID = null;
@@ -254,12 +260,13 @@ public class Player : NetworkBehaviour
     {
         if (MatchMaker.instance.AddAndApproveJoiningGame(id, this.gameObject))
         // if valadation passed
-        {            
+        {
             SyncListGameObject players = MatchMaker.instance.FindMatchById(id).playersInThisMatch;
 
             int colorChosen = 0;
             bool duplicate = false;
-            do {
+            do
+            {
                 duplicate = false;
                 for (int i = 0; i < players.Count; i++)
                 {
@@ -269,10 +276,11 @@ public class Player : NetworkBehaviour
                         colorChosen++;
                     }
                 }
-            } while(duplicate);
+            } while (duplicate);
             this.playerColor = colorChosen;
             this.isReady = false;
             this.playerName = "";
+            this.playerIndex = MatchMaker.instance.FindMatchById(id).playersInThisMatch.Count - 2; //If count contains host, so it should deduct 2 for zero-based index
 
             Debug.Log("Server- Sucssesfly joined game");
             TargetJoinGame(true, id, MatchMaker.instance.FindMatchById(id), MatchMaker.RegularIDToGUI(id), MatchMaker.instance.FindMatchById(id).playersInThisMatch.Count - 1);
@@ -290,13 +298,12 @@ public class Player : NetworkBehaviour
     {
         if (success)
         {
-            this.playerIndex = index;
             //localPlayer.gameObject.GetComponent<NetworkMatchChecker>().matchId = GuiId;
             //CmdUpdateMatchChecker(GuiId);
             localPlayer.matchID = id;
             CmdUpdateMatchID(localPlayer.matchID);
             Debug.Log("Client- Game joining was sucsesfull with id " + id.ToString());
-            localPlayer.uiLobby.OpenJoinPanalWithId(index,match.maxGameSize);
+            localPlayer.uiLobby.OpenJoinPanalWithId(index, match.maxGameSize);
             CmdAddJoinContainerLocally(id, localPlayer.playerID);
 
             // add my contaniner to the host 
@@ -358,7 +365,7 @@ public class Player : NetworkBehaviour
         localPlayer.uiLobby.AddJoinParticipentConteiner(id, false, "Player", color, playerId);
 
     }
-    
+
     [TargetRpc]
     void TargetAddJoinContainerLocally(string id, bool host, string playerName, int color, string playerId)
     {
@@ -432,34 +439,43 @@ public class Player : NetworkBehaviour
     #region I AM READY
     public void PlayerReadyGame()
     {
-        if(playerName == "") return;
+        if (playerName == "") return;
         CmdReadyGame();
     }
 
     [Command]
-    void CmdReadyGame() {
+    void CmdReadyGame()
+    {
         this.isReady = true;
         Match match = MatchMaker.instance.FindMatchById(this.matchID);
         bool gameFull = (match.playersInThisMatch.Count - 1 == match.maxGameSize);
         bool allReady = true;
-        for(var i=0; i<match.playersInThisMatch.Count; i++) {
-            if(match.playersInThisMatch[i].GetComponent<Player>().isReady == false) {
+        for (var i = 0; i < match.playersInThisMatch.Count; i++)
+        {
+            if (match.playersInThisMatch[i].GetComponent<Player>().isReady == false)
+            {
                 allReady = false;
             }
         }
         RpcReadyGame(this.playerID, this.matchID, gameFull, allReady);
     }
     [ClientRpc]
-    void RpcReadyGame(string playerID, string matchID, bool gameFull, bool allReady) {
-        if(localPlayer.matchID != matchID) return; // message from other match
+    void RpcReadyGame(string playerID, string matchID, bool gameFull, bool allReady)
+    {
+        if (localPlayer.matchID != matchID) return; // message from other match
 
-        if(playerID == localPlayer.playerID) {//ready player is me
+        if (playerID == localPlayer.playerID)
+        {//ready player is me
             localPlayer.uiLobby.updateJoinPanelIAmReady();
         }
-        else {//other player has ready button clicked
-            if(localPlayer.isHost) {//i am host
+        else
+        {//other player has ready button clicked
+            if (localPlayer.isHost)
+            {//i am host
                 localPlayer.uiLobby.updateHostPanelPlayerReady(gameFull, allReady);
-            } else {//i am joiner
+            }
+            else
+            {//i am joiner
                 localPlayer.uiLobby.updateJoinPanelPlayerReady(playerID);
             }
         }
@@ -481,12 +497,19 @@ public class Player : NetworkBehaviour
     [Command] // call this from a client to run it on the server
     void CmdBeginGame(string id, bool dailyDouble, int timeToAnswer, int timeToBuzz)
     {
+        //Game Settings
         TransferDataToGame.instance.dailyDouble = dailyDouble;
         TransferDataToGame.instance.timeToAnswer = timeToAnswer;
         TransferDataToGame.instance.timeToBuzz = timeToBuzz;
 
         //MatchMaker.instance.BegineGame(matchID);
         Match thisMatch = MatchMaker.instance.FindMatchById(id);
+
+        //Randomly choose starting player
+        TurnManager.instance.RandomlyChooseStartingPlayer(thisMatch.playersInThisMatch.Count);
+        //Debug
+        Debug.Log($"TurnManager card chooser is {TurnManager.instance.cardChooser}");
+
         for (int i = 0; i < thisMatch.playersInThisMatch.Count; i++)
         {
             TargetBeginGame(thisMatch.playersInThisMatch[i].GetComponent<NetworkIdentity>().connectionToClient, MatchMaker.RegularIDToGUI(id));
@@ -511,8 +534,9 @@ public class Player : NetworkBehaviour
         SceneManager.LoadScene("PlayerBoard");
     }
 
-    public void DistributeDataForFirstBoard() {
-        if(isHost)
+    public void DistributeDataForFirstBoard()
+    {
+        if (isHost)
             CmdDistributeDataForFirstBoard();
     }
 
@@ -520,7 +544,8 @@ public class Player : NetworkBehaviour
     #endregion
 
     #region CONTAINERS
-    public void ClearGameContainer() {
+    public void ClearGameContainer()
+    {
         localPlayer.uiLobby.ClearGameContainer();
     }
     [Command]
@@ -615,7 +640,7 @@ public class Player : NetworkBehaviour
             // add my contaniner to everyone else
             Debug.Log(playersInThisMatch[i].GetComponent<NetworkIdentity>().connectionToClient);
             int color = this.playerColor;
-            if(playersInThisMatch[i].GetComponent<Player>().isHost)
+            if (playersInThisMatch[i].GetComponent<Player>().isHost)
                 TargetAddHostParticipentContainer(playersInThisMatch[i].GetComponent<NetworkIdentity>().connectionToClient, id, color, playerId); ;
         }
     }
@@ -640,7 +665,7 @@ public class Player : NetworkBehaviour
     [TargetRpc]
     void TargetDeleteParticipentContainer(NetworkConnection target, string id, string playerId)
     {
-        if(localPlayer.isHost)
+        if (localPlayer.isHost)
             localPlayer.uiLobby.DeleteHostParticipentContainer(id, playerId);
         else
             localPlayer.uiLobby.DeleteJoinParticipentContainer(id, playerId);
@@ -654,7 +679,8 @@ public class Player : NetworkBehaviour
 
         for (int i = 0; i < instance.allGames.Count; i++)
         {
-            if(instance.allGames[i].started == false) {
+            if (instance.allGames[i].started == false)
+            {
                 TargetUpdateGameRoomList(instance.allGames[i].matchId, instance.allGames[i].gameName, instance.allGames[i].playersInThisMatch.Count, instance.allGames[i].maxGameSize);
             }
         }
@@ -676,9 +702,9 @@ public class Player : NetworkBehaviour
         }
     }
     [TargetRpc]
-    void TargetCountParticipentContainers(NetworkConnection target,int current, int max)
+    void TargetCountParticipentContainers(NetworkConnection target, int current, int max)
     {
-        if(localPlayer.isHost== true)
+        if (localPlayer.isHost == true)
             localPlayer.uiLobby.hostParticipentNumTxt.text = (current - 1) + " / " + max; // (current-1) -1 because we don't iclude the host as a participent
         else
             localPlayer.uiLobby.joinParticipentNumTxt.text = (current - 1) + " / " + max; //(current - 1) - 1 because we don't iclude the host as a participent
@@ -720,10 +746,10 @@ public class Player : NetworkBehaviour
     [TargetRpc]
     void TargetUpdateMyHostContainerName(NetworkConnection target, string playerId, string playerName)
     {
-        if(localPlayer.isHost)
+        if (localPlayer.isHost)
         {
-        Debug.LogError("TargetUpdateMyHostContainerName");
-        localPlayer.uiLobby.UpdateHostContainerName(playerId, playerName);
+            Debug.LogError("TargetUpdateMyHostContainerName");
+            localPlayer.uiLobby.UpdateHostContainerName(playerId, playerName);
 
         }
     }
@@ -793,7 +819,7 @@ public class Player : NetworkBehaviour
     [ClientRpc]
     void RpcCopyCatagoryData(int index, string catText)
     {
-        this.uiGame = GameObject.Find("UI Game Controller").GetComponent<UIGameController>(); 
+        this.uiGame = GameObject.Find("UI Game Controller").GetComponent<UIGameController>();
         //the host is already set up
         if (!localPlayer.isHost)
         {
@@ -815,7 +841,7 @@ public class Player : NetworkBehaviour
     void RcpCopyAmountData(int k, string answer, string question)
     {
         // because the host already has the data
-        if(!localPlayer.isHost)
+        if (!localPlayer.isHost)
         {
             localPlayer.uiGame.allSlots[k].answer = answer;
             localPlayer.uiGame.allSlots[k].question = question;
@@ -857,6 +883,22 @@ public class Player : NetworkBehaviour
         // reset has everyone answered 
         localPlayer.PlayerSetHasAnswered(false);
         localPlayer.uiGame.OpenSlotsPanel();
+    }
+    public void PlayerOpenQuestionPanalToUnansweredPlayers() {
+        CmdOpenQuestionPanalToUnansweredPlayers();
+    }
+    [Command]
+    void CmdOpenQuestionPanalToUnansweredPlayers() {
+        RpcOpenQuestionPanalToUnansweredPlayers();
+    }
+    [ClientRpc]
+    void RpcOpenQuestionPanalToUnansweredPlayers() {
+        // make sure to open after updating cuurent question, answer, amount
+        if (localPlayer.isHost)
+            // change what should happen to host when players have time to buzz in
+            localPlayer.uiGame.OpenHostQuesionPanel();
+        else if(!localPlayer.hasAnswered)
+            localPlayer.uiGame.OpenClientQuesionPanel();
     }
     internal void PlayerOpenQuestionPanalToAll()
     {
@@ -906,7 +948,8 @@ public class Player : NetworkBehaviour
     [ClientRpc]
     void RpcOpenAnswerPanalToAll()
     {
-        if (localPlayer.isHost) {
+        if (localPlayer.isHost)
+        {
             // localPlayer.uiGame.OpenHostQuesionPanel();
         }
         else
@@ -915,11 +958,11 @@ public class Player : NetworkBehaviour
     public void PlayerOpenFinalJeopardyPanalToAll()
     {
 
-            localPlayer.PlayerSetIsDoubleJeopardy(false);
-            localPlayer.PlayerSetIsFinalJeopardy(true);
-            localPlayer.PlayerSetCurrenctQuestionAmount(0);
-            CmdOpenFinalJeopardyPanalToAll();
-        if(localPlayer.uiGame.currentQuestionAmount!=0)
+        localPlayer.PlayerSetIsDoubleJeopardy(false);
+        localPlayer.PlayerSetIsFinalJeopardy(true);
+        localPlayer.PlayerSetCurrenctQuestionAmount(0);
+        CmdOpenFinalJeopardyPanalToAll();
+        if (localPlayer.uiGame.currentQuestionAmount != 0)
             localPlayer.PlayerSetCurrenctQuestionAmount(0);
 
     }
@@ -931,11 +974,11 @@ public class Player : NetworkBehaviour
     [ClientRpc]
     void RpcOpenFinalJeopardyPanalToAll()
     {
-        if(localPlayer.isHost == false)
+        if (localPlayer.isHost == false)
         {
             localPlayer.uiGame.OpenFinalJeopardyPanal();
         }
-        else 
+        else
             localPlayer.PlayerOpenHostQuestionPanal();
     }
     internal void PlayerOpenWinnerPanal()
@@ -990,7 +1033,7 @@ public class Player : NetworkBehaviour
     }
     internal void PlayerSetIsDailyDouble(bool dailyDouble)
     {
-            CmdSetIsDailyDouble(dailyDouble);
+        CmdSetIsDailyDouble(dailyDouble);
     }
     [Command]
     void CmdSetIsDailyDouble(bool dailyDouble)
@@ -1022,7 +1065,7 @@ public class Player : NetworkBehaviour
     // final jeopardy
     internal void PlayerSetIsFinalJeopardy(bool finalJeopardy)
     {
-            CmdSetIsFinalJeopardy(finalJeopardy);
+        CmdSetIsFinalJeopardy(finalJeopardy);
     }
     [Command]
     void CmdSetIsFinalJeopardy(bool finalJeopardy)
@@ -1085,10 +1128,10 @@ public class Player : NetworkBehaviour
     [ClientRpc]
     void RpcSetHostCurrenctQuestionAmount(int amount)
     {
-        if(localPlayer.isHost)
+        if (localPlayer.isHost)
         {
             localPlayer.uiGame.currentQuestionAmount = amount;
-            localPlayer.uiGame.hostQuestionAmountTxt.text = "$"+amount.ToString();
+            localPlayer.uiGame.hostQuestionAmountTxt.text = "$" + amount.ToString();
         }
         Debug.LogError("Current Question Amount has changed to: " + localPlayer.uiGame.currentQuestionAmount);
     }
@@ -1100,14 +1143,14 @@ public class Player : NetworkBehaviour
     [Command]
     void CmdSetQuestionAndAnswer(string question, string answer)
     {
-        RpcSetQuestionAndAnswer(question,answer);
+        RpcSetQuestionAndAnswer(question, answer);
     }
     [ClientRpc]
     void RpcSetQuestionAndAnswer(string question, string answer)
     {
         localPlayer.uiGame.currentQuestion = question;
         localPlayer.uiGame.currentCorrectAnswer = answer;
-        Debug.LogError("Current question and answer have been changed to: " + localPlayer.uiGame.currentQuestion+ " " + localPlayer.uiGame.currentCorrectAnswer);
+        Debug.LogError("Current question and answer have been changed to: " + localPlayer.uiGame.currentQuestion + " " + localPlayer.uiGame.currentCorrectAnswer);
     }
 
     // current input answer
@@ -1137,7 +1180,6 @@ public class Player : NetworkBehaviour
 
     internal void PlayerSetHasAnswered(bool has)
     {
-        this.hasAnswered = has;
         CmdSetHasAnswered(has, localPlayer.matchID, this.playerID);
     }
     [Command]
@@ -1147,7 +1189,7 @@ public class Player : NetworkBehaviour
         SyncListGameObject players = MatchMaker.instance.FindMatchById(matchid).playersInThisMatch;
         for (int i = 0; i < players.Count; i++)
         {
-            if(players[i].GetComponent<Player>().playerID == playerId)
+            if (players[i].GetComponent<Player>().playerID == playerId)
             {
                 MatchMaker.instance.FindMatchById(matchid).playersInThisMatch[i].GetComponent<Player>().hasAnswered = has;
                 Debug.LogError("Sucsesfully changed player has answered in matchmaker for id " + matchID);
@@ -1158,7 +1200,7 @@ public class Player : NetworkBehaviour
     #region GENERAL METHODS
     public void PlayerAddAmount(int amount)
     {
-        if(localPlayer.uiGame.isDailyDoubleNow || localPlayer.uiGame.isFinalJeopardyNow)
+        if (localPlayer.uiGame.isDailyDoubleNow || localPlayer.uiGame.isFinalJeopardyNow)
         {
             this.playerAmount += amount * 2;
         }
@@ -1166,7 +1208,7 @@ public class Player : NetworkBehaviour
         {
             this.playerAmount += amount;
         }
-        CmdPlayerAddAmount(this.playerAmount,this.playerIndex);
+        CmdPlayerAddAmount(this.playerAmount, this.playerIndex);
     }
     //Send a COMMAND and Target RPC each time the players money amout changes and change the UI accordinly
     [Command]
@@ -1179,7 +1221,7 @@ public class Player : NetworkBehaviour
 
     public void PlayerDeductAmount(int amount)
     {
-        if (this.playerAmount - amount >=0)
+        if (this.playerAmount - amount >= 0)
         {
             this.playerAmount -= amount;
             CmdPlayerDeductAmount(this.playerIndex, this.playerAmount);
@@ -1252,7 +1294,8 @@ public class Player : NetworkBehaviour
     void RpcPlayerBuzzedIn(string playerID)
     {
         // make it so  can't buzz
-        if(localPlayer.playerID != playerID) {
+        if (localPlayer.playerID != playerID)
+        {
             localPlayer.uiGame.CantBuzz();
         }
     }
@@ -1291,7 +1334,7 @@ public class Player : NetworkBehaviour
     void CmdHostDecided(bool correct, string matchid)
     {
         Debug.LogError("Now answering indezx is " + TurnManager.instance.nowAnswering);
-        if(correct)
+        if (correct)
             RpcPlayerSumbitedRight(TurnManager.instance.nowAnswering);
         else
         {
@@ -1303,7 +1346,7 @@ public class Player : NetworkBehaviour
     {
         if (localPlayer.playerIndex == whoAnswered)
         {
-            localPlayer.PlayerSetQuestionsLeft((localPlayer.uiGame.questionsLeft-1));
+            localPlayer.PlayerSetQuestionsLeft((localPlayer.uiGame.questionsLeft - 1));
             // need to call this on the player that has submited only
             Debug.Log("Answer was declared correct");
             //A correct response earns the dollar value of the question and the opportunity to select the next question from the board.
@@ -1315,11 +1358,11 @@ public class Player : NetworkBehaviour
     }
 
     [ClientRpc]
-    void RpcPlayerSumbitedWrong( bool everyoneAnswered, int whoAnswered)
+    void RpcPlayerSumbitedWrong(bool everyoneAnswered, int whoAnswered)
     {
         if (localPlayer.playerIndex == whoAnswered)
         {
-            localPlayer.PlayerSetQuestionsLeft((localPlayer.uiGame.questionsLeft-1));
+            localPlayer.PlayerSetQuestionsLeft((localPlayer.uiGame.questionsLeft - 1));
             Debug.Log("Answer was declared wrong");
             //An incorrect response or a failure to buzz in within the time limit deducts the dollar value of the question 
             //from the team's score and gives any remaining opponent(s) the opportunity to buzz in and respond.
@@ -1354,7 +1397,7 @@ public class Player : NetworkBehaviour
     [ClientRpc]
     void RpcStopTimerForAllExceptMe(int index)
     {
-        if(localPlayer.playerIndex!=index&& localPlayer.isHost == false)
+        if (localPlayer.playerIndex != index && localPlayer.isHost == false)
         {
             Debug.Log("Stopping timer coutine");
             localPlayer.uiGame.StopTimerCoroutine();
@@ -1387,7 +1430,7 @@ public class Player : NetworkBehaviour
     [ClientRpc]
     void RpcStartTimerForHost(bool sumbit)
     {
-        if(localPlayer.isHost)
+        if (localPlayer.isHost)
             localPlayer.uiGame.StartTimerCoroutine(sumbit);
     }
     internal void PlayerStoptTimerForHost()
@@ -1460,7 +1503,7 @@ public class Player : NetworkBehaviour
         CmdGiveTurnTo(lastIndex, me);
     }
     [Command]
-    void CmdGiveTurnTo(int lastIndex,bool me)
+    void CmdGiveTurnTo(int lastIndex, bool me)
     {
         int indexToGive = lastIndex;
         if (me)
@@ -1506,8 +1549,8 @@ public class Player : NetworkBehaviour
         }
         else
         {
-            
-            if(localPlayer.uiGame.hostQuestionPanel.activeSelf)
+
+            if (localPlayer.uiGame.hostQuestionPanel.activeSelf)
             {
                 localPlayer.canContinue = false;
                 if (localPlayer.uiGame.hostContinueButton.isEnabled)
@@ -1565,9 +1608,9 @@ public class Player : NetworkBehaviour
         else
         {
             Debug.LogError("isSubmit = " + isSumbiting);
-             if (localPlayer.isSumbiting)
+            if (localPlayer.isSumbiting)
                 localPlayer.uiGame.CanSumbit();
-             else if(localPlayer.isBuzzing)
+            else if (localPlayer.isBuzzing)
             {
                 localPlayer.uiGame.CanBuzz();
 
@@ -1593,24 +1636,56 @@ public class Player : NetworkBehaviour
     }
     #endregion
     #endregion
-    public void KickPlayer(string playerID) {
+    public void KickPlayer(string playerID)
+    {
         CmdKickPlayer(playerID);
     }
     [Command]
-    void CmdKickPlayer(string playerID) {
+    void CmdKickPlayer(string playerID)
+    {
         SyncListGameObject players = MatchMaker.instance.FindMatchById(this.matchID).playersInThisMatch;
-        for(int i=0; i<players.Count; i++) {
+        for (int i = 0; i < players.Count; i++)
+        {
             NetworkConnection connection = players[i].GetComponent<NetworkIdentity>().connectionToClient;
-            if(playerID == players[i].GetComponent<Player>().playerID) {
+            if (playerID == players[i].GetComponent<Player>().playerID)
+            {
                 TargetKickPlayer(connection);
             }
         }
     }
     [TargetRpc]
-    void TargetKickPlayer(NetworkConnection target) {
+    void TargetKickPlayer(NetworkConnection target)
+    {
         localPlayer.PlayerCancelJoin(localPlayer.matchID);
     }
-    void OnDestroy() {
+    public void TintAllSlotsButOne(int playerIndex)
+    {
+        CmdTintAllSlotsButOne(playerIndex);
+    }
+    [Command]
+    void CmdTintAllSlotsButOne(int playerIndex)
+    {
+        RpcTintAllSlotsButOne(playerIndex);
+    }
+    [ClientRpc]
+    void RpcTintAllSlotsButOne(int playerIndex)
+    {
+        SidePanalController.instance.TintAllSlotsButOne(playerIndex);
+    }
+    public void UntintAll()
+    {
+        CmdUntintAll();
+    }
+    [Command]
+    void CmdUntintAll() {
+        RpcUntintAll();
+    }
+    [ClientRpc]
+    void RpcUntintAll() {
+        SidePanalController.instance.UntintAll();
+    }
+    void OnDestroy()
+    {
         // if(isHost)
         //     localPlayer.PlayerCancelJoin(matchID);
         // else if(localPlayer != null && localPlayer.isHost) {
