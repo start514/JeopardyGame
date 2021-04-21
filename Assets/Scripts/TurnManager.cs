@@ -43,7 +43,7 @@ public class TurnManager : NetworkBehaviour
        
         for (int i = 0; i < allPlayers.Count; i++)
         {
-            if (allPlayers[i].GetComponent<Player>().hasAnswered == false)
+            if (allPlayers[i].GetComponent<Player>().isHost == false && allPlayers[i].GetComponent<Player>().hasAnswered == false)
             {
                 Debug.LogError("Everyone answered = false" );
                 return false;

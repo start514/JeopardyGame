@@ -433,6 +433,7 @@ public class UIGameController : MonoBehaviour
             localPlayer.PlayerHostDecided(false);
             // once you set the buttons to active there is no way to go farward, so open the next screen after a few seconds
             if(localPlayer.isHost) {
+                hostDecision = 0;
                 hostPauseBtn.interactable = false;
                 hostContinueButton.SetEnable(true);
             }

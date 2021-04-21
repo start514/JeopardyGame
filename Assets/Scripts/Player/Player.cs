@@ -1369,8 +1369,8 @@ public class Player : NetworkBehaviour
             localPlayer.PlayerDeductAmount(localPlayer.uiGame.currentQuestionAmount);
             //change later
             //PlayerGiveTurnTo(localPlayer.playerIndex, true);
-            
-            if (everyoneAnswered)
+        } else if(localPlayer.isHost) { //if it is a host
+            if (everyoneAnswered) //set everyoneAnswered as true so that continue button will show slots panel to all
             {
                 localPlayer.uiGame.everyoneAnswered = true;
             }
