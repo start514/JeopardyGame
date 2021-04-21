@@ -36,7 +36,8 @@ public class UIGameController : MonoBehaviour
     [Header("Values")]
     public bool timerRunning;
     public int jumpsAmount = 100;
-    internal bool isCorrect = false;
+    internal int hostDecision = -1; //-1 for not selected, 0 for wrong, 1 for right
+    public bool everyoneAnswered = false;
     internal Coroutine buzzTimer, submitTimer, backToBoard;
     internal string finalQuestion, finalAnswer;
     public string currentQuestion, currentCorrectAnswer, currentInputAnswer;
@@ -241,9 +242,14 @@ public class UIGameController : MonoBehaviour
         hostInputAnswerTxt.text = "";
         hostAnswerer.text = "Nobody answered yet...";
         hostPauseBtn.interactable = true;
+        correctButton.SetEnable(false);
+        incorrectButton.SetEnable(false);
+        hostContinueButton.SetEnable(false);
         hostRightAnswerTxt.text = currentCorrectAnswer;
         hostQuestionAmountTxt.text = "$"+currentQuestionAmount.ToString();
         hostQuestionPanel.SetActive(true);
+        hostDecision = -1; //set as not decided yet
+        everyoneAnswered = false;
     }
     public void OpenClientAnswerPanel()
     {
@@ -366,8 +372,6 @@ public class UIGameController : MonoBehaviour
                 hostContinueButton.SetEnable(true);
             }
         }
-
-        // when a player has buzzed, Light the player slot of the one who has buzzed
     }
 
     public void CantBuzz()
@@ -409,14 +413,15 @@ public class UIGameController : MonoBehaviour
             string answer = inputFieldAnswer.text;
             if(string.IsNullOrEmpty(answer))
             {
-                localPlayer.PlayerHostDecided(false);
-                localPlayer.PlayerOpenSlotsPanalToAll();
+                answer = "Not answered";
+                // localPlayer.PlayerHostDecided(false);
+                // localPlayer.PlayerOpenSlotsPanalToAll();
             }
-            else
-            {
+            // else
+            // {
 
             localPlayer.PlayerSumbited(answer);
-            }
+            // }
             StopTimerCoroutine();
             localPlayer.PlayerStoptTimerForHost();
             timerRunning = false;
@@ -433,7 +438,6 @@ public class UIGameController : MonoBehaviour
             }
         }
         CantSumbit();
-        localPlayer.UntintAll();
     }
     public void ChosingAmountRight()
     {
@@ -479,18 +483,20 @@ public class UIGameController : MonoBehaviour
     #region HOST METHODS
     public void HostContinueButton()
     {
-        if(isCorrect) { // If answer was correct
+        if(hostDecision == 1) { // If answer was correct
             if (!isFinalJeopardyNow)
             {
                 localPlayer.PlayerOpenSlotsPanalToAll();
             }
             else
                 localPlayer.PlayerOpenWinnerPanal();
-        } else { //If answer was incorrect
-            if(isDailyDoubleNow)
+        } else if(hostDecision == 0) { //If answer was incorrect
+            if(isDailyDoubleNow || everyoneAnswered)
                 localPlayer.PlayerOpenSlotsPanalToAll();
             else
                 localPlayer.PlayerOpenQuestionPanalToUnansweredPlayers();
+        } else { //timeout
+            localPlayer.PlayerOpenSlotsPanalToAll();
         }
         localPlayer.UntintAll();
     }
@@ -500,7 +506,7 @@ public class UIGameController : MonoBehaviour
         correctButton.SetEnable(false);
         incorrectButton.SetEnable(false);
         localPlayer.PlayerHostDecided(true);
-        isCorrect = true;
+        hostDecision = 1;
     }
     public void HostWrongButton()
     {
@@ -508,7 +514,7 @@ public class UIGameController : MonoBehaviour
         correctButton.SetEnable(false);
         incorrectButton.SetEnable(false);
         localPlayer.PlayerHostDecided(false);
-        isCorrect = false;
+        hostDecision = 0;
     }
     public void HostPauseButton()
     {

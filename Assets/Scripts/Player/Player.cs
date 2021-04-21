@@ -1369,20 +1369,11 @@ public class Player : NetworkBehaviour
             localPlayer.PlayerDeductAmount(localPlayer.uiGame.currentQuestionAmount);
             //change later
             //PlayerGiveTurnTo(localPlayer.playerIndex, true);
-            /*change
-            if (everyoneAnswered == false)
+            
+            if (everyoneAnswered)
             {
-                // if not double jeopardy or daily double
-                if (!localPlayer.uiGame.isDailyDoubleNow && !localPlayer.uiGame.isFinalJeopardyNow)
-                {
-                    localPlayer.PlayerGiveTryTo();
-                }
+                localPlayer.uiGame.everyoneAnswered = true;
             }
-            else
-            {
-
-                PlayerGiveTurnTo(localPlayer.playerIndex, false);
-            }*/
         }
     }
     internal void PlayerStopTimerForAllExceptMe()
