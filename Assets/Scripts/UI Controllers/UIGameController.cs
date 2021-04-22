@@ -111,6 +111,7 @@ public class UIGameController : MonoBehaviour
             {
                 // meaning all of the questions on the first board have been answered
                 localPlayer.PlayerOpenDoubleJeopardyPanal();
+                isSecondBoardNow = true;
             }
             else if (isSecondBoardNow == true && questionsLeft == 0)
             // meaning you have finished the second board, and go to final jeopardy

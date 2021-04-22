@@ -957,7 +957,6 @@ public class Player : NetworkBehaviour
     }
     public void PlayerOpenFinalJeopardyPanalToAll()
     {
-
         localPlayer.PlayerSetIsDoubleJeopardy(false);
         localPlayer.PlayerSetIsFinalJeopardy(true);
         localPlayer.PlayerSetCurrenctQuestionAmount(0);
@@ -976,7 +975,18 @@ public class Player : NetworkBehaviour
     {
         if (localPlayer.isHost == false)
         {
-            localPlayer.uiGame.OpenFinalJeopardyPanal();
+            //Only open to top 3 players
+            int myrank = 1;
+            var players = GameObject.FindObjectsOfType<Player>();
+            foreach(var player in players) {
+                //if someone has higher amount than me, my rank is increased.
+                if(player.matchID == localPlayer.matchID && player.playerID != localPlayer.playerID && player.playerAmount > localPlayer.playerAmount) {
+                    myrank ++;
+                }
+            }
+            if(myrank<=3) { //Only top 3 can take part in final jeopardy
+                localPlayer.uiGame.OpenFinalJeopardyPanal();
+            }
         }
         else
             localPlayer.PlayerOpenHostQuestionPanal();
@@ -990,6 +1000,17 @@ public class Player : NetworkBehaviour
     {
         int winnerAmount = 0;
         string winnerName = "";
+        Match match = MatchMaker.instance.FindMatchById(localPlayer.matchID);
+        for(var i=0; i<match.playersInThisMatch.Count; i++) {
+            var player = match.playersInThisMatch[i].GetComponent<Player>();
+            if(player.playerAmount > winnerAmount) {
+                winnerAmount = player.playerAmount;
+                winnerName = player.playerName;
+            } else if(player.playerAmount == winnerAmount) {
+                if(winnerName == "") winnerName = player.playerName;
+                else winnerName = winnerName + ", " + playerName;
+            }
+        }
         RpcOpenWinnerPanal(winnerAmount, winnerName);
     }
     [ClientRpc]
@@ -1216,7 +1237,7 @@ public class Player : NetworkBehaviour
     {
         this.playerAmount = newAmount;
         TargetUpdatePlayerUI(newAmount);
-        RpcUpdateSideContainerToAll(playerIndex, newAmount);
+        // RpcUpdateSideContainerToAll(playerIndex, newAmount);
     }
 
     public void PlayerDeductAmount(int amount)
@@ -1232,7 +1253,7 @@ public class Player : NetworkBehaviour
     {
         this.playerAmount = newAmount;
         TargetUpdatePlayerUI(newAmount);
-        RpcUpdateSideContainerToAll(index, newAmount);
+        // RpcUpdateSideContainerToAll(index, newAmount);
     }
     [TargetRpc]
     void TargetUpdatePlayerUI(int newAmount)
