@@ -2,6 +2,7 @@
 using UnityEngine.UI;
 using Mirror;
 using System;
+using System.Collections;
 using UnityEngine.SceneManagement;
 
 public class Player : NetworkBehaviour
@@ -19,12 +20,17 @@ public class Player : NetworkBehaviour
     [SyncVar] public string playerID;
     [SyncVar] public bool hasAnswered;
     [SyncVar] public int playerIndex;
-    private UILobbyController uiLobby;
+    [SyncVar] public int finalAmount = 0;
+    public ArrayList answererList = new ArrayList();
+    public ArrayList answerList = new ArrayList();
+    public ArrayList amountList = new ArrayList();
+    public ArrayList playerIndexList = new ArrayList();
+    public UILobbyController uiLobby;
 
     [Header("Game")]
     UIPlayerController uiPlayer;
     NetworkMatchChecker matchChecker;
-    internal UIGameController uiGame;
+    public UIGameController uiGame;
     internal bool isSumbiting, isBuzzing, canDecide, canContinue;
 
     void Start()
@@ -301,6 +307,8 @@ public class Player : NetworkBehaviour
             //localPlayer.gameObject.GetComponent<NetworkMatchChecker>().matchId = GuiId;
             //CmdUpdateMatchChecker(GuiId);
             localPlayer.matchID = id;
+            localPlayer.isHost = false;
+            CmdUpdateIsHost(false, id, localPlayer.matchID);
             CmdUpdateMatchID(localPlayer.matchID);
             Debug.Log("Client- Game joining was sucsesfull with id " + id.ToString());
             localPlayer.uiLobby.OpenJoinPanalWithId(index, match.maxGameSize);
@@ -922,6 +930,11 @@ public class Player : NetworkBehaviour
 
     internal void PlayerOpenHostQuestionPanal()
     {
+        localPlayer.answererList.Clear();
+        localPlayer.answerList.Clear();
+        localPlayer.amountList.Clear();
+        localPlayer.playerIndexList.Clear();
+        localPlayer.uiGame.finalAnswered = 0;
         CmdOpenHostQuestionPanal();
     }
     [Command]
@@ -988,19 +1001,21 @@ public class Player : NetworkBehaviour
                 localPlayer.uiGame.OpenFinalJeopardyPanal();
             }
         }
-        else
+        else {
+            localPlayer.uiGame.isFinalJeopardyNow = true;
             localPlayer.PlayerOpenHostQuestionPanal();
+        }
     }
     internal void PlayerOpenWinnerPanal()
     {
-        CmdOpenWinnerPanal();
+        CmdOpenWinnerPanal(localPlayer.matchID);
     }
     [Command]
-    void CmdOpenWinnerPanal()
+    void CmdOpenWinnerPanal(string matchID)
     {
         int winnerAmount = 0;
         string winnerName = "";
-        Match match = MatchMaker.instance.FindMatchById(localPlayer.matchID);
+        Match match = MatchMaker.instance.FindMatchById(matchID);
         for(var i=0; i<match.playersInThisMatch.Count; i++) {
             var player = match.playersInThisMatch[i].GetComponent<Player>();
             if(player.playerAmount > winnerAmount) {
@@ -1198,6 +1213,39 @@ public class Player : NetworkBehaviour
             localPlayer.uiGame.hostAnswerer.text = who;
         }
     }
+    // current input answer amount
+    internal void PlayerSetCurrentInputAnswerAmount(string who, string answer, int amount, int pidx)
+    {
+        CmdSetCurrentInputAnswerAmount(who, answer, amount, pidx);
+    }
+    [Command]
+    void CmdSetCurrentInputAnswerAmount(string who, string answer, int amount, int pidx)
+    {
+        RpcSetCurrentInputAnswerAmount(who, answer, amount, pidx);
+    }
+    [ClientRpc]
+    void RpcSetCurrentInputAnswerAmount(string who, string answer, int amount, int pidx)
+    {
+        localPlayer.uiGame.currentInputAnswer = answer;
+        Debug.LogError("##  Current input answer hase been changed to: " + localPlayer.uiGame.currentInputAnswer);
+        if (localPlayer.isHost)
+        {
+            if(localPlayer.answererList.Count == 0) {
+                localPlayer.uiGame.correctButton.SetEnable(true);
+                localPlayer.uiGame.incorrectButton.SetEnable(true);
+                localPlayer.uiGame.hostPauseBtn.interactable = false;
+                localPlayer.uiGame.hostInputAnswerTxt.text = answer;
+                localPlayer.uiGame.hostAnswerer.text = who;
+                localPlayer.uiGame.currentQuestionAmount = amount;
+                localPlayer.uiGame.currentPlayerIndex = pidx;
+                localPlayer.uiGame.hostQuestionAmountTxt.text = "$" + amount.ToString();
+            }
+            localPlayer.answererList.Add(who);
+            localPlayer.answerList.Add(answer);
+            localPlayer.amountList.Add(amount);
+            localPlayer.playerIndexList.Add(pidx);
+        }
+    }
 
     internal void PlayerSetHasAnswered(bool has)
     {
@@ -1344,8 +1392,39 @@ public class Player : NetworkBehaviour
     //Send a COMMAND and Target RPC if player has submited a wrong answer, or buzzed but not submited, giving the other players a chance to buzz
     internal void PlayerSumbited(string answer)
     {
-        this.PlayerSetNowAnswering(localPlayer.playerIndex);
-        localPlayer.PlayerSetCurrentInputAnswer(localPlayer.playerName, answer);
+        if(localPlayer.uiGame.isFinalJeopardyNow) {
+            localPlayer.PlayerSetCurrentInputAnswerAmount(localPlayer.playerName, answer, localPlayer.uiGame.currentQuestionAmount, localPlayer.playerIndex);
+        }
+        else {
+            this.PlayerSetNowAnswering(localPlayer.playerIndex);
+            localPlayer.PlayerSetCurrentInputAnswer(localPlayer.playerName, answer);
+        }
+    }
+    public void PlayerAddAmountTo(int playerIndex, int amount) {
+        CmdPlayerAddAmountTo(playerIndex, amount);
+    }
+    [Command]
+    void CmdPlayerAddAmountTo(int playerIndex, int amount) {
+        RpcPlayerAddAmountTo(playerIndex, amount);
+    }
+    [ClientRpc]
+    void RpcPlayerAddAmountTo(int playerIndex, int amount) {
+        if(localPlayer.playerIndex == playerIndex) {
+            localPlayer.PlayerAddAmount(amount);
+        }
+    }
+    public void PlayerDeductAmountTo(int playerIndex, int amount) {
+        CmdPlayerDeductAmountTo(playerIndex, amount);
+    }
+    [Command]
+    void CmdPlayerDeductAmountTo(int playerIndex, int amount) {
+        RpcPlayerDeductAmountTo(playerIndex, amount);
+    }
+    [ClientRpc]
+    void RpcPlayerDeductAmountTo(int playerIndex, int amount) {
+        if(localPlayer.playerIndex == playerIndex) {
+            localPlayer.PlayerDeductAmount(amount);
+        }
     }
     internal void PlayerHostDecided(bool correct)
     {
@@ -1698,8 +1777,8 @@ public class Player : NetworkBehaviour
     }
     void OnDestroy()
     {
-        // if(isHost)
-        //     localPlayer.PlayerCancelJoin(matchID);
+        if(isHost && localPlayer != this)
+            SceneManager.LoadScene("Lobby");
         // else if(localPlayer != null && localPlayer.isHost) {
         //     localPlayer.KickPlayer(playerID);
         // }

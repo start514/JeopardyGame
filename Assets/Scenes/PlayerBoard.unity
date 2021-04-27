@@ -3027,7 +3027,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 483290463}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 782b1ab4ccae8497e92e8f3fc7320494, type: 3}
   m_Name: 
@@ -3448,8 +3448,35 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4934527156590932421, guid: 556fed887c624ee479ea15394aa1ac72,
         type: 3}
+      propertyPath: m_fontAsset
+      value: 
+      objectReference: {fileID: 11400000, guid: 9bcf47df41cc04ae5b4b63cafd7aa41c,
+        type: 2}
+    - target: {fileID: 4934527156590932421, guid: 556fed887c624ee479ea15394aa1ac72,
+        type: 3}
+      propertyPath: m_fontStyle
+      value: 16
+      objectReference: {fileID: 0}
+    - target: {fileID: 4934527156590932421, guid: 556fed887c624ee479ea15394aa1ac72,
+        type: 3}
       propertyPath: m_fontSizeBase
       value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: 4934527156590932421, guid: 556fed887c624ee479ea15394aa1ac72,
+        type: 3}
+      propertyPath: m_textAlignment
+      value: 65535
+      objectReference: {fileID: 0}
+    - target: {fileID: 4934527156590932421, guid: 556fed887c624ee479ea15394aa1ac72,
+        type: 3}
+      propertyPath: m_sharedMaterial
+      value: 
+      objectReference: {fileID: 5049557062767124095, guid: 9bcf47df41cc04ae5b4b63cafd7aa41c,
+        type: 2}
+    - target: {fileID: 4934527156590932421, guid: 556fed887c624ee479ea15394aa1ac72,
+        type: 3}
+      propertyPath: m_VerticalAlignment
+      value: 512
       objectReference: {fileID: 0}
     - target: {fileID: 4934527156590932421, guid: 556fed887c624ee479ea15394aa1ac72,
         type: 3}
@@ -3479,7 +3506,7 @@ PrefabInstance:
     - target: {fileID: 4934527156590932427, guid: 556fed887c624ee479ea15394aa1ac72,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 556fed887c624ee479ea15394aa1ac72, type: 3}
@@ -3850,8 +3877,35 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4934527156590932421, guid: 556fed887c624ee479ea15394aa1ac72,
         type: 3}
+      propertyPath: m_fontAsset
+      value: 
+      objectReference: {fileID: 11400000, guid: 9bcf47df41cc04ae5b4b63cafd7aa41c,
+        type: 2}
+    - target: {fileID: 4934527156590932421, guid: 556fed887c624ee479ea15394aa1ac72,
+        type: 3}
+      propertyPath: m_fontStyle
+      value: 16
+      objectReference: {fileID: 0}
+    - target: {fileID: 4934527156590932421, guid: 556fed887c624ee479ea15394aa1ac72,
+        type: 3}
       propertyPath: m_fontSizeBase
       value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: 4934527156590932421, guid: 556fed887c624ee479ea15394aa1ac72,
+        type: 3}
+      propertyPath: m_textAlignment
+      value: 65535
+      objectReference: {fileID: 0}
+    - target: {fileID: 4934527156590932421, guid: 556fed887c624ee479ea15394aa1ac72,
+        type: 3}
+      propertyPath: m_sharedMaterial
+      value: 
+      objectReference: {fileID: 5049557062767124095, guid: 9bcf47df41cc04ae5b4b63cafd7aa41c,
+        type: 2}
+    - target: {fileID: 4934527156590932421, guid: 556fed887c624ee479ea15394aa1ac72,
+        type: 3}
+      propertyPath: m_VerticalAlignment
+      value: 512
       objectReference: {fileID: 0}
     - target: {fileID: 4934527156590932421, guid: 556fed887c624ee479ea15394aa1ac72,
         type: 3}
@@ -4403,6 +4457,8 @@ MonoBehaviour:
   clientGameController: {fileID: 1113415938}
   timerRunning: 0
   jumpsAmount: 100
+  everyoneAnswered: 0
+  finalAnswered: 0
   currentQuestion: 
   currentCorrectAnswer: 
   currentInputAnswer: 
@@ -4412,6 +4468,7 @@ MonoBehaviour:
   isFinalJeopardyNow: 0
   currentQuestionAmount: 0
   questionsLeft: 30
+  currentPlayerIndex: -1
   jsonToCScript: {fileID: 1165550848}
   openAnswerDelay: 0
   closeAnswerDelay: 6
@@ -6089,7 +6146,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1049977012}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 782b1ab4ccae8497e92e8f3fc7320494, type: 3}
   m_Name: 
@@ -10057,6 +10114,8 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0.1
   nowAnswering: 0
+  cardChooser: 0
+  lastCardWinner: 0
 --- !u!114 &1764657424
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10107,7 +10166,7 @@ PrefabInstance:
     - target: {fileID: 3058834101225121318, guid: 556fed887c624ee479ea15394aa1ac72,
         type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3058834101225121318, guid: 556fed887c624ee479ea15394aa1ac72,
         type: 3}

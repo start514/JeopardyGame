@@ -38,11 +38,12 @@ public class UIGameController : MonoBehaviour
     public int jumpsAmount = 100;
     internal int hostDecision = -1; //-1 for not selected, 0 for wrong, 1 for right
     public bool everyoneAnswered = false;
+    public int finalAnswered = 0;
     internal Coroutine buzzTimer, submitTimer, backToBoard;
     internal string finalQuestion, finalAnswer;
     public string currentQuestion, currentCorrectAnswer, currentInputAnswer;
     public bool isDailyDoubleNow = false, haveAllPlayersAnswered = false, isSecondBoardNow = false, isFinalJeopardyNow = false;
-    public int currentQuestionAmount, questionsLeft = 30;
+    public int currentQuestionAmount, questionsLeft = 30, currentPlayerIndex = -1;
     public JsonToC jsonToCScript;
     public int openAnswerDelay = 0, closeAnswerDelay = 6;
     public AmountSlot[] allSlots;
@@ -330,6 +331,7 @@ public class UIGameController : MonoBehaviour
             finalAnswer = jsonToCScript.finalRoot.Questions[0].Answer;
             localPlayer.PlayerSetQuestionAndAnswer(finalQuestion, finalAnswer);
         }
+        isFinalJeopardyNow = true;
         amountChoserText.text = "$0";
     }
     public void OpenWinnerPanel(int winnerAmount, string winnerName)
@@ -449,7 +451,7 @@ public class UIGameController : MonoBehaviour
         {
             amountChoserText.text = "$" + (currentQuestionAmount + jumpsAmount).ToString();
             currentQuestionAmount = (currentQuestionAmount + jumpsAmount);
-            localPlayer.PlayerSetHostCurrenctQuestionAmount(currentQuestionAmount);
+            // localPlayer.PlayerSetHostCurrenctQuestionAmount(currentQuestionAmount);
         }
     }
     public void ChosingAmountLeft()
@@ -463,7 +465,7 @@ public class UIGameController : MonoBehaviour
         {
             amountChoserText.text = "$" + (currentQuestionAmount - jumpsAmount).ToString();
             currentQuestionAmount = (currentQuestionAmount - jumpsAmount);
-            localPlayer.PlayerSetHostCurrenctQuestionAmount(currentQuestionAmount);
+            // localPlayer.PlayerSetHostCurrenctQuestionAmount(currentQuestionAmount);
         }
     }
 
@@ -483,40 +485,87 @@ public class UIGameController : MonoBehaviour
     }
     #endregion
     #region HOST METHODS
+    void GetNextAnswer() {
+        finalAnswered++;
+        //remove current item
+        localPlayer.answerList.RemoveAt(0);
+        localPlayer.answererList.RemoveAt(0);
+        localPlayer.amountList.RemoveAt(0);
+        localPlayer.playerIndexList.RemoveAt(0);
+
+        if(localPlayer.answererList.Count != 0) { //if pending answer is left
+            string answer = (string)localPlayer.answerList[0];
+            string answerer = (string)localPlayer.answererList[0];
+            int amount = (int)localPlayer.amountList[0];
+            int currentPlayerIndex = (int)localPlayer.playerIndexList[0];
+            //set host panel - answer/amount/answerer
+            localPlayer.uiGame.hostInputAnswerTxt.text = answer;
+            localPlayer.uiGame.hostAnswerer.text = answerer;
+            localPlayer.uiGame.currentQuestionAmount = amount;
+            localPlayer.uiGame.currentPlayerIndex = currentPlayerIndex;
+            localPlayer.uiGame.hostQuestionAmountTxt.text = "$" + amount.ToString();
+        } else if(finalAnswered != 3) {
+            localPlayer.uiGame.hostInputAnswerTxt.text = "Waiting for answer";
+            localPlayer.uiGame.hostAnswerer.text = "";
+            localPlayer.uiGame.currentQuestionAmount = 0;
+            localPlayer.uiGame.currentPlayerIndex = -1;
+            localPlayer.uiGame.hostQuestionAmountTxt.text = "$0";
+            localPlayer.uiGame.correctButton.SetEnable(false);
+            localPlayer.uiGame.incorrectButton.SetEnable(false);
+            localPlayer.uiGame.hostContinueButton.SetEnable(false);
+        } else {
+            //Show continue button to finish game
+            hostContinueButton.SetEnable(true);
+            correctButton.SetEnable(false);
+            incorrectButton.SetEnable(false);
+            hostDecision = 2; //decided to finish game
+        }
+    }
     public void HostContinueButton()
     {
-        if(hostDecision == 1) { // If answer was correct
-            if (!isFinalJeopardyNow)
-            {
+        if (isFinalJeopardyNow) {
+            Debug.LogError("Opening Winner Panel");
+            localPlayer.PlayerOpenWinnerPanal();
+        }
+        else {
+            if(hostDecision == 1) { // If answer was correct
+                localPlayer.PlayerOpenSlotsPanalToAll();
+            } else if(hostDecision == 0) { //If answer was incorrect
+                if(isDailyDoubleNow || everyoneAnswered)
+                    localPlayer.PlayerOpenSlotsPanalToAll();
+                else
+                    localPlayer.PlayerOpenQuestionPanalToUnansweredPlayers();
+            } else { //timeout
                 localPlayer.PlayerOpenSlotsPanalToAll();
             }
-            else
-                localPlayer.PlayerOpenWinnerPanal();
-        } else if(hostDecision == 0) { //If answer was incorrect
-            if(isDailyDoubleNow || everyoneAnswered)
-                localPlayer.PlayerOpenSlotsPanalToAll();
-            else
-                localPlayer.PlayerOpenQuestionPanalToUnansweredPlayers();
-        } else { //timeout
-            localPlayer.PlayerOpenSlotsPanalToAll();
+            localPlayer.UntintAll();
         }
-        localPlayer.UntintAll();
     }
     public void HostCorrectButton()
     {
-        hostContinueButton.SetEnable(true);
-        correctButton.SetEnable(false);
-        incorrectButton.SetEnable(false);
-        localPlayer.PlayerHostDecided(true);
-        hostDecision = 1;
+        if(!isFinalJeopardyNow) {
+            hostContinueButton.SetEnable(true);
+            correctButton.SetEnable(false);
+            incorrectButton.SetEnable(false);
+            localPlayer.PlayerHostDecided(true);
+            hostDecision = 1;
+        } else {
+            localPlayer.PlayerAddAmountTo(localPlayer.uiGame.currentPlayerIndex, localPlayer.uiGame.currentQuestionAmount);
+            GetNextAnswer();
+        }
     }
     public void HostWrongButton()
     {
-        hostContinueButton.SetEnable(true);
-        correctButton.SetEnable(false);
-        incorrectButton.SetEnable(false);
-        localPlayer.PlayerHostDecided(false);
-        hostDecision = 0;
+        if(!isFinalJeopardyNow) {
+            hostContinueButton.SetEnable(true);
+            correctButton.SetEnable(false);
+            incorrectButton.SetEnable(false);
+            localPlayer.PlayerHostDecided(false);
+            hostDecision = 0;
+        } else {
+            localPlayer.PlayerDeductAmountTo(localPlayer.uiGame.currentPlayerIndex, localPlayer.uiGame.currentQuestionAmount);
+            GetNextAnswer();
+        }
     }
     public void HostPauseButton()
     {

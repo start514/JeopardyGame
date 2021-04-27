@@ -12933,7 +12933,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1458840202}
   m_HandleRect: {fileID: 1458840201}
   m_Direction: 2
-  m_Value: 1
+  m_Value: 0
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -15841,6 +15841,11 @@ PrefabInstance:
       propertyPath: transport
       value: 
       objectReference: {fileID: 1049703669}
+    - target: {fileID: 5874394709511425841, guid: ea3b9063bf69f904b93719d6d4322c2d,
+        type: 3}
+      propertyPath: offlineScene
+      value: Assets/Scenes/Start.unity
+      objectReference: {fileID: 0}
     - target: {fileID: 5874394709511425841, guid: ea3b9063bf69f904b93719d6d4322c2d,
         type: 3}
       propertyPath: maxConnections

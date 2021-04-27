@@ -54,6 +54,7 @@ public class UILobbyController : MonoBehaviour
     }*/
     private void Start()
     {
+        Player.localPlayer.uiLobby = this;
         // DontDestroyOnLoad(this);
     }
     private void OnEnable()
