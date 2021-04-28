@@ -10,8 +10,6 @@ public class WinnerPanalController : MonoBehaviour
 
     public void PlayAgainButton()
     {
-        // deleting objects so there won't be twice in the scene by accident 
-        Destroy(Player.localPlayer.gameObject);
         SceneManager.LoadScene("Start", LoadSceneMode.Additive);
     }
 }

@@ -55,14 +55,14 @@ public class UIGameController : MonoBehaviour
 
     void OnEnable()
     {
-        if (instance != null && instance != this)
-        {
-            Destroy(this.gameObject);
-        }
-        else
-        {
+        // if (instance != null && instance != this)
+        // {
+            // Destroy(this.gameObject);
+        // }
+        // else
+        // {
             instance = this;
-        }
+        // }
         localPlayer = Player.localPlayer;
         localPlayer.uiGame = this;
         //transferDataInstance = TransferDataToGame.instance;

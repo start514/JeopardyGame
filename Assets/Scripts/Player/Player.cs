@@ -46,7 +46,7 @@ public class Player : NetworkBehaviour
         {
             this.playerID = CreateRandomID();
             CmdUpdatePlayerId(this.playerID);
-            this.uiLobby = GameObject.Find("UI Lobby Controller").GetComponent<UILobbyController>();
+            this.uiLobby = GameObject.Find("UI Lobby Controller")?.GetComponent<UILobbyController>();
             this.playerAmount = 0;
             if (isClient && this.uiLobby != null && this.uiLobby.lobbyPanal.activeSelf)
             {
@@ -56,10 +56,13 @@ public class Player : NetworkBehaviour
             // for testing purpeses, if we are startubg from the game and not the lobby
             else
             {
-                this.uiGame = GameObject.Find("UI Game Controller").GetComponent<UIGameController>();
+                this.uiGame = GameObject.Find("UI Game Controller")?.GetComponent<UIGameController>();
                 StartUIIfConnected.instance.ActivateUI();
             }
         }
+    }
+    public void UpdateGameRoomList() {
+        CmdUpdateGameRoomList();
     }
     void OnEnable()
     {
@@ -531,8 +534,8 @@ public class Player : NetworkBehaviour
     void TargetBeginGame(NetworkConnection target, Guid guid)
     {
         // instatiate a match chcker with the correct id
-        this.matchChecker = localPlayer.gameObject.AddComponent(typeof(NetworkMatchChecker)) as NetworkMatchChecker;
-        this.matchChecker.matchId = guid;
+        if(localPlayer.matchChecker == null) localPlayer.matchChecker = localPlayer.gameObject.AddComponent(typeof(NetworkMatchChecker)) as NetworkMatchChecker;
+        localPlayer.matchChecker.matchId = guid;
         // spawn a turn manager
         //GameObject turnManager = Instantiate(localPlayer.uiLobby.turnMangerPrefab);
         //TurnManager turnManagerScript = turnManager.GetComponent<TurnManager>();
@@ -1775,10 +1778,20 @@ public class Player : NetworkBehaviour
     void RpcUntintAll() {
         SidePanalController.instance.UntintAll();
     }
+    public void CancelGame(string matchID) {
+        CmdCancelGame(matchID);
+    }
+    [Command]
+    void CmdCancelGame(string matchID) {
+        Match match = MatchMaker.instance.FindMatchById(matchID);
+        match.started = true;
+    }
     void OnDestroy()
     {
-        if(isHost && localPlayer != this)
+        if(isHost && localPlayer != this) {
             SceneManager.LoadScene("Lobby");
+            localPlayer.CancelGame(localPlayer.matchID);
+        }
         // else if(localPlayer != null && localPlayer.isHost) {
         //     localPlayer.KickPlayer(playerID);
         // }

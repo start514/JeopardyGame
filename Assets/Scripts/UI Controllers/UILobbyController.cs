@@ -54,7 +54,10 @@ public class UILobbyController : MonoBehaviour
     }*/
     private void Start()
     {
-        Player.localPlayer.uiLobby = this;
+        if(Player.localPlayer!=null) {
+            Player.localPlayer.uiLobby = this;
+            Player.localPlayer.UpdateGameRoomList();
+        }
         // DontDestroyOnLoad(this);
     }
     private void OnEnable()
