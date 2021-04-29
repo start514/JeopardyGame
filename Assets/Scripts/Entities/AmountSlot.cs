@@ -18,16 +18,15 @@ public class AmountSlot : MonoBehaviour
     public int slotIndex;
 
 
-    // Start is called before the first frame update
+    void Awake() {        
+        btn = gameObject.GetComponent<Button>();
+        btn.onClick.AddListener(AmountWasPressed);
+        btn.enabled = true;
+    }
     void Start()
     {
         amountText = gameObject.GetComponentInChildren<TMP_Text>();
         amountText.text = "$" + amout.ToString();
-        btn = gameObject.GetComponent<Button>();
-        btn.onClick.AddListener(AmountWasPressed);
-        btn.enabled = true;
-
-
     }
 
     // Update is called once per frame

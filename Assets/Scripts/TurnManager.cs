@@ -27,17 +27,14 @@ public class TurnManager : NetworkBehaviour
         return rnd;
     }
 
-    /*
-    public Player NextTurn()
-    {
-        currentPlayerInList++;
-        if (currentPlayerInList == allPlayers.Count) // if this is the last player in the list turn;
-        {
-            currentPlayerInList = 0;
-        }
-        return allPlayers[currentPlayerInList].GetComponent<Player>();
+    public void GiveTurnToCurrentAnswerer() {
+        Player.localPlayer.GiveTurnToCurrentAnswerer();
     }
-    */
+
+    public void GiveTurnToLastWinner() {
+        Player.localPlayer.GiveTurnToLastWinner();
+    }
+
     public static bool CheckIfEveryoneAnswered(SyncListGameObject allPlayers)
     {
        
@@ -52,14 +49,4 @@ public class TurnManager : NetworkBehaviour
         Debug.LogError("Everyone answered = true" );
         return true;
     }
-
-    public static void FindWinner(SyncListGameObject allPlayers)
-    {
-
-    }
-
-   // public static int WhosNextInTurn(int lastIndex, SyncListGameObject players)
-    //{
-       
-    //}
 }

@@ -3350,6 +3350,11 @@ PrefabInstance:
       propertyPath: sceneId
       value: 2183739019
       objectReference: {fileID: 0}
+    - target: {fileID: 2347830618969894865, guid: cfbd8f8e44fcaca479da7fbfad1879b9,
+        type: 3}
+      propertyPath: serverOnly
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: cfbd8f8e44fcaca479da7fbfad1879b9, type: 3}
 --- !u!1001 &636323333
@@ -12933,7 +12938,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1458840202}
   m_HandleRect: {fileID: 1458840201}
   m_Direction: 2
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:

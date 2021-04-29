@@ -219,7 +219,7 @@ public class Player : NetworkBehaviour
         // if valadation passed
         {
             TargetCancelHost(true, id);
-            RcpCountGameContainers();
+            RcpCountGameContainers(id);
             Debug.Log("Server - Sucssesfly canceled a hosting");
         }
         else
@@ -250,10 +250,9 @@ public class Player : NetworkBehaviour
     }
 
     [ClientRpc]
-    void RcpCountGameContainers()
+    void RcpCountGameContainers(string matchID)
     {
-        localPlayer.uiLobby.CountGameContainers();
-
+        localPlayer.uiLobby?.CountGameContainers();
     }
     #endregion
 
@@ -518,16 +517,16 @@ public class Player : NetworkBehaviour
 
         //Randomly choose starting player
         TurnManager.instance.RandomlyChooseStartingPlayer(thisMatch.playersInThisMatch.Count);
-        //Debug
-        Debug.Log($"TurnManager card chooser is {TurnManager.instance.cardChooser}");
+        TurnManager.instance.lastCardWinner = -1;
+
+        thisMatch.started = true;
+        RpcDeleteGameContainer(id);
+        RcpCountGameContainers(id);
 
         for (int i = 0; i < thisMatch.playersInThisMatch.Count; i++)
         {
             TargetBeginGame(thisMatch.playersInThisMatch[i].GetComponent<NetworkIdentity>().connectionToClient, MatchMaker.RegularIDToGUI(id));
         }
-        RpcDeleteGameContainer(id);
-        thisMatch.started = true;
-        RcpCountGameContainers();
     }
 
     [TargetRpc] // the server will run this on a specific client
@@ -591,7 +590,7 @@ public class Player : NetworkBehaviour
     [ClientRpc]
     private void RpcDeleteGameContainer(string id)
     {
-        localPlayer.uiLobby.DeleteGameContainer(id);
+        localPlayer.uiLobby?.DeleteGameContainer(id);
     }
     [TargetRpc]
     void TargetPlayerLeaveGameFromLobby(NetworkConnection target)
@@ -923,6 +922,7 @@ public class Player : NetworkBehaviour
     [ClientRpc]
     void RpcOpenQuestionPanalToAll()
     {
+        SidePanalController.instance.UntintAllExceptAnswered();
         // make sure to open after updating cuurent question, answer, amount
         if (localPlayer.isHost)
             // change what should happen to host when players have time to buzz in
@@ -1339,7 +1339,11 @@ public class Player : NetworkBehaviour
     [ClientRpc]
     void RpcPlaceDailyDouble(int spot)
     {
-        localPlayer.uiGame.PlaceDailyDouble(spot);
+        if(localPlayer.uiGame == null) {
+            UIGameController.doubleSlot = spot;
+        } else {
+            localPlayer.uiGame.PlaceDailyDouble(spot);
+        }
     }
     //Send a COMMAND and Target RPC to let all the players know a player has buzzed in and thet cannot answer anymore
     //set the correct ui each time a player buzzed in
@@ -1766,17 +1770,17 @@ public class Player : NetworkBehaviour
     {
         SidePanalController.instance.TintAllSlotsButOne(playerIndex);
     }
-    public void UntintAll()
+    public void UntintAllExceptAnswered()
     {
-        CmdUntintAll();
+        CmdUntintAllExceptAnswered();
     }
     [Command]
-    void CmdUntintAll() {
-        RpcUntintAll();
+    void CmdUntintAllExceptAnswered() {
+        RpcUntintAllExceptAnswered();
     }
     [ClientRpc]
-    void RpcUntintAll() {
-        SidePanalController.instance.UntintAll();
+    void RpcUntintAllExceptAnswered() {
+        SidePanalController.instance.UntintAllExceptAnswered();
     }
     public void CancelGame(string matchID) {
         CmdCancelGame(matchID);
@@ -1785,6 +1789,45 @@ public class Player : NetworkBehaviour
     void CmdCancelGame(string matchID) {
         Match match = MatchMaker.instance.FindMatchById(matchID);
         match.started = true;
+    }
+
+    public void GiveTurnToCurrentAnswerer() {
+        CmdGiveTurnToCurrentAnswerer();
+    }
+    
+    [Command]
+    void CmdGiveTurnToCurrentAnswerer() {
+        TurnManager.instance.cardChooser = TurnManager.instance.nowAnswering;
+        TurnManager.instance.lastCardWinner = TurnManager.instance.nowAnswering;
+        RpcGiveTurnToCurrentAnswerer(TurnManager.instance.cardChooser);
+    }
+
+    [ClientRpc]
+    void RpcGiveTurnToCurrentAnswerer(int cardChooser) {
+        SidePanalController.instance.TintAllSlotsButOne(cardChooser);
+    }
+
+    public void GiveTurnToLastWinner() {
+        CmdGiveTurnToLastWinner(localPlayer.matchID);
+    }
+    
+    [Command]
+    void CmdGiveTurnToLastWinner(string matchID) {
+        if(TurnManager.instance.lastCardWinner != -1)
+            TurnManager.instance.cardChooser = TurnManager.instance.lastCardWinner;
+        else {
+            //Get current match
+            Match thisMatch = MatchMaker.instance.FindMatchById(matchID);
+
+            //Randomly choose starting player
+            TurnManager.instance.RandomlyChooseStartingPlayer(thisMatch.playersInThisMatch.Count);
+        }
+        RpcGiveTurnToLastWinner(TurnManager.instance.cardChooser);
+    }
+
+    [ClientRpc]
+    void RpcGiveTurnToLastWinner(int cardChooser) {
+        SidePanalController.instance.TintAllSlotsButOne(cardChooser);
     }
     void OnDestroy()
     {

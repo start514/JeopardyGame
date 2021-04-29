@@ -19,11 +19,7 @@ public class SidePanalController : MonoBehaviour
             instance = this;
         }
     }
-
-    private void Start()
-    {
-        //ActivateSlots();    
-    }
+    
     internal void UpdateSideSlotAmount(int slotNum, int newAmount)
     {
         this.playerSlotsArry.playerSlots[slotNum].amountTxt.text = "$" + newAmount.ToString();
@@ -38,29 +34,32 @@ public class SidePanalController : MonoBehaviour
     {
         for (int i = 0; i < playerSlotsArry.playerSlots.Length; i++)
         {
-            if (i != PlayerNumWhoBuzzed)
-                playerSlotsArry.playerSlots[i].GetComponent<PlayerSlot>().tint.SetActive(true);
+            //tint selected player index card
+            playerSlotsArry.playerSlots[i].GetComponent<PlayerSlot>().tint.SetActive(i != PlayerNumWhoBuzzed);
+            //activate/deactivate if slot is mine
+            if(i == Player.localPlayer.playerIndex) {
+                //if "but one" is me
+                if(i == PlayerNumWhoBuzzed)
+                    Player.localPlayer.uiGame.ActivateSlots();
+                else
+                    Player.localPlayer.uiGame.DeactivateSlots();
+            }
         }
     }
-    public void UntintAll()
+    public void UntintAllExceptAnswered()
     {
         for (int i = 0; i < playerSlotsArry.playerSlots.Length; i++)
         {
-            playerSlotsArry.playerSlots[i].GetComponent<PlayerSlot>().tint.SetActive(false);
+            var players = GameObject.FindObjectsOfType<Player>();
+            var answered = false;
+            foreach(var player in players) {
+                //if someone has answered
+                if(player.matchID == Player.localPlayer.matchID && player.playerIndex == i && player.hasAnswered) {
+                    answered = true;
+                }
+            }
+            playerSlotsArry.playerSlots[i].GetComponent<PlayerSlot>().tint.SetActive(answered);
         }
-    }
-
-
-    public void ActivateSlots()
-    {
-        int numOfPlayers = TransferDataToGame.instance.gameSize;
-        if (numOfPlayers == 4)
-            Instantiate(fourPlayerSlotsPrefab, slotsParent.transform);
-        if (numOfPlayers == 5)
-            Instantiate(fivePlayerSlotsPrefab, slotsParent.transform);
-        if (numOfPlayers == 6)
-            Instantiate(sixPlayerSlotsPrefab, slotsParent.transform);
-        playerSlotsArry = PlayerSlotsArry.instance;
     }
 
     public void TurnSlotToMine(int slotNum)

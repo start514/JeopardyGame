@@ -52,6 +52,7 @@ public class UIGameController : MonoBehaviour
     // delete later
     public Button final, doubleBtn;
     public bool isPaused = false;
+    public static int doubleSlot = -1;
 
     void OnEnable()
     {
@@ -68,6 +69,8 @@ public class UIGameController : MonoBehaviour
         //transferDataInstance = TransferDataToGame.instance;
         OpenSingleJeopardyPanal();
         Player.localPlayer.PlayerPlaceDailyDouble();
+        if(doubleSlot != -1) PlaceDailyDouble(doubleSlot);
+        doubleSlot = -1;
         timerRunning = false;
         isDailyDoubleNow = false;
         haveAllPlayersAnswered = false;
@@ -101,6 +104,10 @@ public class UIGameController : MonoBehaviour
         // for later demo
         //timeToBuzz = Player.localPlayer.PlayerGetTimeToBuzz();
         //timeToAnswer = Player.localPlayer.PlayerGetTimeToAnswer();
+    }
+
+    void Start() {
+        SidePanalController.instance.TintAllSlotsButOne(TurnManager.instance.cardChooser);
     }
 
     // Update is called once per frame
@@ -476,11 +483,18 @@ public class UIGameController : MonoBehaviour
     internal void TakeTurnFromMe()
     {
     }
-    internal void DeactivateSlots()
+    public void DeactivateSlots()
     {
         for (int i = 0; i < allSlots.Length; i++)
         {
             allSlots[i].DeactivateButtons();
+        }
+    }
+    public void ActivateSlots()
+    {
+        for (int i = 0; i < allSlots.Length; i++)
+        {
+            allSlots[i].ActivateButtons();
         }
     }
     #endregion
@@ -530,15 +544,20 @@ public class UIGameController : MonoBehaviour
         else {
             if(hostDecision == 1) { // If answer was correct
                 localPlayer.PlayerOpenSlotsPanalToAll();
+                TurnManager.instance.GiveTurnToCurrentAnswerer();
             } else if(hostDecision == 0) { //If answer was incorrect
-                if(isDailyDoubleNow || everyoneAnswered)
+                if(isDailyDoubleNow || everyoneAnswered) {
                     localPlayer.PlayerOpenSlotsPanalToAll();
-                else
+                    TurnManager.instance.GiveTurnToLastWinner();
+                }
+                else {
                     localPlayer.PlayerOpenQuestionPanalToUnansweredPlayers();
+                    localPlayer.UntintAllExceptAnswered();
+                }
             } else { //timeout
                 localPlayer.PlayerOpenSlotsPanalToAll();
+                TurnManager.instance.GiveTurnToLastWinner();
             }
-            localPlayer.UntintAll();
         }
     }
     public void HostCorrectButton()
