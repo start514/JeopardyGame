@@ -975,6 +975,26 @@ public class Player : NetworkBehaviour
         else
             localPlayer.uiGame.OpenClientAnswerPanel();
     }
+    internal void PlayerOpenCorrectAnswerPanalToAll()
+    {
+        CmdOpenCorrectAnswerPanalToAll();
+    }
+    [Command]
+    void CmdOpenCorrectAnswerPanalToAll()
+    {
+        RpcOpenCorrectAnswerPanalToAll();
+    }
+    [ClientRpc]
+    void RpcOpenCorrectAnswerPanalToAll()
+    {
+        if (localPlayer.isHost)
+        {
+            // localPlayer.uiGame.OpenHostQuesionPanel();
+        }
+        else
+            localPlayer.uiGame.OpenClientCorrectAnswerPanel();
+    }
+    
     public void PlayerOpenFinalJeopardyPanalToAll()
     {
         localPlayer.PlayerSetIsDoubleJeopardy(false);
@@ -1484,7 +1504,7 @@ public class Player : NetworkBehaviour
             if (everyoneAnswered) //set everyoneAnswered as true so that continue button will show slots panel to all
             {
                 localPlayer.uiGame.everyoneAnswered = true;
-                PlayerOpenAnswerPanalToAll();
+                PlayerOpenCorrectAnswerPanalToAll();
             }
         }
     }

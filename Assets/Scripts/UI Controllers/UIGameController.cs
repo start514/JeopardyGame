@@ -270,6 +270,16 @@ public class UIGameController : MonoBehaviour
         clientAnswerTxt.text = currentInputAnswer;
         clientAnswerAmountText.text = "$"+currentQuestionAmount.ToString();
     }
+    public void OpenClientCorrectAnswerPanel()
+    {
+        slotsPanel.SetActive(false);
+        clientAnswerPanel.SetActive(true);
+        submitButton.SetEnable(false);
+        submitButton.gameObject.SetActive(true);
+        answerInput.SetEnable(false);
+        clientAnswerTxt.text = currentCorrectAnswer;
+        clientAnswerAmountText.text = "$"+currentQuestionAmount.ToString();
+    }
     public void OpenSingleJeopardyPanal()
     {
         singleIcon.SetActive(true);
@@ -380,7 +390,7 @@ public class UIGameController : MonoBehaviour
             if(localPlayer.isHost) {
                 hostPauseBtn.interactable = false;
                 hostContinueButton.SetEnable(true);
-                localPlayer.PlayerOpenAnswerPanalToAll();
+                localPlayer.PlayerOpenCorrectAnswerPanalToAll();
             }
         }
     }
