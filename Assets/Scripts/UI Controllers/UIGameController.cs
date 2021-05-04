@@ -380,6 +380,7 @@ public class UIGameController : MonoBehaviour
             if(localPlayer.isHost) {
                 hostPauseBtn.interactable = false;
                 hostContinueButton.SetEnable(true);
+                localPlayer.PlayerOpenAnswerPanalToAll();
             }
         }
     }
@@ -421,11 +422,9 @@ public class UIGameController : MonoBehaviour
         {
             Debug.LogError("Player Submitted");
             string answer = inputFieldAnswer.text;
-            if(string.IsNullOrEmpty(answer))
+            if(string.IsNullOrWhiteSpace(answer))
             {
-                answer = "Not answered";
-                // localPlayer.PlayerHostDecided(false);
-                // localPlayer.PlayerOpenSlotsPanalToAll();
+                return;
             }
             // else
             // {

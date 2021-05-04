@@ -162,7 +162,8 @@ public class Player : NetworkBehaviour
         {
             this.playerColor = -1;
             this.isReady = true;
-            this.playerName = "";
+            this.playerName = "Host";
+            this.isHost = true;
             this.playerIndex = -1; //Host is not a player in sidebars
             CountParticipentContainers(id);
             TargetHostGame(true, id, gameSize, gameName, MatchMaker.RegularIDToGUI(id));
@@ -181,7 +182,6 @@ public class Player : NetworkBehaviour
     {
         if (success)
         {
-            localPlayer.isHost = true;
             CmdUpdateIsHost(true, id, localPlayer.matchID);
             CmdAddGameContainer(id, gameName, gameSize, guid);
             localPlayer.matchID = id;
@@ -287,8 +287,11 @@ public class Player : NetworkBehaviour
             } while (duplicate);
             this.playerColor = colorChosen;
             this.isReady = false;
-            this.playerName = "";
+            this.playerAmount = 0;
+            this.matchID = id;
+            this.isHost = false;
             this.playerIndex = MatchMaker.instance.FindMatchById(id).playersInThisMatch.Count - 2; //If count contains host, so it should deduct 2 for zero-based index
+            this.playerName = "Player #" + (this.playerIndex + 1);
 
             Debug.Log("Server- Sucssesfly joined game");
             TargetJoinGame(true, id, MatchMaker.instance.FindMatchById(id), MatchMaker.RegularIDToGUI(id), MatchMaker.instance.FindMatchById(id).playersInThisMatch.Count - 1);
@@ -306,10 +309,10 @@ public class Player : NetworkBehaviour
     {
         if (success)
         {
-            //localPlayer.gameObject.GetComponent<NetworkMatchChecker>().matchId = GuiId;
-            //CmdUpdateMatchChecker(GuiId);
             localPlayer.matchID = id;
             localPlayer.isHost = false;
+            //localPlayer.gameObject.GetComponent<NetworkMatchChecker>().matchId = GuiId;
+            //CmdUpdateMatchChecker(GuiId);
             CmdUpdateIsHost(false, id, localPlayer.matchID);
             CmdUpdateMatchID(localPlayer.matchID);
             Debug.Log("Client- Game joining was sucsesfull with id " + id.ToString());
@@ -366,13 +369,13 @@ public class Player : NetworkBehaviour
         for (int i = 0; i < players.Count; i++)
         {
             if (playerId != players[i].GetComponent<Player>().playerID) // if it is not me 
-                TargetCmdAddJoinContainerToPlayersWhoAlreadyJoined(players[i].GetComponent<NetworkIdentity>().connectionToClient, id, this.playerColor, playerId);
+                TargetCmdAddJoinContainerToPlayersWhoAlreadyJoined(players[i].GetComponent<NetworkIdentity>().connectionToClient, id, this.playerColor, playerId, this.playerName);
         }
     }
     [TargetRpc]
-    void TargetCmdAddJoinContainerToPlayersWhoAlreadyJoined(NetworkConnection target, string id, int color, string playerId)
+    void TargetCmdAddJoinContainerToPlayersWhoAlreadyJoined(NetworkConnection target, string id, int color, string playerId, string playerNameToAdd)
     {
-        localPlayer.uiLobby.AddJoinParticipentConteiner(id, false, "Player", color, playerId);
+        localPlayer.uiLobby.AddJoinParticipentConteiner(id, false, playerNameToAdd, color, playerId);
 
     }
 
@@ -650,16 +653,17 @@ public class Player : NetworkBehaviour
             // add my contaniner to everyone else
             Debug.Log(playersInThisMatch[i].GetComponent<NetworkIdentity>().connectionToClient);
             int color = this.playerColor;
+            string playerNameToAdd = this.playerName;
             if (playersInThisMatch[i].GetComponent<Player>().isHost)
-                TargetAddHostParticipentContainer(playersInThisMatch[i].GetComponent<NetworkIdentity>().connectionToClient, id, color, playerId); ;
+                TargetAddHostParticipentContainer(playersInThisMatch[i].GetComponent<NetworkIdentity>().connectionToClient, id, color, playerId, playerNameToAdd); ;
         }
     }
 
     [TargetRpc]
-    private void TargetAddHostParticipentContainer(NetworkConnection target, string id, int color, string playerId)
+    private void TargetAddHostParticipentContainer(NetworkConnection target, string id, int color, string playerId, string playerNameToAdd)
     {
         Debug.LogError(" target rpc adding host participent ");
-        localPlayer.uiLobby.AddHostParticipentContainer(id, "Player", color, playerId);
+        localPlayer.uiLobby.AddHostParticipentContainer(id, playerNameToAdd, color, playerId);
     }
     void DeleteParticipentContainer(string id, string playerId)
     {
@@ -1480,6 +1484,7 @@ public class Player : NetworkBehaviour
             if (everyoneAnswered) //set everyoneAnswered as true so that continue button will show slots panel to all
             {
                 localPlayer.uiGame.everyoneAnswered = true;
+                PlayerOpenAnswerPanalToAll();
             }
         }
     }

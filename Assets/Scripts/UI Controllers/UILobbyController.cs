@@ -303,6 +303,7 @@ public class UILobbyController : MonoBehaviour
         script.playerID = playerId;
         script.matchID = id;
         script.color.sprite = colors[color];
+        script.inputField.SetTextWithoutNotify(Player.localPlayer.playerName);
 
         // add the color chooser
         SetJoinContainerColor();
@@ -317,6 +318,7 @@ public class UILobbyController : MonoBehaviour
         script.role.sprite = hostRole;
         script.playerID = playerId;
         script.matchID = id;
+        script.inputField.SetTextWithoutNotify(Player.localPlayer.playerName??"Host");
         if (Player.localPlayer.isHost) script.color.gameObject.SetActive(false);
         else script.color.sprite = colors[Player.localPlayer.playerColor];
         // add the color chooser
