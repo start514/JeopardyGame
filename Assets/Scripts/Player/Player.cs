@@ -198,6 +198,22 @@ public class Player : NetworkBehaviour
             Debug.LogError("Client- Player couldnt host game");
         }
     }
+    public void PlayerLeaveGame() {
+        CmdPlayerLeaveGame(localPlayer.isHost, localPlayer.playerID, localPlayer.matchID);
+    }
+    [Command]
+    void CmdPlayerLeaveGame(bool isHost, string playerID, string matchID) {
+        this.matchID = "";
+        RpcPlayerLeaveGame(isHost, playerID, matchID);
+    }
+    [ClientRpc]
+    void RpcPlayerLeaveGame(bool isHost, string playerID, string matchID) {
+        if(isHost && localPlayer.playerID != playerID) {
+            Toast.instance.showToast("Host has left the game.", 3);
+            SceneManager.LoadScene("Lobby");
+            localPlayer.CancelGame(localPlayer.matchID);
+        }
+    }
     public void PlayerCancelHosting(string id)
     {
         CmdCancelHost(id);
@@ -505,15 +521,17 @@ public class Player : NetworkBehaviour
             dailyDouble = true;
         int timeToAnswer = int.Parse(uiLobby.timeToAnswerTxt.text);
         int timeToBuzz = int.Parse(uiLobby.timeToBuzzTxt.text);
-        CmdBeginGame(localPlayer.matchID, dailyDouble, timeToAnswer, timeToBuzz);
+        CmdBeginGame(localPlayer.matchID, dailyDouble, timeToAnswer, timeToBuzz, TransferDataToGame.instance.gameName, TransferDataToGame.instance.gameSize);
     }
     [Command] // call this from a client to run it on the server
-    void CmdBeginGame(string id, bool dailyDouble, int timeToAnswer, int timeToBuzz)
+    void CmdBeginGame(string id, bool dailyDouble, int timeToAnswer, int timeToBuzz, string gameName, int gameSize)
     {
         //Game Settings
         TransferDataToGame.instance.dailyDouble = dailyDouble;
         TransferDataToGame.instance.timeToAnswer = timeToAnswer;
         TransferDataToGame.instance.timeToBuzz = timeToBuzz;
+        TransferDataToGame.instance.gameName = gameName;
+        TransferDataToGame.instance.gameSize = gameSize;
 
         //MatchMaker.instance.BegineGame(matchID);
         Match thisMatch = MatchMaker.instance.FindMatchById(id);
@@ -528,13 +546,21 @@ public class Player : NetworkBehaviour
 
         for (int i = 0; i < thisMatch.playersInThisMatch.Count; i++)
         {
-            TargetBeginGame(thisMatch.playersInThisMatch[i].GetComponent<NetworkIdentity>().connectionToClient, MatchMaker.RegularIDToGUI(id));
+            TargetBeginGame(thisMatch.playersInThisMatch[i].GetComponent<NetworkIdentity>().connectionToClient, MatchMaker.RegularIDToGUI(id), dailyDouble, timeToAnswer, timeToBuzz, gameName, gameSize, TurnManager.instance.cardChooser, TurnManager.instance.lastCardWinner);
         }
     }
 
     [TargetRpc] // the server will run this on a specific client
-    void TargetBeginGame(NetworkConnection target, Guid guid)
+    void TargetBeginGame(NetworkConnection target, Guid guid, bool dailyDouble, int timeToAnswer, int timeToBuzz, string gameName, int gameSize, int cardChooser, int lastCardWinner)
     {
+        //Game Settings
+        TransferDataToGame.instance.dailyDouble = dailyDouble;
+        TransferDataToGame.instance.timeToAnswer = timeToAnswer;
+        TransferDataToGame.instance.timeToBuzz = timeToBuzz;
+        TransferDataToGame.instance.gameName = gameName;
+        TransferDataToGame.instance.gameSize = gameSize;
+        TurnManager.instance.cardChooser = cardChooser;
+        TurnManager.instance.lastCardWinner = lastCardWinner;
         // instatiate a match chcker with the correct id
         if(localPlayer.matchChecker == null) localPlayer.matchChecker = localPlayer.gameObject.AddComponent(typeof(NetworkMatchChecker)) as NetworkMatchChecker;
         localPlayer.matchChecker.matchId = guid;
@@ -1856,12 +1882,12 @@ public class Player : NetworkBehaviour
     }
     void OnDestroy()
     {
-        if(isHost && localPlayer != this) {
+        if(isHost && localPlayer != this && localPlayer != null) {
+            Toast.instance.showToast("Host has left the game.", 3);
             SceneManager.LoadScene("Lobby");
             localPlayer.CancelGame(localPlayer.matchID);
+        } else if(localPlayer == this || localPlayer == null) {
+            Toast.instance.showToast("Network disconnected.", 3);
         }
-        // else if(localPlayer != null && localPlayer.isHost) {
-        //     localPlayer.KickPlayer(playerID);
-        // }
     }
 }

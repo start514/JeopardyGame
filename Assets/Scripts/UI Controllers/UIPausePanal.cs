@@ -45,6 +45,10 @@ public class UIPausePanal : MonoBehaviour
         pausePanal.SetActive(false);
         // deleting objects so there won't be twice in the scene by accident 
         //Destroy(Player.localPlayer.gameObject);
+        if(Player.localPlayer!=null) {
+            //send message that i am leaving game
+            Player.localPlayer.PlayerLeaveGame("");
+        }
         LoadScene("Start");
         //Application.Quit();
     }

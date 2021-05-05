@@ -19,10 +19,21 @@ public class PlayerSlotsArry : MonoBehaviour
     void Update()
     {
         UIGameController uiGame = GameObject.FindObjectOfType<UIGameController>();
-        var idx = 0;
         var players = GameObject.FindObjectsOfType<Player>();
         System.Array.Reverse(players);
+
+        for(var i = 0; i < TransferDataToGame.instance.gameSize; i++) {
+            //initial value as out
+            playerSlots[i].amountTxt.text = "Out";
+            playerSlots[i].gameObject.SetActive(true);
+        }
+
+        for(var i=TransferDataToGame.instance.gameSize; i<playerSlots.Length; i++) {
+            playerSlots[i].gameObject.SetActive(false);
+        }
+
         for(var i = 0; i < players.Length; i++) {
+            //set slot name/color/bg/active status/amount
             var player = players[i];
             if(player.matchID == Player.localPlayer.matchID && !player.isHost) {
                 playerSlots[player.playerIndex].amountTxt.text = player.playerAmount.ToString("C0");
@@ -33,11 +44,14 @@ public class PlayerSlotsArry : MonoBehaviour
                 playerSlots[player.playerIndex].playerAmountBg.color = uiGame.playerAmountBgColors[player.playerColor];
                 playerSlots[player.playerIndex].playerAmountShadowBg.color = uiGame.playerShadowColors[player.playerColor];
                 playerSlots[player.playerIndex].gameObject.SetActive(true);
-                idx++;
             }
         }
-        for(var i=idx; i<playerSlots.Length; i++) {
-            playerSlots[i].gameObject.SetActive(false);
+
+        for(var i = 0; i < TransferDataToGame.instance.gameSize; i++) {
+            if(playerSlots[i].amountTxt.text == "Out") {
+                //if slot is out, make it dimmed
+                playerSlots[i].tint.SetActive(true);
+            }
         }
     }
 }
