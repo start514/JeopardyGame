@@ -51,6 +51,11 @@ public class PlayerSlotsArry : MonoBehaviour
             if(playerSlots[i].amountTxt.text == "Out") {
                 //if slot is out, make it dimmed
                 playerSlots[i].tint.SetActive(true);
+                //if dimmed player is card chooser and i am host
+                if(TurnManager.instance.cardChooser == i && Player.localPlayer.isHost) {
+                    TurnManager.instance.cardChooser = -1;
+                    Player.localPlayer.GiveTurnToRandomPlayer();
+                }
             }
         }
     }

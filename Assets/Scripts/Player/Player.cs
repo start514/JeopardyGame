@@ -124,11 +124,6 @@ public class Player : NetworkBehaviour
     {
         string id = MatchMaker.CreateRandomID();
         string gameName = uiLobby.gameNameIP.text;
-        if (string.IsNullOrEmpty(gameName))
-        {
-            gameName = "Game #" + (uiLobby.CountGameContainers() + 1).ToString();
-            //Debug.LogError("No game name", this);
-        }
         CmdHostGame(id, int.Parse(uiLobby.gameSizeTxt.text), gameName, localPlayer.gameObject);
     }
     public void ChangeColor()
@@ -156,8 +151,28 @@ public class Player : NetworkBehaviour
     // the problem was that we were passing in the player clone that was on the server and not the local player that called the method
     void CmdHostGame(string id, int gameSize, string gameName, GameObject player)
     {
+        //Check if game name exists or game name is empty
+        bool exist = false;
+        foreach(var game in MatchMaker.instance.allGames) {
+            if(game.gameName == gameName) exist = true;
+        }
+        var newname = gameName;
+        if (string.IsNullOrEmpty(gameName) || exist)
+        {
+            exist = true;
+            int gameidx = 0;
+            while(exist) {
+                gameidx ++;
+                newname = "Game #" + gameidx;
+                exist = false;
+                foreach(var game in MatchMaker.instance.allGames) {
+                    if(game.gameName == newname) exist = true;
+                }
+            }
+            //Debug.LogError("No game name", this);
+        }
         // tell the server we got an id, please register a new game and add this player to the list
-        if (MatchMaker.instance.AddAndApproveHostingGame(id, gameName, gameSize, player.gameObject))
+        if (MatchMaker.instance.AddAndApproveHostingGame(id, newname, gameSize, player.gameObject))
         // if valadation passed
         {
             this.playerColor = -1;
@@ -166,13 +181,13 @@ public class Player : NetworkBehaviour
             this.isHost = true;
             this.playerIndex = -1; //Host is not a player in sidebars
             CountParticipentContainers(id);
-            TargetHostGame(true, id, gameSize, gameName, MatchMaker.RegularIDToGUI(id));
+            TargetHostGame(true, id, gameSize, newname, MatchMaker.RegularIDToGUI(id));
             Debug.Log("Server - Sucssesfly hosted a game");
             // add a game container
         }
         else
         {
-            TargetHostGame(false, id, gameSize, gameName, MatchMaker.RegularIDToGUI(id));
+            TargetHostGame(false, id, gameSize, newname, MatchMaker.RegularIDToGUI(id));
             Debug.LogError("Server- Couldn't host game", this);
         }
     }
@@ -199,19 +214,26 @@ public class Player : NetworkBehaviour
         }
     }
     public void PlayerLeaveGame() {
-        CmdPlayerLeaveGame(localPlayer.isHost, localPlayer.playerID, localPlayer.matchID);
+        CmdPlayerLeaveGame(localPlayer.isHost, localPlayer.playerID, localPlayer.matchID, localPlayer.playerIndex);
     }
     [Command]
-    void CmdPlayerLeaveGame(bool isHost, string playerID, string matchID) {
+    void CmdPlayerLeaveGame(bool isHost, string playerID, string matchID, int playerIndex) {
         this.matchID = "";
-        RpcPlayerLeaveGame(isHost, playerID, matchID);
+        RpcPlayerLeaveGame(isHost, playerID, matchID, playerIndex);
     }
     [ClientRpc]
-    void RpcPlayerLeaveGame(bool isHost, string playerID, string matchID) {
+    void RpcPlayerLeaveGame(bool isHost, string playerID, string matchID, int playerIndex) {
+        if(localPlayer.matchID != matchID) return;
         if(isHost && localPlayer.playerID != playerID) {
             Toast.instance.showToast("Host has left the game.", 3);
             SceneManager.LoadScene("Lobby");
             localPlayer.CancelGame(localPlayer.matchID);
+        } else if(!isHost && localPlayer.playerID != playerID && playerIndex == TurnManager.instance.cardChooser) {
+            if(localPlayer.isHost) {
+                //if i am host and player with the turn has left the game
+                //give turn to other players
+                localPlayer.GiveTurnToRandomPlayer();
+            }
         }
     }
     public void PlayerCancelHosting(string id)
@@ -235,7 +257,6 @@ public class Player : NetworkBehaviour
         // if valadation passed
         {
             TargetCancelHost(true, id);
-            RcpCountGameContainers(id);
             Debug.Log("Server - Sucssesfly canceled a hosting");
         }
         else
@@ -257,18 +278,11 @@ public class Player : NetworkBehaviour
             CmdUpdateMatchID(localPlayer.matchID);
             localPlayer.uiLobby.hostGamePanal.SetActive(false);
             localPlayer.uiLobby.lobbyPanal.SetActive(true);
-            localPlayer.uiLobby.CountGameContainers();
         }
         else
         {
             Debug.LogError("Client- Player couldnt  delete host");
         }
-    }
-
-    [ClientRpc]
-    void RcpCountGameContainers(string matchID)
-    {
-        localPlayer.uiLobby?.CountGameContainers();
     }
     #endregion
 
@@ -542,7 +556,6 @@ public class Player : NetworkBehaviour
 
         thisMatch.started = true;
         RpcDeleteGameContainer(id);
-        RcpCountGameContainers(id);
 
         for (int i = 0; i < thisMatch.playersInThisMatch.Count; i++)
         {
@@ -1879,6 +1892,24 @@ public class Player : NetworkBehaviour
     [ClientRpc]
     void RpcGiveTurnToLastWinner(int cardChooser) {
         SidePanalController.instance.TintAllSlotsButOne(cardChooser);
+    }
+    public void GiveTurnToRandomPlayer() {
+        CmdGiveTurnToRandomPlayer();
+    }
+    [Command]
+    void CmdGiveTurnToRandomPlayer() {
+        bool lastWinnerLeft = (TurnManager.instance.cardChooser == TurnManager.instance.lastCardWinner);
+        TurnManager.instance.RandomlyChooseStartingPlayer(TransferDataToGame.instance.gameSize);
+        if(lastWinnerLeft) TurnManager.instance.lastCardWinner = TurnManager.instance.cardChooser;
+        RpcGiveTurnToRandomPlayer(TurnManager.instance.cardChooser, lastWinnerLeft);
+    }
+    [ClientRpc]
+    void RpcGiveTurnToRandomPlayer(int newTurn, bool lastWinnerLeft) {
+        TurnManager.instance.cardChooser = newTurn;
+        if(lastWinnerLeft) TurnManager.instance.lastCardWinner = newTurn;
+        if(SidePanalController.instance != null) {
+            SidePanalController.instance.TintAllSlotsButOne(newTurn);
+        }
     }
     void OnDestroy()
     {

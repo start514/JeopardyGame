@@ -179,6 +179,8 @@ MonoBehaviour:
   gameNameTxt: {fileID: 5198293841227900211}
   numOfPlayersTxt: {fileID: 380532275532431977}
   emptyTxt: {fileID: 33548288109354170}
+  maxPlayers: 0
+  currentPlayers: 0
 --- !u!114 &329040265894941163
 MonoBehaviour:
   m_ObjectHideFlags: 0

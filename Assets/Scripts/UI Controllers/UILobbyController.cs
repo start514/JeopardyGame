@@ -142,9 +142,16 @@ public class UILobbyController : MonoBehaviour
     #endregion
 
     #region  CONTAINERS
+    public void AddGameContainerCount() {
+        numberOfGameContainers ++;
+        CountGameContainers();
+    }
+    public void DeductGameContainerCount() {
+        numberOfGameContainers --;
+        CountGameContainers();
+    }
     internal int CountGameContainers()
     {
-        numberOfGameContainers = availableGameContent.GetComponentsInChildren<Button>().Length;
         availableGamesNumTxt.text = numberOfGameContainers.ToString();
         return numberOfGameContainers;
     }
@@ -155,14 +162,9 @@ public class UILobbyController : MonoBehaviour
         script.gameId = id;
         ChangeGamecontainerParticipentNumTxt(id, currentPlayers, maxPlayers);
         script.gameNameTxt.text = gameName;
-        // set the color of the container
-        if (numberOfGameContainers % 2 == 0)
-            container.GetComponent<Image>().color = Color.white;
-        else
-            container.GetComponent<Image>().color = greyColor;
         container.GetComponent<Button>().enabled = true;
         container.SetActive(false);
-        CountGameContainers();
+        AddGameContainerCount();
     }
     public void ClearGameContainer()
     {
@@ -197,7 +199,7 @@ public class UILobbyController : MonoBehaviour
                 Debug.Log("Destroyed game container");
             }
         }
-        CountGameContainers();
+        DeductGameContainerCount();
     }
     public void AddHostParticipentContainer(string id, string name, int color, string playerID)
     {
@@ -412,9 +414,13 @@ public class UILobbyController : MonoBehaviour
     {
     }
     #endregion
-    void Update()
-    {
-        CountGameContainers();
+    void FixedUpdate() {
+        //Update game container background color according to the index
+        var containerButtons = availableGameContent.GetComponentsInChildren<Button>();
+        for(var i=0; i<containerButtons.Length; i++) {
+            if(i%2==0) containerButtons[i].GetComponent<Image>().color = Color.white;
+            else containerButtons[i].GetComponent<Image>().color = greyColor;
+        }
         if (joinGamePanal != null && joinGamePanal.activeSelf)
         {
             ParticipentConteiner[] participents = joinGamePanal.GetComponentsInChildren<ParticipentConteiner>();
@@ -443,5 +449,8 @@ public class UILobbyController : MonoBehaviour
             }
             container.gameObject.SetActive(container.currentPlayers != 0);
         }
+    }
+    void Update()
+    {
     }
 }

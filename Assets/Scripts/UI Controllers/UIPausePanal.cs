@@ -47,7 +47,7 @@ public class UIPausePanal : MonoBehaviour
         //Destroy(Player.localPlayer.gameObject);
         if(Player.localPlayer!=null) {
             //send message that i am leaving game
-            Player.localPlayer.PlayerLeaveGame("");
+            Player.localPlayer.PlayerLeaveGame();
         }
         LoadScene("Start");
         //Application.Quit();
