@@ -1959,7 +1959,7 @@ public class Player : NetworkBehaviour
     }
     void OnDestroy()
     {
-        if(isHost && localPlayer != this && localPlayer != null) {
+        if(isHost && localPlayer != this && localPlayer != null && matchID == localPlayer.matchID) {
             Toast.instance.showToast("Host has left the game.", 3);
             SceneManager.LoadScene("Lobby");
             localPlayer.CancelGame(localPlayer.matchID);
