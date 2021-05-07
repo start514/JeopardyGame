@@ -861,22 +861,23 @@ public class Player : NetworkBehaviour
         // all of the slots are set up here
         for (int i = 0; i < localPlayer.uiGame.allCatagories.Length; i++)
         {
-            CmdCopyCatagoryData(i, localPlayer.uiGame.allCatagories[i].catagoryText.text);
+            CmdCopyCatagoryData(i, localPlayer.uiGame.allCatagories[i].catagoryText.text, localPlayer.matchID);
         }
         for (int k = 0; k < localPlayer.uiGame.allSlots.Length; k++)
         {
-            CmdCopyAmountData(k, localPlayer.uiGame.allSlots[k].answer, localPlayer.uiGame.allSlots[k].question);
+            CmdCopyAmountData(k, localPlayer.uiGame.allSlots[k].answer, localPlayer.uiGame.allSlots[k].question, localPlayer.matchID);
             //Debug.LogError("Answer: " + localPlayer.uiGame.allSlots[k].answer);
         }
     }
     [Command]
-    void CmdCopyCatagoryData(int index, string catText)
+    void CmdCopyCatagoryData(int index, string catText, string matchID)
     {
-        RpcCopyCatagoryData(index, catText);
+        RpcCopyCatagoryData(index, catText, matchID);
     }
     [ClientRpc]
-    void RpcCopyCatagoryData(int index, string catText)
+    void RpcCopyCatagoryData(int index, string catText, string matchID)
     {
+        if(localPlayer.matchID!=matchID) return;
         this.uiGame = GameObject.Find("UI Game Controller").GetComponent<UIGameController>();
         //the host is already set up
         if (!localPlayer.isHost)
@@ -891,13 +892,14 @@ public class Player : NetworkBehaviour
     }
 
     [Command]
-    void CmdCopyAmountData(int k, string answer, string question)
+    void CmdCopyAmountData(int k, string answer, string question, string matchID)
     {
-        RcpCopyAmountData(k, answer, question);
+        RcpCopyAmountData(k, answer, question, matchID);
     }
     [ClientRpc]
-    void RcpCopyAmountData(int k, string answer, string question)
+    void RcpCopyAmountData(int k, string answer, string question, string matchID)
     {
+        if(localPlayer.matchID!=matchID) return;
         // because the host already has the data
         if (!localPlayer.isHost)
         {
@@ -914,43 +916,46 @@ public class Player : NetworkBehaviour
         localPlayer.PlayerSetIsDoubleJeopardy(true);
         localPlayer.PlayerSetQuestionsLeft(30);
         localPlayer.PlayerPlaceDailyDouble();
-        CmdOpenDoubleJeopardyPanal();
+        CmdOpenDoubleJeopardyPanal(localPlayer.matchID);
     }
     [Command]
-    void CmdOpenDoubleJeopardyPanal()
+    void CmdOpenDoubleJeopardyPanal(string matchID)
     {
-        RpcOpenDoubleJeopardyPanal();
+        RpcOpenDoubleJeopardyPanal(matchID);
     }
     [ClientRpc]
-    void RpcOpenDoubleJeopardyPanal()
+    void RpcOpenDoubleJeopardyPanal(string matchID)
     {
+        if(localPlayer.matchID != matchID) return;
         localPlayer.uiGame.OpenDoubleJeopardyPanal();
     }
     internal void PlayerOpenSlotsPanalToAll()
     {
-        CmdOpenSlotsPanal();
+        CmdOpenSlotsPanal(localPlayer.matchID);
     }
     [Command]
-    void CmdOpenSlotsPanal()
+    void CmdOpenSlotsPanal(string matchID)
     {
-        RpcOpenSlotsPanal();
+        RpcOpenSlotsPanal(matchID);
     }
     [ClientRpc]
-    void RpcOpenSlotsPanal()
+    void RpcOpenSlotsPanal(string matchID)
     {
+        if(localPlayer.matchID != matchID) return;
         // reset has everyone answered 
         localPlayer.PlayerSetHasAnswered(false);
         localPlayer.uiGame.OpenSlotsPanel();
     }
     public void PlayerOpenQuestionPanalToUnansweredPlayers() {
-        CmdOpenQuestionPanalToUnansweredPlayers();
+        CmdOpenQuestionPanalToUnansweredPlayers(localPlayer.matchID);
     }
     [Command]
-    void CmdOpenQuestionPanalToUnansweredPlayers() {
-        RpcOpenQuestionPanalToUnansweredPlayers();
+    void CmdOpenQuestionPanalToUnansweredPlayers(string matchID) {
+        RpcOpenQuestionPanalToUnansweredPlayers(matchID);
     }
     [ClientRpc]
-    void RpcOpenQuestionPanalToUnansweredPlayers() {
+    void RpcOpenQuestionPanalToUnansweredPlayers(string matchID) {
+        if(localPlayer.matchID != matchID) return;
         // make sure to open after updating cuurent question, answer, amount
         if (localPlayer.isHost)
             // change what should happen to host when players have time to buzz in
@@ -960,16 +965,17 @@ public class Player : NetworkBehaviour
     }
     internal void PlayerOpenQuestionPanalToAll()
     {
-        CmdOpenQuestionPanalToAll();
+        CmdOpenQuestionPanalToAll(localPlayer.matchID);
     }
     [Command]
-    void CmdOpenQuestionPanalToAll()
+    void CmdOpenQuestionPanalToAll(string matchID)
     {
-        RpcOpenQuestionPanalToAll();
+        RpcOpenQuestionPanalToAll(matchID);
     }
     [ClientRpc]
-    void RpcOpenQuestionPanalToAll()
+    void RpcOpenQuestionPanalToAll(string matchID)
     {
+        if(localPlayer.matchID != matchID) return;
         SidePanalController.instance.UntintAllExceptAnswered();
         // make sure to open after updating cuurent question, answer, amount
         if (localPlayer.isHost)
@@ -986,32 +992,34 @@ public class Player : NetworkBehaviour
         localPlayer.amountList.Clear();
         localPlayer.playerIndexList.Clear();
         localPlayer.uiGame.finalAnswered = 0;
-        CmdOpenHostQuestionPanal();
+        CmdOpenHostQuestionPanal(localPlayer.matchID);
     }
     [Command]
-    void CmdOpenHostQuestionPanal()
+    void CmdOpenHostQuestionPanal(string matchID)
     {
-        RpcOpenHostQuestionPanal();
+        RpcOpenHostQuestionPanal(matchID);
     }
     [ClientRpc]
-    void RpcOpenHostQuestionPanal()
+    void RpcOpenHostQuestionPanal(string matchID)
     {
+        if(localPlayer.matchID != matchID) return;
         if (localPlayer.isHost)
             localPlayer.uiGame.OpenHostQuesionPanel();
     }
     //Send a COMMAND and Target RPC to reveal the answer after a player has answered 
     internal void PlayerOpenAnswerPanalToAll()
     {
-        CmdOpenAnswerPanalToAll();
+        CmdOpenAnswerPanalToAll(localPlayer.matchID);
     }
     [Command]
-    void CmdOpenAnswerPanalToAll()
+    void CmdOpenAnswerPanalToAll(string matchID)
     {
-        RpcOpenAnswerPanalToAll();
+        RpcOpenAnswerPanalToAll(matchID);
     }
     [ClientRpc]
-    void RpcOpenAnswerPanalToAll()
+    void RpcOpenAnswerPanalToAll(string matchID)
     {
+        if(localPlayer.matchID != matchID) return;
         if (localPlayer.isHost)
         {
             // localPlayer.uiGame.OpenHostQuesionPanel();
@@ -1021,16 +1029,17 @@ public class Player : NetworkBehaviour
     }
     internal void PlayerOpenCorrectAnswerPanalToAll()
     {
-        CmdOpenCorrectAnswerPanalToAll();
+        CmdOpenCorrectAnswerPanalToAll(localPlayer.matchID);
     }
     [Command]
-    void CmdOpenCorrectAnswerPanalToAll()
+    void CmdOpenCorrectAnswerPanalToAll(string matchID)
     {
-        RpcOpenCorrectAnswerPanalToAll();
+        RpcOpenCorrectAnswerPanalToAll(matchID);
     }
     [ClientRpc]
-    void RpcOpenCorrectAnswerPanalToAll()
+    void RpcOpenCorrectAnswerPanalToAll(string matchID)
     {
+        if(localPlayer.matchID != matchID) return;
         if (localPlayer.isHost)
         {
             // localPlayer.uiGame.OpenHostQuesionPanel();
@@ -1044,19 +1053,20 @@ public class Player : NetworkBehaviour
         localPlayer.PlayerSetIsDoubleJeopardy(false);
         localPlayer.PlayerSetIsFinalJeopardy(true);
         localPlayer.PlayerSetCurrenctQuestionAmount(0);
-        CmdOpenFinalJeopardyPanalToAll();
+        CmdOpenFinalJeopardyPanalToAll(localPlayer.matchID);
         if (localPlayer.uiGame.currentQuestionAmount != 0)
             localPlayer.PlayerSetCurrenctQuestionAmount(0);
 
     }
     [Command]
-    void CmdOpenFinalJeopardyPanalToAll()
+    void CmdOpenFinalJeopardyPanalToAll(string matchID)
     {
-        RpcOpenFinalJeopardyPanalToAll();
+        RpcOpenFinalJeopardyPanalToAll(matchID);
     }
     [ClientRpc]
-    void RpcOpenFinalJeopardyPanalToAll()
+    void RpcOpenFinalJeopardyPanalToAll(string matchID)
     {
+        if(localPlayer.matchID != matchID) return;
         if (localPlayer.isHost == false)
         {
             //Only open to top 3 players
@@ -1097,11 +1107,12 @@ public class Player : NetworkBehaviour
                 else winnerName = winnerName + ", " + playerName;
             }
         }
-        RpcOpenWinnerPanal(winnerAmount, winnerName);
+        RpcOpenWinnerPanal(winnerAmount, winnerName, matchID);
     }
     [ClientRpc]
-    void RpcOpenWinnerPanal(int winnerAmount, string winnerName)
+    void RpcOpenWinnerPanal(int winnerAmount, string winnerName, string matchID)
     {
+        if(localPlayer.matchID != matchID) return;
         localPlayer.uiGame.OpenWinnerPanel(winnerAmount, winnerName);
     }
     #endregion
@@ -1140,16 +1151,17 @@ public class Player : NetworkBehaviour
     }
     internal void PlayerSetIsDailyDouble(bool dailyDouble)
     {
-        CmdSetIsDailyDouble(dailyDouble);
+        CmdSetIsDailyDouble(dailyDouble, localPlayer.matchID);
     }
     [Command]
-    void CmdSetIsDailyDouble(bool dailyDouble)
+    void CmdSetIsDailyDouble(bool dailyDouble, string matchID)
     {
-        RpcSetIsDailyDouble(dailyDouble);
+        RpcSetIsDailyDouble(dailyDouble, matchID);
     }
     [ClientRpc]
-    void RpcSetIsDailyDouble(bool dailyDouble)
+    void RpcSetIsDailyDouble(bool dailyDouble, string matchID)
     {
+        if(localPlayer.matchID != matchID) return;
         localPlayer.uiGame.isDailyDoubleNow = dailyDouble;
         Debug.LogError("Daily double has changed to: " + localPlayer.uiGame.isDailyDoubleNow);
     }
@@ -1157,31 +1169,33 @@ public class Player : NetworkBehaviour
     internal void PlayerSetIsDoubleJeopardy(bool doubleJeopardy)
     {
         if (this.isHost)
-            CmdSetIsDoubleJeopardy(doubleJeopardy);
+            CmdSetIsDoubleJeopardy(doubleJeopardy, localPlayer.matchID);
     }
     [Command]
-    void CmdSetIsDoubleJeopardy(bool doubleJeopardy)
+    void CmdSetIsDoubleJeopardy(bool doubleJeopardy, string matchID)
     {
-        RpcSetIsDoubleJeopardy(doubleJeopardy);
+        RpcSetIsDoubleJeopardy(doubleJeopardy, matchID);
     }
     [ClientRpc]
-    void RpcSetIsDoubleJeopardy(bool doubleJeopardy)
+    void RpcSetIsDoubleJeopardy(bool doubleJeopardy, string matchID)
     {
+        if(localPlayer.matchID != matchID) return;
         localPlayer.uiGame.isDailyDoubleNow = doubleJeopardy;
     }
     // final jeopardy
     internal void PlayerSetIsFinalJeopardy(bool finalJeopardy)
     {
-        CmdSetIsFinalJeopardy(finalJeopardy);
+        CmdSetIsFinalJeopardy(finalJeopardy, localPlayer.matchID);
     }
     [Command]
-    void CmdSetIsFinalJeopardy(bool finalJeopardy)
+    void CmdSetIsFinalJeopardy(bool finalJeopardy, string matchID)
     {
-        RpcSetIsFinalJeopardy(finalJeopardy);
+        RpcSetIsFinalJeopardy(finalJeopardy, matchID);
     }
     [ClientRpc]
-    void RpcSetIsFinalJeopardy(bool finalJeopardy)
+    void RpcSetIsFinalJeopardy(bool finalJeopardy, string matchID)
     {
+        if(localPlayer.matchID != matchID) return;
         localPlayer.uiGame.isFinalJeopardyNow = finalJeopardy;
     }
     public void PlayerTest()
@@ -1190,16 +1204,17 @@ public class Player : NetworkBehaviour
     // remeining question
     internal void PlayerSetQuestionsLeft(int left)
     {
-        CmdSetQuestionsLeft(left);
+        CmdSetQuestionsLeft(left, localPlayer.matchID);
     }
     [Command]
-    void CmdSetQuestionsLeft(int left)
+    void CmdSetQuestionsLeft(int left, string matchID)
     {
-        RpcSetQuestionsLeft(left);
+        RpcSetQuestionsLeft(left, matchID);
     }
     [ClientRpc]
-    void RpcSetQuestionsLeft(int left)
+    void RpcSetQuestionsLeft(int left, string matchID)
     {
+        if(localPlayer.matchID != matchID) return;
         localPlayer.uiGame.questionsLeft = left;
         localPlayer.uiGame.remeiningQuestions.text = left + "/30";
         Debug.LogError("Question left has changed to: " + localPlayer.uiGame.questionsLeft);
@@ -1207,16 +1222,17 @@ public class Player : NetworkBehaviour
     // question amount
     internal void PlayerSetCurrenctQuestionAmount(int amount)
     {
-        CmdSetCurrenctQuestionAmount(amount);
+        CmdSetCurrenctQuestionAmount(amount, localPlayer.matchID);
     }
     [Command]
-    void CmdSetCurrenctQuestionAmount(int amount)
+    void CmdSetCurrenctQuestionAmount(int amount, string matchID)
     {
-        RpcSetCurrenctQuestionAmount(amount);
+        RpcSetCurrenctQuestionAmount(amount, matchID);
     }
     [ClientRpc]
-    void RpcSetCurrenctQuestionAmount(int amount)
+    void RpcSetCurrenctQuestionAmount(int amount, string matchID)
     {
+        if(localPlayer.matchID != matchID) return;
         localPlayer.uiGame.currentQuestionAmount = amount;
         //localPlayer.uiGame.clientAnswerAmountText.text = "$"+amount.ToString();
         Debug.LogError("Current Question Amount has changed to: " + localPlayer.uiGame.currentQuestionAmount);
@@ -1225,16 +1241,17 @@ public class Player : NetworkBehaviour
     // question amount for host only
     internal void PlayerSetHostCurrenctQuestionAmount(int amount)
     {
-        CmdSetHostCurrenctQuestionAmount(amount);
+        CmdSetHostCurrenctQuestionAmount(amount, localPlayer.matchID);
     }
     [Command]
-    void CmdSetHostCurrenctQuestionAmount(int amount)
+    void CmdSetHostCurrenctQuestionAmount(int amount, string matchID)
     {
-        RpcSetHostCurrenctQuestionAmount(amount);
+        RpcSetHostCurrenctQuestionAmount(amount, matchID);
     }
     [ClientRpc]
-    void RpcSetHostCurrenctQuestionAmount(int amount)
+    void RpcSetHostCurrenctQuestionAmount(int amount, string matchID)
     {
+        if(localPlayer.matchID != matchID) return;
         if (localPlayer.isHost)
         {
             localPlayer.uiGame.currentQuestionAmount = amount;
@@ -1245,16 +1262,17 @@ public class Player : NetworkBehaviour
     // current answer and question  
     internal void PlayerSetQuestionAndAnswer(string question, string answer)
     {
-        CmdSetQuestionAndAnswer(question, answer);
+        CmdSetQuestionAndAnswer(question, answer, localPlayer.matchID);
     }
     [Command]
-    void CmdSetQuestionAndAnswer(string question, string answer)
+    void CmdSetQuestionAndAnswer(string question, string answer, string matchID)
     {
-        RpcSetQuestionAndAnswer(question, answer);
+        RpcSetQuestionAndAnswer(question, answer, matchID);
     }
     [ClientRpc]
-    void RpcSetQuestionAndAnswer(string question, string answer)
+    void RpcSetQuestionAndAnswer(string question, string answer, string matchID)
     {
+        if(localPlayer.matchID != matchID) return;
         localPlayer.uiGame.currentQuestion = question;
         localPlayer.uiGame.currentCorrectAnswer = answer;
         Debug.LogError("Current question and answer have been changed to: " + localPlayer.uiGame.currentQuestion + " " + localPlayer.uiGame.currentCorrectAnswer);
@@ -1263,16 +1281,17 @@ public class Player : NetworkBehaviour
     // current input answer
     internal void PlayerSetCurrentInputAnswer(string who, string answer)
     {
-        CmdSetCurrentInputAnswer(who, answer);
+        CmdSetCurrentInputAnswer(who, answer, localPlayer.matchID);
     }
     [Command]
-    void CmdSetCurrentInputAnswer(string who, string answer)
+    void CmdSetCurrentInputAnswer(string who, string answer, string matchID)
     {
-        RpcSetCurrentInputAnswer(who, answer);
+        RpcSetCurrentInputAnswer(who, answer, matchID);
     }
     [ClientRpc]
-    void RpcSetCurrentInputAnswer(string who, string answer)
+    void RpcSetCurrentInputAnswer(string who, string answer, string matchID)
     {
+        if(localPlayer.matchID != matchID) return;
         localPlayer.uiGame.currentInputAnswer = answer;
         Debug.LogError("Current input answer hase been changed to: " + localPlayer.uiGame.currentInputAnswer);
         if (localPlayer.isHost)
@@ -1287,16 +1306,17 @@ public class Player : NetworkBehaviour
     // current input answer amount
     internal void PlayerSetCurrentInputAnswerAmount(string who, string answer, int amount, int pidx)
     {
-        CmdSetCurrentInputAnswerAmount(who, answer, amount, pidx);
+        CmdSetCurrentInputAnswerAmount(who, answer, amount, pidx, localPlayer.matchID);
     }
     [Command]
-    void CmdSetCurrentInputAnswerAmount(string who, string answer, int amount, int pidx)
+    void CmdSetCurrentInputAnswerAmount(string who, string answer, int amount, int pidx, string matchID)
     {
-        RpcSetCurrentInputAnswerAmount(who, answer, amount, pidx);
+        RpcSetCurrentInputAnswerAmount(who, answer, amount, pidx, matchID);
     }
     [ClientRpc]
-    void RpcSetCurrentInputAnswerAmount(string who, string answer, int amount, int pidx)
+    void RpcSetCurrentInputAnswerAmount(string who, string answer, int amount, int pidx, string matchID)
     {
+        if(localPlayer.matchID != matchID) return;
         localPlayer.uiGame.currentInputAnswer = answer;
         Debug.LogError("##  Current input answer hase been changed to: " + localPlayer.uiGame.currentInputAnswer);
         if (localPlayer.isHost)
@@ -1382,8 +1402,9 @@ public class Player : NetworkBehaviour
         this.uiPlayer.UpdateMyButtomContainer(newAmount);
     }
     [ClientRpc]
-    void RpcUpdateSideContainerToAll(int myIndex, int newAmount)
+    void RpcUpdateSideContainerToAll(int myIndex, int newAmount, string matchID)
     {
+        if(localPlayer.matchID != matchID) return;
         SidePanalController.instance.UpdateSideSlotAmount(myIndex, newAmount);
     }
     internal void PlayerPlaceDailyDouble()
@@ -1393,20 +1414,21 @@ public class Player : NetworkBehaviour
             CmdPlaceDailyDouble(localPlayer.matchID);
     }
     [Command]
-    void CmdPlaceDailyDouble(string id)
+    void CmdPlaceDailyDouble(string matchID)
     {
         if (TransferDataToGame.instance.dailyDouble)
         {
             // choose a random spot to place the daily double and tell eveyone to do so
             int rnd = UnityEngine.Random.Range(0, 29);
-            RpcPlaceDailyDouble(rnd);
+            RpcPlaceDailyDouble(rnd, matchID);
         }
         else
             Debug.LogError("Should place daily double is set to false", this);
     }
     [ClientRpc]
-    void RpcPlaceDailyDouble(int spot)
+    void RpcPlaceDailyDouble(int spot, string matchID)
     {
+        if(localPlayer.matchID != matchID) return;
         if(localPlayer.uiGame == null) {
             UIGameController.doubleSlot = spot;
         } else {
@@ -1419,14 +1441,14 @@ public class Player : NetworkBehaviour
 
     internal void PlayerBuzzedIn()
     {
-        CmdPlayerBuzzedIn(playerID);
+        CmdPlayerBuzzedIn(playerID, localPlayer.matchID);
         this.PlayerStopTimerForAllExceptMe();
     }
     [Command]
-    void CmdPlayerBuzzedIn(string playerID)
+    void CmdPlayerBuzzedIn(string playerID, string matchID)
     {
         TargetPlayerBuzzedIn();
-        RpcPlayerBuzzedIn(playerID);
+        RpcPlayerBuzzedIn(playerID, matchID);
     }
     [TargetRpc]
     void TargetPlayerBuzzedIn()
@@ -1435,8 +1457,9 @@ public class Player : NetworkBehaviour
         // runs only on the player that has buzzed in 
     }
     [ClientRpc]
-    void RpcPlayerBuzzedIn(string playerID)
+    void RpcPlayerBuzzedIn(string playerID, string matchID)
     {
+        if(localPlayer.matchID != matchID) return;
         // make it so  can't buzz
         if (localPlayer.playerID != playerID)
         {
@@ -1476,27 +1499,29 @@ public class Player : NetworkBehaviour
         }
     }
     public void PlayerAddAmountTo(int playerIndex, int amount) {
-        CmdPlayerAddAmountTo(playerIndex, amount);
+        CmdPlayerAddAmountTo(playerIndex, amount, localPlayer.matchID);
     }
     [Command]
-    void CmdPlayerAddAmountTo(int playerIndex, int amount) {
-        RpcPlayerAddAmountTo(playerIndex, amount);
+    void CmdPlayerAddAmountTo(int playerIndex, int amount, string matchID) {
+        RpcPlayerAddAmountTo(playerIndex, amount, matchID);
     }
     [ClientRpc]
-    void RpcPlayerAddAmountTo(int playerIndex, int amount) {
+    void RpcPlayerAddAmountTo(int playerIndex, int amount, string matchID) {
+        if(localPlayer.matchID != matchID) return;
         if(localPlayer.playerIndex == playerIndex) {
             localPlayer.PlayerAddAmount(amount);
         }
     }
     public void PlayerDeductAmountTo(int playerIndex, int amount) {
-        CmdPlayerDeductAmountTo(playerIndex, amount);
+        CmdPlayerDeductAmountTo(playerIndex, amount, localPlayer.matchID);
     }
     [Command]
-    void CmdPlayerDeductAmountTo(int playerIndex, int amount) {
-        RpcPlayerDeductAmountTo(playerIndex, amount);
+    void CmdPlayerDeductAmountTo(int playerIndex, int amount, string matchID) {
+        RpcPlayerDeductAmountTo(playerIndex, amount, matchID);
     }
     [ClientRpc]
-    void RpcPlayerDeductAmountTo(int playerIndex, int amount) {
+    void RpcPlayerDeductAmountTo(int playerIndex, int amount, string matchID) {
+        if(localPlayer.matchID != matchID) return;
         if(localPlayer.playerIndex == playerIndex) {
             localPlayer.PlayerDeductAmount(amount);
         }
@@ -1506,19 +1531,20 @@ public class Player : NetworkBehaviour
         CmdHostDecided(correct, localPlayer.matchID);
     }
     [Command]
-    void CmdHostDecided(bool correct, string matchid)
+    void CmdHostDecided(bool correct, string matchID)
     {
         Debug.LogError("Now answering indezx is " + TurnManager.instance.nowAnswering);
         if (correct)
-            RpcPlayerSumbitedRight(TurnManager.instance.nowAnswering);
+            RpcPlayerSumbitedRight(TurnManager.instance.nowAnswering, matchID);
         else
         {
-            RpcPlayerSumbitedWrong(TurnManager.CheckIfEveryoneAnswered(MatchMaker.instance.FindMatchById(matchid).playersInThisMatch), TurnManager.instance.nowAnswering);
+            RpcPlayerSumbitedWrong(TurnManager.CheckIfEveryoneAnswered(MatchMaker.instance.FindMatchById(matchID).playersInThisMatch), TurnManager.instance.nowAnswering, matchID);
         }
     }
     [ClientRpc]
-    void RpcPlayerSumbitedRight(int whoAnswered)
+    void RpcPlayerSumbitedRight(int whoAnswered, string matchID)
     {
+        if(localPlayer.matchID != matchID) return;
         if (localPlayer.playerIndex == whoAnswered)
         {
             localPlayer.PlayerSetQuestionsLeft((localPlayer.uiGame.questionsLeft - 1));
@@ -1526,15 +1552,16 @@ public class Player : NetworkBehaviour
             Debug.Log("Answer was declared correct");
             //A correct response earns the dollar value of the question and the opportunity to select the next question from the board.
             localPlayer.PlayerAddAmount(localPlayer.uiGame.currentQuestionAmount);
-            localPlayer.CmdOpenAnswerPanalToAll();
+            localPlayer.CmdOpenAnswerPanalToAll(matchID);
             //PlayerGiveTurnTo(localPlayer.playerIndex, true);
 
         }
     }
 
     [ClientRpc]
-    void RpcPlayerSumbitedWrong(bool everyoneAnswered, int whoAnswered)
+    void RpcPlayerSumbitedWrong(bool everyoneAnswered, int whoAnswered, string matchID)
     {
+        if(localPlayer.matchID != matchID) return;
         if (localPlayer.playerIndex == whoAnswered)
         {
             localPlayer.PlayerSetQuestionsLeft((localPlayer.uiGame.questionsLeft - 1));
@@ -1554,16 +1581,17 @@ public class Player : NetworkBehaviour
     }
     internal void PlayerStopTimerForAllExceptMe()
     {
-        CmdStopTimerForAllExceptMe(this.playerIndex);
+        CmdStopTimerForAllExceptMe(this.playerIndex, localPlayer.matchID);
     }
     [Command]
-    void CmdStopTimerForAllExceptMe(int index)
+    void CmdStopTimerForAllExceptMe(int index, string matchID)
     {
-        RpcStopTimerForAllExceptMe(index);
+        RpcStopTimerForAllExceptMe(index, matchID);
     }
     [ClientRpc]
-    void RpcStopTimerForAllExceptMe(int index)
+    void RpcStopTimerForAllExceptMe(int index, string matchID)
     {
+        if(localPlayer.matchID != matchID) return;
         if (localPlayer.playerIndex != index && localPlayer.isHost == false)
         {
             Debug.Log("Stopping timer coutine");
@@ -1572,46 +1600,49 @@ public class Player : NetworkBehaviour
     }
     internal void PlayerStartTimerForAll(bool sumbit)
     {
-        CmdStartTimerForAll(sumbit);
+        CmdStartTimerForAll(sumbit, localPlayer.matchID);
     }
     [Command]
-    void CmdStartTimerForAll(bool sumbit)
+    void CmdStartTimerForAll(bool sumbit, string matchID)
     {
-        RpcStartTimerForAll(sumbit);
+        RpcStartTimerForAll(sumbit, matchID);
     }
     [ClientRpc]
-    void RpcStartTimerForAll(bool sumbit)
+    void RpcStartTimerForAll(bool sumbit, string matchID)
     {
+        if(localPlayer.matchID != matchID) return;
         localPlayer.uiGame.StartTimerCoroutine(sumbit);
     }
 
     internal void PlayerStartTimerForHost(bool sumbit)
     {
-        CmdStartTimerForHost(sumbit);
+        CmdStartTimerForHost(sumbit, localPlayer.matchID);
     }
     [Command]
-    void CmdStartTimerForHost(bool sumbit)
+    void CmdStartTimerForHost(bool sumbit, string matchID)
     {
-        RpcStartTimerForHost(sumbit);
+        RpcStartTimerForHost(sumbit, matchID);
     }
     [ClientRpc]
-    void RpcStartTimerForHost(bool sumbit)
+    void RpcStartTimerForHost(bool sumbit, string matchID)
     {
+        if(localPlayer.matchID != matchID) return;
         if (localPlayer.isHost)
             localPlayer.uiGame.StartTimerCoroutine(sumbit);
     }
     internal void PlayerStoptTimerForHost()
     {
-        CmdStopTimerForHost();
+        CmdStopTimerForHost(localPlayer.matchID);
     }
     [Command]
-    void CmdStopTimerForHost()
+    void CmdStopTimerForHost(string matchID)
     {
-        RpcStopTimerForHost();
+        RpcStopTimerForHost(matchID);
     }
     [ClientRpc]
-    void RpcStopTimerForHost()
+    void RpcStopTimerForHost(string matchID)
     {
+        if(localPlayer.matchID != matchID) return;
         if (localPlayer.isHost)
         {
             Debug.LogError("RpcStopTimerForHost()");
@@ -1624,10 +1655,10 @@ public class Player : NetworkBehaviour
     }
 
     [Command]
-    void CmdGiveTryTo(int lastIndex, string matchid)
+    void CmdGiveTryTo(int lastIndex, string matchID)
     {
         // make sure this method is not called from the host
-        SyncListGameObject players = MatchMaker.instance.FindMatchById(matchid).playersInThisMatch;
+        SyncListGameObject players = MatchMaker.instance.FindMatchById(matchID).playersInThisMatch;
         if (players.Count > 2)
         {
             int nextIndex;
@@ -1649,14 +1680,15 @@ public class Player : NetworkBehaviour
                     }
                 }
             }
-            RpcGiveTryTo(nextIndex);
+            RpcGiveTryTo(nextIndex, matchID);
         }
         else
-            RpcGiveTryTo(lastIndex);
+            RpcGiveTryTo(lastIndex, matchID);
     }
     [ClientRpc]
-    void RpcGiveTryTo(int indexToGive)
+    void RpcGiveTryTo(int indexToGive, string matchID)
     {
+        if(localPlayer.matchID != matchID) return;
         if (localPlayer.isHost == false)
         {
             if (localPlayer.playerIndex == indexToGive)
@@ -1667,37 +1699,39 @@ public class Player : NetworkBehaviour
     }
     void PlayerGiveTurnTo(int lastIndex, bool me)
     {
-        CmdGiveTurnTo(lastIndex, me);
+        CmdGiveTurnTo(lastIndex, me, localPlayer.matchID);
     }
     [Command]
-    void CmdGiveTurnTo(int lastIndex, bool me)
+    void CmdGiveTurnTo(int lastIndex, bool me, string matchID)
     {
         int indexToGive = lastIndex;
         if (me)
-            RpcGiveTurnTo(lastIndex);
+            RpcGiveTurnTo(lastIndex, matchID);
         else
         {
-            RpcGiveTurnTo(indexToGive);
+            RpcGiveTurnTo(indexToGive, matchID);
 
         }
     }
     [ClientRpc]
-    void RpcGiveTurnTo(int indexToGive)
+    void RpcGiveTurnTo(int indexToGive, string matchID)
     {
+        if(localPlayer.matchID != matchID) return;
         localPlayer.uiGame.OpenSlotsPanel();
     }
     internal void PlayerPauseGameForAll()
     {
-        CmdPauseGameForAll();
+        CmdPauseGameForAll(localPlayer.matchID);
     }
     [Command]
-    void CmdPauseGameForAll()
+    void CmdPauseGameForAll(string matchID)
     {
-        RpcPauseGameForAll();
+        RpcPauseGameForAll(matchID);
     }
     [ClientRpc]
-    void RpcPauseGameForAll()
+    void RpcPauseGameForAll(string matchID)
     {
+        if(localPlayer.matchID != matchID) return;
         // bool stopTimer = false;
         if (!localPlayer.isHost)
         {
@@ -1745,16 +1779,17 @@ public class Player : NetworkBehaviour
     }
     internal void PlayerUnPauseGameForAll()
     {
-        CmdUnPauseGameForAll();
+        CmdUnPauseGameForAll(localPlayer.matchID);
     }
     [Command]
-    void CmdUnPauseGameForAll()
+    void CmdUnPauseGameForAll(string matchID)
     {
-        RpcUnPauseGameForAll();
+        RpcUnPauseGameForAll(matchID);
     }
     [ClientRpc]
-    void RpcUnPauseGameForAll()
+    void RpcUnPauseGameForAll(string matchID)
     {
+        if(localPlayer.matchID != matchID) return;
         if (localPlayer.isHost)
         {
             localPlayer.uiGame.hostUnpauseBtn.gameObject.SetActive(false);
@@ -1789,16 +1824,17 @@ public class Player : NetworkBehaviour
     }
     internal void PlayerGreyOutSlotForEveryone(int slotIndex)
     {
-        CmdGreyOutSlotForEveryone(slotIndex);
+        CmdGreyOutSlotForEveryone(slotIndex, localPlayer.matchID);
     }
     [Command]
-    void CmdGreyOutSlotForEveryone(int slotIndex)
+    void CmdGreyOutSlotForEveryone(int slotIndex, string matchID)
     {
-        RpcGreyOutSlotForEveryone(slotIndex);
+        RpcGreyOutSlotForEveryone(slotIndex, matchID);
     }
     [ClientRpc]
-    void RpcGreyOutSlotForEveryone(int slotIndex)
+    void RpcGreyOutSlotForEveryone(int slotIndex, string matchID)
     {
+        if(localPlayer.matchID != matchID) return;
         localPlayer.uiGame.GreyOutSlot(slotIndex);
     }
     #endregion
@@ -1827,28 +1863,30 @@ public class Player : NetworkBehaviour
     }
     public void TintAllSlotsButOne(int playerIndex)
     {
-        CmdTintAllSlotsButOne(playerIndex);
+        CmdTintAllSlotsButOne(playerIndex, localPlayer.matchID);
     }
     [Command]
-    void CmdTintAllSlotsButOne(int playerIndex)
+    void CmdTintAllSlotsButOne(int playerIndex, string matchID)
     {
-        RpcTintAllSlotsButOne(playerIndex);
+        RpcTintAllSlotsButOne(playerIndex, matchID);
     }
     [ClientRpc]
-    void RpcTintAllSlotsButOne(int playerIndex)
+    void RpcTintAllSlotsButOne(int playerIndex, string matchID)
     {
+        if(localPlayer.matchID != matchID) return;
         SidePanalController.instance.TintAllSlotsButOne(playerIndex);
     }
     public void UntintAllExceptAnswered()
     {
-        CmdUntintAllExceptAnswered();
+        CmdUntintAllExceptAnswered(localPlayer.matchID);
     }
     [Command]
-    void CmdUntintAllExceptAnswered() {
-        RpcUntintAllExceptAnswered();
+    void CmdUntintAllExceptAnswered(string matchID) {
+        RpcUntintAllExceptAnswered(matchID);
     }
     [ClientRpc]
-    void RpcUntintAllExceptAnswered() {
+    void RpcUntintAllExceptAnswered(string matchID) {
+        if(localPlayer.matchID != matchID) return;
         SidePanalController.instance.UntintAllExceptAnswered();
     }
     public void CancelGame(string matchID) {
@@ -1861,18 +1899,19 @@ public class Player : NetworkBehaviour
     }
 
     public void GiveTurnToCurrentAnswerer() {
-        CmdGiveTurnToCurrentAnswerer();
+        CmdGiveTurnToCurrentAnswerer(localPlayer.matchID);
     }
     
     [Command]
-    void CmdGiveTurnToCurrentAnswerer() {
+    void CmdGiveTurnToCurrentAnswerer(string matchID) {
         TurnManager.instance.cardChooser = TurnManager.instance.nowAnswering;
         TurnManager.instance.lastCardWinner = TurnManager.instance.nowAnswering;
-        RpcGiveTurnToCurrentAnswerer(TurnManager.instance.cardChooser);
+        RpcGiveTurnToCurrentAnswerer(TurnManager.instance.cardChooser, matchID);
     }
 
     [ClientRpc]
-    void RpcGiveTurnToCurrentAnswerer(int cardChooser) {
+    void RpcGiveTurnToCurrentAnswerer(int cardChooser, string matchID) {
+        if(localPlayer.matchID != matchID) return;
         SidePanalController.instance.TintAllSlotsButOne(cardChooser);
     }
 
@@ -1891,25 +1930,27 @@ public class Player : NetworkBehaviour
             //Randomly choose starting player
             TurnManager.instance.RandomlyChooseStartingPlayer(thisMatch.playersInThisMatch.Count);
         }
-        RpcGiveTurnToLastWinner(TurnManager.instance.cardChooser);
+        RpcGiveTurnToLastWinner(TurnManager.instance.cardChooser, matchID);
     }
 
     [ClientRpc]
-    void RpcGiveTurnToLastWinner(int cardChooser) {
+    void RpcGiveTurnToLastWinner(int cardChooser, string matchID) {
+        if(localPlayer.matchID != matchID) return;
         SidePanalController.instance.TintAllSlotsButOne(cardChooser);
     }
     public void GiveTurnToRandomPlayer() {
-        CmdGiveTurnToRandomPlayer();
+        CmdGiveTurnToRandomPlayer(localPlayer.matchID);
     }
     [Command]
-    void CmdGiveTurnToRandomPlayer() {
+    void CmdGiveTurnToRandomPlayer(string matchID) {
         bool lastWinnerLeft = (TurnManager.instance.cardChooser == TurnManager.instance.lastCardWinner);
         TurnManager.instance.RandomlyChooseStartingPlayer(TransferDataToGame.instance.gameSize);
         if(lastWinnerLeft) TurnManager.instance.lastCardWinner = TurnManager.instance.cardChooser;
-        RpcGiveTurnToRandomPlayer(TurnManager.instance.cardChooser, lastWinnerLeft);
+        RpcGiveTurnToRandomPlayer(TurnManager.instance.cardChooser, lastWinnerLeft, matchID);
     }
     [ClientRpc]
-    void RpcGiveTurnToRandomPlayer(int newTurn, bool lastWinnerLeft) {
+    void RpcGiveTurnToRandomPlayer(int newTurn, bool lastWinnerLeft, string matchID) {
+        if(localPlayer.matchID != matchID) return;
         TurnManager.instance.cardChooser = newTurn;
         if(lastWinnerLeft) TurnManager.instance.lastCardWinner = newTurn;
         if(SidePanalController.instance != null) {
