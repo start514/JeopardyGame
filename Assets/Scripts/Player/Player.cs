@@ -320,7 +320,7 @@ public class Player : NetworkBehaviour
             this.playerAmount = 0;
             this.matchID = id;
             this.isHost = false;
-            this.playerIndex = MatchMaker.instance.FindMatchById(id).playersInThisMatch.Count - 2; //If count contains host, so it should deduct 2 for zero-based index
+            this.playerIndex = colorChosen;
             this.playerName = "Player #" + (this.playerIndex + 1);
 
             Debug.Log("Server- Sucssesfly joined game");
@@ -346,8 +346,8 @@ public class Player : NetworkBehaviour
             CmdUpdateIsHost(false, id, localPlayer.matchID);
             CmdUpdateMatchID(localPlayer.matchID);
             Debug.Log("Client- Game joining was sucsesfull with id " + id.ToString());
-            localPlayer.uiLobby.OpenJoinPanalWithId(index, match.maxGameSize);
-            CmdAddJoinContainerLocally(id, localPlayer.playerID);
+            // localPlayer.uiLobby.OpenJoinPanalWithId(index, match.maxGameSize);
+            CmdAddJoinContainerLocally(id, localPlayer.playerID, index, match.maxGameSize);
 
             // add my contaniner to the host 
             CmdAddHostContainer(id, localPlayer.playerID);
@@ -361,7 +361,7 @@ public class Player : NetworkBehaviour
         }
     }
     [Command]
-    void CmdAddJoinContainerLocally(string id, string playerId)
+    void CmdAddJoinContainerLocally(string id, string playerId, int index, int maxGameSize)
     {
         SyncListGameObject players = MatchMaker.instance.FindMatchById(id).playersInThisMatch;
         int numOfPlayers = players.Count;
@@ -374,11 +374,12 @@ public class Player : NetworkBehaviour
                 int color = players[i].GetComponent<Player>().playerColor;
                 if (string.IsNullOrEmpty(hostName))
                     hostName = "Host";
-                TargetAddJoinContainerLocally(id, true, hostName, color, players[i].GetComponent<Player>().playerID);
+                TargetAddJoinContainerLocally(id, true, hostName, color, players[i].GetComponent<Player>().playerID, -1, maxGameSize, -1);
                 break;
             }
         }
-        TargetAddJoinContainerLocallyWithIF(id, this.playerColor);
+        bool onlyMe = (numOfPlayers == 2);
+        TargetAddJoinContainerLocallyWithIF(id, this.playerColor, index, maxGameSize, onlyMe);
         for (int i = 0; i < numOfPlayers; i++)
         {
             if (players[i].GetComponent<Player>().isHost == false && players[i].GetComponent<Player>().playerID != playerId)
@@ -387,7 +388,7 @@ public class Player : NetworkBehaviour
                 int color = players[i].GetComponent<Player>().playerColor;
                 if (string.IsNullOrEmpty(playerName))
                     playerName = "Player";
-                TargetAddJoinContainerLocally(id, false, playerName, color, players[i].GetComponent<Player>().playerID);
+                TargetAddJoinContainerLocally(id, false, playerName, color, players[i].GetComponent<Player>().playerID, index, maxGameSize, i);
             }
         }
     }
@@ -410,17 +411,21 @@ public class Player : NetworkBehaviour
     }
 
     [TargetRpc]
-    void TargetAddJoinContainerLocally(string id, bool host, string playerName, int color, string playerId)
+    void TargetAddJoinContainerLocally(string id, bool host, string playerName, int color, string playerId, int joined, int maxGameSize, int index)
     {
         Debug.Log(playerName + "'s color = " + color);
         localPlayer.uiLobby.AddJoinParticipentConteiner(id, host, playerName, color, playerId);
-
+        //to get zero based index, minus 2 to exclude host player
+        //if this is last container to add, show join panel
+        if(joined - 1 == index) localPlayer.uiLobby.OpenJoinPanalWithId(joined, maxGameSize);
     }
 
     [TargetRpc]
-    void TargetAddJoinContainerLocallyWithIF(string id, int color)
+    void TargetAddJoinContainerLocallyWithIF(string id, int color, int joined, int maxGameSize, bool onlyMe)
     {
         localPlayer.uiLobby.AddJoinParticipentConteinerWithInput(id, color, localPlayer.playerID);
+        //if i am only the participant, open join panel now
+        if(onlyMe) localPlayer.uiLobby.OpenJoinPanalWithId(joined, maxGameSize);
 
     }
     public void PlayerCancelJoin(string id)

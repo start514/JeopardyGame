@@ -135,7 +135,7 @@ public class UILobbyController : MonoBehaviour
 
     internal void OpenJoinPanalWithId(int current, int max)
     {
-        joinParticipentNumTxt.text = (current - 1) + " / " + max; //(current - 1) - 1 because we don't iclude the host as a participent
+        joinParticipentNumTxt.text = current + " / " + max; //(current - 1) - 1 because we don't iclude the host as a participent
         lobbyPanal.SetActive(true);
         joinGamePanal.SetActive(true);
     }
@@ -235,6 +235,7 @@ public class UILobbyController : MonoBehaviour
                 }
             }
         }
+        SetHostContainerColor();
     }
     public void AddJoinParticipentConteiner(string id, bool host, string name, int color, string playerID)
     {
@@ -345,6 +346,7 @@ public class UILobbyController : MonoBehaviour
                 }
             }
         }
+        SetJoinContainerColor();
     }
     public void UpdateJoinContainerName(string playerId, string newName)
     {
@@ -449,6 +451,9 @@ public class UILobbyController : MonoBehaviour
             }
             container.gameObject.SetActive(container.currentPlayers != 0);
         }
+        //Join/Host container colors
+        SetJoinContainerColor();
+        SetHostContainerColor();
     }
     void Update()
     {

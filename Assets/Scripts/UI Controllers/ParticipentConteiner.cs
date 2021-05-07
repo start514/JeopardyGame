@@ -15,8 +15,7 @@ public class ParticipentConteiner : MonoBehaviour
 
     }
 
-    // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         Player[] players = GameObject.FindObjectsOfType<Player>();
         for(int i=0; i<players.Length; i++) {
