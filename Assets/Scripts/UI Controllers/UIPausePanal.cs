@@ -7,6 +7,7 @@ public class UIPausePanal : MonoBehaviour
 {
     public Button settings, leaveGame, LeaderBoard, instructions;
     public GameObject settingsPanal, infoPanal, leaderBoardPanal, pausePanal;
+    public ConfirmPopup confirmPopup;
     public bool shouldOpen = false;
     // Start is called before the first frame update
 
@@ -42,15 +43,18 @@ public class UIPausePanal : MonoBehaviour
     }
     public void LeaveGame()
     {
-        pausePanal.SetActive(false);
-        // deleting objects so there won't be twice in the scene by accident 
-        //Destroy(Player.localPlayer.gameObject);
-        if(Player.localPlayer!=null) {
-            //send message that i am leaving game
-            Player.localPlayer.PlayerLeaveGame();
-        }
-        LoadScene("Start");
-        //Application.Quit();
+        confirmPopup.show(delegate {
+            pausePanal.SetActive(false);
+            // deleting objects so there won't be twice in the scene by accident 
+            //Destroy(Player.localPlayer.gameObject);
+            if(Player.localPlayer!=null) {
+                //send message that i am leaving game
+                Player.localPlayer.PlayerLeaveGame();
+            }
+            LoadScene("Start");
+            //Application.Quit();
+            return true;
+        });
     }
 
     public void Open()

@@ -213,23 +213,32 @@ public class Player : NetworkBehaviour
             Debug.LogError("Client- Player couldnt host game");
         }
     }
-    public void PlayerLeaveGame() {
-        CmdPlayerLeaveGame(localPlayer.isHost, localPlayer.playerID, localPlayer.matchID, localPlayer.playerIndex);
+    public void OtherPlayerDisconnected(bool isHost, string playerName, string playerID, string matchID, int playerIndex) {
+        CmdOtherPlayerDisconnected(isHost, playerName, playerID, matchID, playerIndex);
     }
     [Command]
-    void CmdPlayerLeaveGame(bool isHost, string playerID, string matchID, int playerIndex) {
+    void CmdOtherPlayerDisconnected(bool isHost, string playerName, string playerID, string matchID, int playerIndex) {
+        RpcPlayerLeaveGame(isHost, playerName, playerID, matchID, playerIndex);
+    }
+    public void PlayerLeaveGame() {
+        CmdPlayerLeaveGame(localPlayer.isHost, localPlayer.playerName, localPlayer.playerID, localPlayer.matchID, localPlayer.playerIndex);
+    }
+    [Command]
+    void CmdPlayerLeaveGame(bool isHost, string playerName, string playerID, string matchID, int playerIndex) {
         this.matchID = "";
-        RpcPlayerLeaveGame(isHost, playerID, matchID, playerIndex);
+        RpcPlayerLeaveGame(isHost, playerName, playerID, matchID, playerIndex);
     }
     [ClientRpc]
-    void RpcPlayerLeaveGame(bool isHost, string playerID, string matchID, int playerIndex) {
+    void RpcPlayerLeaveGame(bool isHost, string playerName, string playerID, string matchID, int playerIndex) {
+        if(localPlayer == null) return;
         if(localPlayer.matchID != matchID) return;
         if(isHost && localPlayer.playerID != playerID) {
-            Toast.instance.showToast("Host has left the game.", 3);
+            Toast.instance.showToast("The host has left the game.", 3);
             SceneManager.LoadScene("Lobby");
             localPlayer.CancelGame(localPlayer.matchID);
-        } else if(!isHost && localPlayer.playerID != playerID && playerIndex == TurnManager.instance.cardChooser) {
-            if(localPlayer.isHost) {
+        } else if(!isHost && localPlayer.playerID != playerID) {
+            Toast.instance.showToast($"[{playerName}] has\nleft the game.", 3);
+            if(localPlayer.isHost && playerIndex == TurnManager.instance.cardChooser) {
                 //if i am host and player with the turn has left the game
                 //give turn to other players
                 localPlayer.GiveTurnToRandomPlayer();
@@ -556,7 +565,7 @@ public class Player : NetworkBehaviour
         Match thisMatch = MatchMaker.instance.FindMatchById(id);
 
         //Randomly choose starting player
-        TurnManager.instance.RandomlyChooseStartingPlayer(thisMatch.playersInThisMatch.Count);
+        TurnManager.instance.RandomlyChooseStartingPlayer(gameSize, matchID);
         TurnManager.instance.lastCardWinner = -1;
 
         thisMatch.started = true;
@@ -1859,6 +1868,7 @@ public class Player : NetworkBehaviour
     [TargetRpc]
     void TargetKickPlayer(NetworkConnection target)
     {
+        Toast.instance.showToast("You were kicked by the host", 3);
         localPlayer.PlayerCancelJoin(localPlayer.matchID);
     }
     public void TintAllSlotsButOne(int playerIndex)
@@ -1928,7 +1938,7 @@ public class Player : NetworkBehaviour
             Match thisMatch = MatchMaker.instance.FindMatchById(matchID);
 
             //Randomly choose starting player
-            TurnManager.instance.RandomlyChooseStartingPlayer(thisMatch.playersInThisMatch.Count);
+            TurnManager.instance.RandomlyChooseStartingPlayer(TransferDataToGame.instance.gameSize, matchID);
         }
         RpcGiveTurnToLastWinner(TurnManager.instance.cardChooser, matchID);
     }
@@ -1944,7 +1954,7 @@ public class Player : NetworkBehaviour
     [Command]
     void CmdGiveTurnToRandomPlayer(string matchID) {
         bool lastWinnerLeft = (TurnManager.instance.cardChooser == TurnManager.instance.lastCardWinner);
-        TurnManager.instance.RandomlyChooseStartingPlayer(TransferDataToGame.instance.gameSize);
+        TurnManager.instance.RandomlyChooseStartingPlayer(TransferDataToGame.instance.gameSize, matchID);
         if(lastWinnerLeft) TurnManager.instance.lastCardWinner = TurnManager.instance.cardChooser;
         RpcGiveTurnToRandomPlayer(TurnManager.instance.cardChooser, lastWinnerLeft, matchID);
     }
@@ -1960,11 +1970,17 @@ public class Player : NetworkBehaviour
     void OnDestroy()
     {
         if(isHost && localPlayer != this && localPlayer != null && matchID == localPlayer.matchID) {
-            Toast.instance.showToast("Host has left the game.", 3);
+            //When host is destoryed and he is not my match and i am not host
+            Toast.instance.showToast("The host has left the game.", 3);
             SceneManager.LoadScene("Lobby");
             localPlayer.CancelGame(localPlayer.matchID);
+        } else if(localPlayer != null && localPlayer.isHost && !isHost && matchID == localPlayer.matchID) {
+            //When I am host and one of participant has disconnected (player object destroyed)
+            //Send message to every participant and me to show toast "somebody disconnected"
+            localPlayer.OtherPlayerDisconnected(isHost, playerName, playerID, matchID, playerIndex);
         } else if(localPlayer == this || localPlayer == null) {
-            Toast.instance.showToast("Network disconnected.", 3);
+            //When my network is disconnected (my player object is destroyed)
+            // Toast.instance.showToast("Network disconnected.", 3);
         }
     }
 }

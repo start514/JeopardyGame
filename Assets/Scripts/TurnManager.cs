@@ -20,10 +20,23 @@ public class TurnManager : NetworkBehaviour
             instance = this;
         }
     }
-    public int RandomlyChooseStartingPlayer(int playerCount)
+    public int RandomlyChooseStartingPlayer(int playerCount, string matchID)
     {
-        int rnd = Random.Range(0, playerCount - 1);
-        cardChooser = rnd;
+        bool availablePlayer = false;
+        int rnd = -1;
+        while(!availablePlayer) {
+            availablePlayer = false;
+            rnd = Random.Range(0, playerCount - 1);
+            cardChooser = rnd;
+            Match match = MatchMaker.instance.FindMatchById(matchID);
+            foreach(var gameobject in match.playersInThisMatch) {
+                Player player = gameobject?.GetComponent<Player>();
+                if((player != null && player.matchID == matchID && player.playerIndex == rnd)) {
+                    //Valid player
+                    availablePlayer = true;
+                }
+            }
+        }
         return rnd;
     }
 
