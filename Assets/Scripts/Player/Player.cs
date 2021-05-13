@@ -1990,7 +1990,7 @@ public class Player : NetworkBehaviour
     {
         if(isHost && localPlayer != this && localPlayer != null && matchID == localPlayer.matchID) {
             //When host is destoryed and he is not my match and i am not host
-            Toast.instance.showToast("The host has left the game.", 3);
+            Toast.instance.showToast("The host has left the game", 3);
             SceneManager.LoadScene("Lobby");
             localPlayer.CancelGame(localPlayer.matchID);
         } else if(localPlayer != null && localPlayer.isHost && !isHost && matchID == localPlayer.matchID) {
@@ -1999,7 +1999,7 @@ public class Player : NetworkBehaviour
             localPlayer.OtherPlayerDisconnected(isHost, playerName, playerID, matchID, playerIndex);
         } else if(localPlayer == this || localPlayer == null) {
             //When my network is disconnected (my player object is destroyed)
-            // Toast.instance.showToast("Network disconnected.", 3);
+            // Toast.instance.showToast("Network disconnected", 3);
         }
     }
 }

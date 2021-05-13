@@ -2238,7 +2238,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Christine Adams
+  m_text: Player #1
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 9acf0547ec5744d25ae1d39dc4509b15, type: 2}
   m_sharedMaterial: {fileID: 5049557062767124095, guid: 9acf0547ec5744d25ae1d39dc4509b15,
@@ -2269,9 +2269,9 @@ MonoBehaviour:
   m_fontSize: 42
   m_fontSizeBase: 42
   m_fontWeight: 400
-  m_enableAutoSizing: 0
-  m_fontSizeMin: 0
-  m_fontSizeMax: 0
+  m_enableAutoSizing: 1
+  m_fontSizeMin: 30
+  m_fontSizeMax: 42
   m_fontStyle: 0
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
@@ -2351,8 +2351,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 27}
-  m_SizeDelta: {x: -13.7, y: -73.95}
+  m_AnchoredPosition: {x: -3.449997, y: 27}
+  m_SizeDelta: {x: 50.829, y: -73.95}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &233673524
 MonoBehaviour:
@@ -13314,7 +13314,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Meylis Amanov
+  m_text: -- HOST --
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 9acf0547ec5744d25ae1d39dc4509b15, type: 2}
   m_sharedMaterial: {fileID: 5049557062767124095, guid: 9acf0547ec5744d25ae1d39dc4509b15,
@@ -13346,7 +13346,7 @@ MonoBehaviour:
   m_fontSizeBase: 29.1
   m_fontWeight: 400
   m_enableAutoSizing: 1
-  m_fontSizeMin: 0
+  m_fontSizeMin: 20
   m_fontSizeMax: 30.03
   m_fontStyle: 0
   m_HorizontalAlignment: 2
@@ -13358,7 +13358,7 @@ MonoBehaviour:
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0
-  m_enableWordWrapping: 0
+  m_enableWordWrapping: 1
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
   m_linkedTextComponent: {fileID: 0}
