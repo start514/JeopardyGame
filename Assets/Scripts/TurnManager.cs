@@ -26,11 +26,12 @@ public class TurnManager : NetworkBehaviour
         int rnd = -1;
         while(!availablePlayer) {
             availablePlayer = false;
-            rnd = Random.Range(0, playerCount - 1);
+            rnd = Random.Range(0, playerCount);
             cardChooser = rnd;
             Match match = MatchMaker.instance.FindMatchById(matchID);
             foreach(var gameobject in match.playersInThisMatch) {
-                Player player = gameobject?.GetComponent<Player>();
+                if(gameobject == null) continue;
+                Player player = gameobject.GetComponent<Player>();
                 if((player != null && player.matchID == matchID && player.playerIndex == rnd)) {
                     //Valid player
                     availablePlayer = true;

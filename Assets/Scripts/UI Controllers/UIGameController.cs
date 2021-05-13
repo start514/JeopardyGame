@@ -85,10 +85,9 @@ public class UIGameController : MonoBehaviour
         StopTimerCoroutine();
         //backToBoard = GoBackToBoard(closeAnswerDelay);
 
-        if (localPlayer.isHost)
-        {
-            HostBottom.SetActive(true);
-        }
+        HostBottom.SetActive(localPlayer.isHost);
+        clientBottonPanal.SetActive(!localPlayer.isHost);
+
         // load the first board
         if (allSlots.Length != 30)
         {

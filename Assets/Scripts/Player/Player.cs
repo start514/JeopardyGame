@@ -233,15 +233,32 @@ public class Player : NetworkBehaviour
         if(localPlayer == null) return;
         if(localPlayer.matchID != matchID) return;
         if(isHost && localPlayer.playerID != playerID) {
-            Toast.instance.showToast("The host has left the game.", 3);
+            Toast.instance.showToast("The host has left the game", 3);
             SceneManager.LoadScene("Lobby");
             localPlayer.CancelGame(localPlayer.matchID);
         } else if(!isHost && localPlayer.playerID != playerID) {
-            Toast.instance.showToast($"[{playerName}] has\nleft the game.", 3);
-            if(localPlayer.isHost && playerIndex == TurnManager.instance.cardChooser) {
-                //if i am host and player with the turn has left the game
-                //give turn to other players
-                localPlayer.GiveTurnToRandomPlayer();
+            //Check if only one player has left
+            var players = GameObject.FindObjectsOfType<Player>();
+            int playersInThisMatch = 0;
+            Player remainer;
+            foreach(var player in players) {
+                if(player.matchID == localPlayer.matchID && player.isHost == false) {
+                    playersInThisMatch ++;
+                    remainer = player;
+                }
+            }
+            if(playersInThisMatch > 1) {
+                Toast.instance.showToast($"{playerName} has\nleft the game", 3);
+                if(localPlayer.isHost && playerIndex == TurnManager.instance.cardChooser) {
+                    //if i am host and player with the turn has left the game
+                    //give turn to other players
+                    localPlayer.GiveTurnToRandomPlayer();
+                }
+            } else {
+                if(localPlayer.isHost) {
+                    //declare remainer as winner
+                    localPlayer.PlayerOpenWinnerPanal();
+                }
             }
         }
     }
@@ -1107,13 +1124,15 @@ public class Player : NetworkBehaviour
         string winnerName = "";
         Match match = MatchMaker.instance.FindMatchById(matchID);
         for(var i=0; i<match.playersInThisMatch.Count; i++) {
+            if(match.playersInThisMatch[i] == null) continue;
             var player = match.playersInThisMatch[i].GetComponent<Player>();
+            if(player == null || player.matchID != matchID || player.isHost) continue;
             if(player.playerAmount > winnerAmount) {
                 winnerAmount = player.playerAmount;
                 winnerName = player.playerName;
             } else if(player.playerAmount == winnerAmount) {
                 if(winnerName == "") winnerName = player.playerName;
-                else winnerName = winnerName + ", " + playerName;
+                else winnerName = winnerName + ", " + player.playerName;
             }
         }
         RpcOpenWinnerPanal(winnerAmount, winnerName, matchID);
