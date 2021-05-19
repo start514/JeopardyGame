@@ -352,6 +352,7 @@ public class UIGameController : MonoBehaviour
     }
     public void OpenWinnerPanel(int winnerAmount, string winnerName)
     {
+        if(winnerPanel.activeSelf) return;
         amountChoser.SetActive(false);
         winnerPanel.SetActive(true);
         WinnerPanalController script = winnerPanel.GetComponent<WinnerPanalController>();

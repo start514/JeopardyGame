@@ -52,7 +52,7 @@ public class PlayerSlotsArry : MonoBehaviour
                 //if slot is out, make it dimmed
                 playerSlots[i].tint.SetActive(true);
                 //if dimmed player is card chooser and i am host
-                if(TurnManager.instance.cardChooser == i && Player.localPlayer.isHost) {
+                if(TurnManager.instance.cardChooser == i && Player.localPlayer.isHost && !Player.localPlayer.uiGame.winnerPanel.activeSelf) {
                     TurnManager.instance.cardChooser = -1;
                     Player.localPlayer.GiveTurnToRandomPlayer();
                 }

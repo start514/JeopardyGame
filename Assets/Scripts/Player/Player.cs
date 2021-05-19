@@ -242,7 +242,7 @@ public class Player : NetworkBehaviour
             int playersInThisMatch = 0;
             Player remainer;
             foreach(var player in players) {
-                if(player.matchID == localPlayer.matchID && player.isHost == false) {
+                if(player.matchID == localPlayer.matchID && player.isHost == false && player.playerID != playerID) {
                     playersInThisMatch ++;
                     remainer = player;
                 }
