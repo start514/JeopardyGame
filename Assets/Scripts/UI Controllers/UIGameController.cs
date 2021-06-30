@@ -462,8 +462,10 @@ public class UIGameController : MonoBehaviour
     public void ChosingAmountRight()
     {
         // for the daily and final jeopardy panel
-        int amount = localPlayer.playerAmount;
-        if (currentQuestionAmount + jumpsAmount <= amount)
+        int maxWagerAmount = localPlayer.playerAmount;
+        // for daily double, wager amount can reach to 1000 regardless of current player amount
+        if(isDailyDoubleNow && maxWagerAmount<1000) maxWagerAmount = 1000;
+        if (currentQuestionAmount + jumpsAmount <= maxWagerAmount)
         {
             amountChoserText.text = "$" + (currentQuestionAmount + jumpsAmount).ToString();
             currentQuestionAmount = (currentQuestionAmount + jumpsAmount);

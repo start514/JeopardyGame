@@ -1409,11 +1409,11 @@ public class Player : NetworkBehaviour
 
     public void PlayerDeductAmount(int amount)
     {
-        if (this.playerAmount - amount >= 0)
-        {
+        // if (this.playerAmount - amount >= 0)
+        // {
             this.playerAmount -= amount;
             CmdPlayerDeductAmount(this.playerIndex, this.playerAmount);
-        }
+        // }
     }
     [Command]
     internal void CmdPlayerDeductAmount(int index, int newAmount)
@@ -1592,7 +1592,6 @@ public class Player : NetworkBehaviour
         if(localPlayer.matchID != matchID) return;
         if (localPlayer.playerIndex == whoAnswered)
         {
-            localPlayer.PlayerSetQuestionsLeft((localPlayer.uiGame.questionsLeft - 1));
             Debug.Log("Answer was declared wrong");
             //An incorrect response or a failure to buzz in within the time limit deducts the dollar value of the question 
             //from the team's score and gives any remaining opponent(s) the opportunity to buzz in and respond.
@@ -1602,6 +1601,7 @@ public class Player : NetworkBehaviour
         } else if(localPlayer.isHost) { //if it is a host
             if (everyoneAnswered) //set everyoneAnswered as true so that continue button will show slots panel to all
             {
+                localPlayer.PlayerSetQuestionsLeft((localPlayer.uiGame.questionsLeft - 1));
                 localPlayer.uiGame.everyoneAnswered = true;
                 PlayerOpenCorrectAnswerPanalToAll();
             }

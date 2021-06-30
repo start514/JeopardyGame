@@ -1,5 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
+using System;
 using UnityEngine;
 using TMPro;
 
@@ -23,7 +25,13 @@ public class UIPlayerController : MonoBehaviour
             instance = this;
         }
         Debug.Log("Starting UI player");
-        buttonAmountText.text = Player.localPlayer.playerAmount.ToString("C0");
+        
+	    CultureInfo culture = CultureInfo.CreateSpecificCulture("en-US");
+	    culture.NumberFormat.CurrencyNegativePattern = 1; 
+        culture.NumberFormat.CurrencyDecimalDigits = 0;
+	    String str = String.Format(culture, "{0:C}", Player.localPlayer.playerAmount);
+
+        buttonAmountText.text = str;
         buttonNameText.text = Player.localPlayer.playerName;
         /*
         // setting the players name to the one he has put in the input field in the lobby scene
@@ -43,7 +51,11 @@ public class UIPlayerController : MonoBehaviour
     }
     internal void UpdateMyButtomContainer(int newAmount)
     {
-        buttonAmountText.text = "$" + newAmount.ToString();
+	    CultureInfo culture = CultureInfo.CreateSpecificCulture("en-US");
+	    culture.NumberFormat.CurrencyNegativePattern = 1; 
+        culture.NumberFormat.CurrencyDecimalDigits = 0;
+	    String str = String.Format(culture, "{0:C}", newAmount);
+        buttonAmountText.text = str;
     }
     public void TintMySlot()
     {
