@@ -1102,7 +1102,7 @@ public class Player : NetworkBehaviour
             int myrank = 1;
             foreach(var player in players) {
                 //if someone has higher amount than me, my rank is increased.
-                if(player.matchID == localPlayer.matchID && player.playerID != localPlayer.playerID && player.playerAmount > localPlayer.playerAmount) {
+                if(player.matchID == localPlayer.matchID && player.playerID != localPlayer.playerID && player.playerAmount > localPlayer.playerAmount && player.isHost != false) {
                     myrank ++;
                 }
             }

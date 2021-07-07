@@ -729,4 +729,8 @@ public class UIGameController : MonoBehaviour
         localPlayer.PlayerOpenAnswerPanalToAll();
         //OpenClientAnswerPanel();
     }
+
+    void OnGUI() {
+        GUI.Label(new Rect(0, 100, Screen.width, Screen.height), "Final Jeopardy Participants: " + finalJeopardyParticipants);
+    }
 }
