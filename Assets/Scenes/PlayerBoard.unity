@@ -3457,6 +3457,12 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 524694387}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &524694389 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3058834101225121312, guid: 556fed887c624ee479ea15394aa1ac72,
+    type: 3}
+  m_PrefabInstance: {fileID: 524694387}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &539317660 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3198212233763630343, guid: 459c411edb49063408c21bfade324027,
@@ -3880,6 +3886,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 556fed887c624ee479ea15394aa1ac72, type: 3}
+--- !u!1 &636152283 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3058834101225121312, guid: 556fed887c624ee479ea15394aa1ac72,
+    type: 3}
+  m_PrefabInstance: {fileID: 636152282}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &643759821 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5075528496712129005, guid: 5e84d8c60c2d3884d8d680774c88216d,
@@ -4385,6 +4397,8 @@ MonoBehaviour:
   correctButton: {fileID: 7702027873347182650}
   incorrectButton: {fileID: 7702027874234643310}
   hostContinueButton: {fileID: 7702027872621222820}
+  dailyDoubleContinueButton: {fileID: 636152283}
+  finalJeopardyContinueButton: {fileID: 524694389}
   singleIcon: {fileID: 539317660}
   doubleIcon: {fileID: 204466901}
   notGreyedOutSlot: {fileID: 21300000, guid: b00a43dcf4f10be428dc7794bc3d5244, type: 3}
@@ -4400,6 +4414,7 @@ MonoBehaviour:
   jumpsAmount: 100
   everyoneAnswered: 0
   finalAnswered: 0
+  eligibleToPlay: 0
   currentQuestion: 
   currentCorrectAnswer: 
   currentInputAnswer: 
@@ -12092,8 +12107,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 3.449997, y: 4.9000015}
-  m_SizeDelta: {x: -6, y: -7}
+  m_AnchoredPosition: {x: 3.449997, y: 4.2}
+  m_SizeDelta: {x: -6, y: -8.4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1001 &2108806010
 PrefabInstance:

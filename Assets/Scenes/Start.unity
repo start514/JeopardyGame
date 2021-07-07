@@ -12071,7 +12071,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: The host has left the game
+  m_text: has left the game
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 7d6aceb013e1a4fe381528084396d515, type: 2}
   m_sharedMaterial: {fileID: 5049557062767124095, guid: 7d6aceb013e1a4fe381528084396d515,

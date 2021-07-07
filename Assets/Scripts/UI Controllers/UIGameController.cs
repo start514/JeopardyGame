@@ -21,8 +21,8 @@ public class UIGameController : MonoBehaviour
     public CustomButton submitButton, buzzButton;
     public CustomInputField answerInput;
     public GameObject HostBottom;
-    public CustomButton correctButton, incorrectButton, hostContinueButton;
-    public GameObject singleIcon, doubleIcon;
+    public CustomButton correctButton, incorrectButton, hostContinueButton;    
+    public GameObject dailyDoubleContinueButton, finalJeopardyContinueButton, singleIcon, doubleIcon;
     [Header("Sprites")]
     public Sprite notGreyedOutSlot, greyedOutSlot, singleCatagory, doubleCatagory;
     public Button hostPauseBtn,hostUnpauseBtn;
@@ -36,9 +36,11 @@ public class UIGameController : MonoBehaviour
     [Header("Values")]
     public bool timerRunning;
     public int jumpsAmount = 100;
+    public int finalJeopardyParticipants = 0;
     internal int hostDecision = -1; //-1 for not selected, 0 for wrong, 1 for right
     public bool everyoneAnswered = false;
     public int finalAnswered = 0;
+    public bool eligibleToPlay = false;
     internal Coroutine buzzTimer, submitTimer, backToBoard;
     internal string finalQuestion, finalAnswer;
     public string currentQuestion, currentCorrectAnswer, currentInputAnswer;
@@ -149,7 +151,8 @@ public class UIGameController : MonoBehaviour
         if (slot.dailyDouble)
         {
             localPlayer.PlayerSetIsDailyDouble(true);
-            OpenDailyDoublePanal();
+            localPlayer.OpenDailyDoublePanalToAll();
+            localPlayer.PlayerOpenHostQuestionPanal();
             slot.dailyDouble = false;
         }
         else
@@ -272,6 +275,8 @@ public class UIGameController : MonoBehaviour
     public void OpenClientCorrectAnswerPanel()
     {
         slotsPanel.SetActive(false);
+        dailyPanel.SetActive(false);
+        finalPanal.SetActive(false);
         clientAnswerPanel.SetActive(true);
         submitButton.SetEnable(false);
         submitButton.gameObject.SetActive(true);
@@ -306,7 +311,7 @@ public class UIGameController : MonoBehaviour
             allCatagories[k].gameObject.GetComponent<Image>().sprite = doubleCatagory;
         }
     }
-    public void OpenDailyDoublePanal()
+    public void OpenDailyDoublePanal(bool isMyTurn)
     {
         // בכל אחד מהלוחות תהיה שאלת daily double אחת והיא צריכה להיבחר רנדומלית
         // change daily double to true
@@ -314,8 +319,9 @@ public class UIGameController : MonoBehaviour
         Debug.Log("Daily doubly");
         dailyPanel.SetActive(true);
         slotsPanel.SetActive(false);
-        amountChoser.SetActive(true);
-        localPlayer.PlayerOpenHostQuestionPanal();
+        amountChoser.SetActive(isMyTurn);
+        dailyDoubleContinueButton.SetActive(isMyTurn);
+        eligibleToPlay = isMyTurn;
     }
     public void DailyDoubleContunieButton()
     {
@@ -323,13 +329,15 @@ public class UIGameController : MonoBehaviour
         // he wagers in and clicks this button
         // open question panal just for me
         OpenClientQuesionPanel();
+        localPlayer.PlayerOpenCorrectAnswerPanalToAll(true);
 
     }
     public void FinalJeopardyContunieButton()
     {
         OpenClientQuesionPanel();
+        localPlayer.PlayerOpenCorrectAnswerPanalToAll(true);
     }
-    public void OpenFinalJeopardyPanal()
+    public void OpenFinalJeopardyPanal(bool isMyTurn)
     {
         // only the 3 participents with the highest dollars reach final jeopardy
         // ובדומה לdaily double הם בוחרים את הסכום שהם רוצים לסכן (מ0 עד לכל הסכום שהם צברו)
@@ -338,7 +346,8 @@ public class UIGameController : MonoBehaviour
 
         slotsPanel.SetActive(false);
         finalPanal.SetActive(true);
-        amountChoser.SetActive(true);
+        amountChoser.SetActive(isMyTurn);
+        finalJeopardyContinueButton.SetActive(isMyTurn);
         // change gameControllerInstance.currentCorrectAnswer = finalAnswer;
         // change gameControllerInstance.currentQuestion = finalQuestion;
         if (localPlayer.isHost)
@@ -349,6 +358,7 @@ public class UIGameController : MonoBehaviour
         }
         isFinalJeopardyNow = true;
         amountChoserText.text = "$0";
+        eligibleToPlay = isMyTurn;
     }
     public void OpenWinnerPanel(int winnerAmount, string winnerName)
     {
@@ -529,7 +539,7 @@ public class UIGameController : MonoBehaviour
             localPlayer.uiGame.currentQuestionAmount = amount;
             localPlayer.uiGame.currentPlayerIndex = currentPlayerIndex;
             localPlayer.uiGame.hostQuestionAmountTxt.text = "$" + amount.ToString();
-        } else if(finalAnswered != 3) {
+        } else if(finalAnswered != finalJeopardyParticipants) {
             localPlayer.uiGame.hostInputAnswerTxt.text = "Waiting for answer";
             localPlayer.uiGame.hostAnswerer.text = "";
             localPlayer.uiGame.currentQuestionAmount = 0;

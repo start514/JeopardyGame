@@ -248,7 +248,7 @@ public class Player : NetworkBehaviour
                 }
             }
             if(playersInThisMatch > 1) {
-                Toast.instance.showToast($"{playerName} has\nleft the game", 3);
+                Toast.instance.showToast($"{playerName} has left the game", 3);
                 if(localPlayer.isHost && playerIndex == TurnManager.instance.cardChooser) {
                     //if i am host and player with the turn has left the game
                     //give turn to other players
@@ -1029,8 +1029,10 @@ public class Player : NetworkBehaviour
     void RpcOpenHostQuestionPanal(string matchID)
     {
         if(localPlayer.matchID != matchID) return;
-        if (localPlayer.isHost)
+        if (localPlayer.isHost) {
+            Debug.LogError("Host Panel Opened");
             localPlayer.uiGame.OpenHostQuesionPanel();
+        }
     }
     //Send a COMMAND and Target RPC to reveal the answer after a player has answered 
     internal void PlayerOpenAnswerPanalToAll()
@@ -1053,24 +1055,24 @@ public class Player : NetworkBehaviour
         else
             localPlayer.uiGame.OpenClientAnswerPanel();
     }
-    internal void PlayerOpenCorrectAnswerPanalToAll()
+    internal void PlayerOpenCorrectAnswerPanalToAll(bool eligibility = false)
     {
-        CmdOpenCorrectAnswerPanalToAll(localPlayer.matchID);
+        CmdOpenCorrectAnswerPanalToAll(localPlayer.matchID, eligibility);
     }
     [Command]
-    void CmdOpenCorrectAnswerPanalToAll(string matchID)
+    void CmdOpenCorrectAnswerPanalToAll(string matchID, bool eligibility)
     {
-        RpcOpenCorrectAnswerPanalToAll(matchID);
+        RpcOpenCorrectAnswerPanalToAll(matchID, eligibility);
     }
     [ClientRpc]
-    void RpcOpenCorrectAnswerPanalToAll(string matchID)
+    void RpcOpenCorrectAnswerPanalToAll(string matchID, bool eligibility)
     {
         if(localPlayer.matchID != matchID) return;
         if (localPlayer.isHost)
         {
             // localPlayer.uiGame.OpenHostQuesionPanel();
         }
-        else
+        else if(!eligibility || !localPlayer.uiGame.eligibleToPlay)
             localPlayer.uiGame.OpenClientCorrectAnswerPanel();
     }
     
@@ -1093,22 +1095,42 @@ public class Player : NetworkBehaviour
     void RpcOpenFinalJeopardyPanalToAll(string matchID)
     {
         if(localPlayer.matchID != matchID) return;
+        var players = GameObject.FindObjectsOfType<Player>();
         if (localPlayer.isHost == false)
         {
             //Only open to top 3 players
             int myrank = 1;
-            var players = GameObject.FindObjectsOfType<Player>();
             foreach(var player in players) {
                 //if someone has higher amount than me, my rank is increased.
                 if(player.matchID == localPlayer.matchID && player.playerID != localPlayer.playerID && player.playerAmount > localPlayer.playerAmount) {
                     myrank ++;
                 }
             }
-            if(myrank<=3) { //Only top 3 can take part in final jeopardy
-                localPlayer.uiGame.OpenFinalJeopardyPanal();
-            }
+            //Only top 3 can take part in final jeopardy
+            localPlayer.uiGame.OpenFinalJeopardyPanal(myrank<=3);
         }
         else {
+            //Find final jeopardy participant count
+            ArrayList amounts = new ArrayList();
+            foreach(var player in players) {
+                if(player.matchID == matchID && player.isHost == false) amounts.Add(player.playerAmount);
+            }
+            amounts.Sort();
+		    amounts.Reverse();
+            int prevAmount = int.MaxValue;
+            int participants = 0;
+            int rank = 0;
+            foreach(int amount in amounts) {
+                if(amount != prevAmount) {
+                    rank++;
+                    prevAmount = amount;
+                }
+                if(rank<=3) {
+                    participants++;
+                }
+            }
+
+            localPlayer.uiGame.finalJeopardyParticipants = participants;
             localPlayer.uiGame.isFinalJeopardyNow = true;
             localPlayer.PlayerOpenHostQuestionPanal();
         }
@@ -2001,5 +2023,19 @@ public class Player : NetworkBehaviour
             //When my network is disconnected (my player object is destroyed)
             // Toast.instance.showToast("Network disconnected", 3);
         }
+    }
+    public void OpenDailyDoublePanalToAll() {
+        CmdOpenDailyDoublePanalToAll(this.playerID, this.matchID);
+    }
+
+    [Command]
+    void CmdOpenDailyDoublePanalToAll(string playerID, string matchID) {
+        RpcOpenDailyDoublePanalToAll(playerID, matchID);
+    }
+
+    [ClientRpc]
+    void RpcOpenDailyDoublePanalToAll(string playerID, string matchID) {
+        if(localPlayer.matchID != matchID) return;
+        if(!localPlayer.isHost) localPlayer.uiGame.OpenDailyDoublePanal(localPlayer.playerID == playerID);
     }
 }
