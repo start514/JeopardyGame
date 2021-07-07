@@ -1142,7 +1142,7 @@ public class Player : NetworkBehaviour
     [Command]
     void CmdOpenWinnerPanal(string matchID)
     {
-        int winnerAmount = 0;
+        int winnerAmount = int.MinValue;
         string winnerName = "";
         Match match = MatchMaker.instance.FindMatchById(matchID);
         for(var i=0; i<match.playersInThisMatch.Count; i++) {
