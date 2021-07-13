@@ -894,6 +894,12 @@ public class Player : NetworkBehaviour
             CmdCopyAmountData(k, localPlayer.uiGame.allSlots[k].answer, localPlayer.uiGame.allSlots[k].question, localPlayer.matchID);
             //Debug.LogError("Answer: " + localPlayer.uiGame.allSlots[k].answer);
         }
+        if(isDouble) {
+            localPlayer.PlayerSetIsDoubleJeopardy(true);
+            localPlayer.PlayerSetQuestionsLeft(30);
+            localPlayer.PlayerPlaceDailyDouble();
+            CmdOpenDoubleJeopardyPanal(localPlayer.matchID);
+        }
     }
     [Command]
     void CmdCopyCatagoryData(int index, string catText, string matchID)
@@ -939,10 +945,6 @@ public class Player : NetworkBehaviour
     {
         // this method will be called only from the host
         CmdDistributeDataForSecondBoard();
-        localPlayer.PlayerSetIsDoubleJeopardy(true);
-        localPlayer.PlayerSetQuestionsLeft(30);
-        localPlayer.PlayerPlaceDailyDouble();
-        CmdOpenDoubleJeopardyPanal(localPlayer.matchID);
     }
     [Command]
     void CmdOpenDoubleJeopardyPanal(string matchID)
@@ -1107,26 +1109,21 @@ public class Player : NetworkBehaviour
                 }
             }
             //Only top 3 can take part in final jeopardy
-            localPlayer.uiGame.OpenFinalJeopardyPanal(myrank<=3);
+            localPlayer.uiGame.OpenFinalJeopardyPanal(myrank<=3 && localPlayer.playerAmount>0);
         }
         else {
             //Find final jeopardy participant count
-            ArrayList amounts = new ArrayList();
-            foreach(var player in players) {
-                if(player.matchID == matchID && player.isHost == false) amounts.Add(player.playerAmount);
-            }
-            amounts.Sort();
-		    amounts.Reverse();
-            int prevAmount = int.MaxValue;
             int participants = 0;
-            int rank = 0;
-            foreach(int amount in amounts) {
-                if(amount != prevAmount) {
-                    rank++;
-                    prevAmount = amount;
-                }
-                if(rank<=3) {
-                    participants++;
+            foreach(var player in players) {
+                if(player.matchID == localPlayer.matchID && player.isHost != false) {
+                    int myrank = 1;
+                    foreach(var player2 in players) {
+                        //if someone has higher amount than me, my rank is increased.
+                        if(player2.matchID == localPlayer.matchID && player2.playerAmount > player.playerAmount && player2.isHost != false) {
+                            myrank ++;
+                        }
+                    }
+                    if(myrank<=3 && player.playerAmount>0) participants++;
                 }
             }
 
@@ -1531,7 +1528,7 @@ public class Player : NetworkBehaviour
     {
         Debug.Log("Player didn't buzz in, everyone answered = " + everyoneAnswered);
         // if no player has buzzed in, reveal the answer to everyone
-        localPlayer.PlayerDeductAmount(localPlayer.uiGame.currentQuestionAmount);
+        // localPlayer.PlayerDeductAmount(localPlayer.uiGame.currentQuestionAmount);
         // localPlayer.PlayerGiveTryTo();
         localPlayer.PlayerSetHasAnswered(true);
     }
@@ -1544,7 +1541,6 @@ public class Player : NetworkBehaviour
             localPlayer.PlayerSetCurrentInputAnswerAmount(localPlayer.playerName, answer, localPlayer.uiGame.currentQuestionAmount, localPlayer.playerIndex);
         }
         else {
-            this.PlayerSetNowAnswering(localPlayer.playerIndex);
             localPlayer.PlayerSetCurrentInputAnswer(localPlayer.playerName, answer);
         }
     }
@@ -1620,7 +1616,7 @@ public class Player : NetworkBehaviour
             localPlayer.PlayerDeductAmount(localPlayer.uiGame.currentQuestionAmount);
             //change later
             //PlayerGiveTurnTo(localPlayer.playerIndex, true);
-        } else if(localPlayer.isHost) { //if it is a host
+        } else if(localPlayer.isHost) {
             if (everyoneAnswered) //set everyoneAnswered as true so that continue button will show slots panel to all
             {
                 localPlayer.PlayerSetQuestionsLeft((localPlayer.uiGame.questionsLeft - 1));

@@ -116,16 +116,22 @@ public class UIGameController : MonoBehaviour
     {
         if (localPlayer.isHost)
         {
-            if (isSecondBoardNow == false && questionsLeft == 0 && isFinalJeopardyNow == false)
-            {
-                // meaning all of the questions on the first board have been answered
-                localPlayer.PlayerOpenDoubleJeopardyPanal();
-                isSecondBoardNow = true;
-            }
-            else if (isSecondBoardNow == true && questionsLeft == 0)
-            // meaning you have finished the second board, and go to final jeopardy
-            {
-                localPlayer.PlayerOpenFinalJeopardyPanalToAll();
+            if(slotsPanel.activeSelf) {
+                if (isSecondBoardNow == false && questionsLeft == 0 && isFinalJeopardyNow == false)
+                {
+                    // meaning all of the questions on the first board have been answered
+                    localPlayer.PlayerOpenDoubleJeopardyPanal();
+                    isSecondBoardNow = true;
+                    questionsLeft = 30;
+                }
+                else if (isSecondBoardNow == true && questionsLeft == 0)
+                // meaning you have finished the second board, and go to final jeopardy
+                {
+                    localPlayer.PlayerOpenFinalJeopardyPanalToAll();
+                    isSecondBoardNow = false;
+                    isFinalJeopardyNow = true;
+                    questionsLeft = 30;
+                }
             }
             hostPlayerContainerTxt.text = localPlayer.playerName;
         } else {
@@ -387,6 +393,7 @@ public class UIGameController : MonoBehaviour
             localPlayer.TintAllSlotsButOne(localPlayer.playerIndex);
             localPlayer.PlayerBuzzedIn();
             localPlayer.PlayerSetHasAnswered(true);
+            localPlayer.PlayerSetNowAnswering(localPlayer.playerIndex);
             StartTimerCoroutine(true);
             localPlayer.PlayerStartTimerForHost(true);
             CanSumbit();
@@ -398,6 +405,8 @@ public class UIGameController : MonoBehaviour
             // once you set the buttons to active there is no way to go farward, so open the next screen after a few seconds
             localPlayer.PlayerDidntBuzz();
             if(localPlayer.isHost) {
+                localPlayer.PlayerSetQuestionsLeft((localPlayer.uiGame.questionsLeft - 1));
+                localPlayer.uiGame.everyoneAnswered = true;
                 hostPauseBtn.interactable = false;
                 hostContinueButton.SetEnable(true);
                 localPlayer.PlayerOpenCorrectAnswerPanalToAll();
@@ -459,9 +468,10 @@ public class UIGameController : MonoBehaviour
         // have not submitted in in time
         {
             // same as submited wrong
-            localPlayer.PlayerHostDecided(false);
+            // localPlayer.hasAnswered = true;
             // once you set the buttons to active there is no way to go farward, so open the next screen after a few seconds
             if(localPlayer.isHost) {
+                localPlayer.PlayerHostDecided(false);
                 hostDecision = 0;
                 hostPauseBtn.interactable = false;
                 hostContinueButton.SetEnable(true);
