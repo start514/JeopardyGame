@@ -1104,7 +1104,7 @@ public class Player : NetworkBehaviour
             int myrank = 1;
             foreach(var player in players) {
                 //if someone has higher amount than me, my rank is increased.
-                if(player.matchID == localPlayer.matchID && player.playerID != localPlayer.playerID && player.playerAmount > localPlayer.playerAmount && player.isHost != false) {
+                if(player.matchID == localPlayer.matchID && player.playerID != localPlayer.playerID && player.playerAmount > localPlayer.playerAmount && player.isHost == false) {
                     myrank ++;
                 }
             }
@@ -1112,14 +1112,17 @@ public class Player : NetworkBehaviour
             localPlayer.uiGame.OpenFinalJeopardyPanal(myrank<=3 && localPlayer.playerAmount>0);
         }
         else {
+            localPlayer.uiGame.finalQuestion = localPlayer.uiGame.jsonToCScript.finalRoot.Questions[0].question;
+            localPlayer.uiGame.finalAnswer = localPlayer.uiGame.jsonToCScript.finalRoot.Questions[0].Answer;
+            localPlayer.PlayerSetQuestionAndAnswer(localPlayer.uiGame.finalQuestion, localPlayer.uiGame.finalAnswer);
             //Find final jeopardy participant count
             int participants = 0;
             foreach(var player in players) {
-                if(player.matchID == localPlayer.matchID && player.isHost != false) {
+                if(player.matchID == localPlayer.matchID && player.isHost == false) {
                     int myrank = 1;
                     foreach(var player2 in players) {
                         //if someone has higher amount than me, my rank is increased.
-                        if(player2.matchID == localPlayer.matchID && player2.playerAmount > player.playerAmount && player2.isHost != false) {
+                        if(player2.matchID == localPlayer.matchID && player2.playerAmount > player.playerAmount && player2.isHost == false) {
                             myrank ++;
                         }
                     }
@@ -1129,7 +1132,8 @@ public class Player : NetworkBehaviour
 
             localPlayer.uiGame.finalJeopardyParticipants = participants;
             localPlayer.uiGame.isFinalJeopardyNow = true;
-            localPlayer.PlayerOpenHostQuestionPanal();
+            if(participants>0) localPlayer.PlayerOpenHostQuestionPanal();
+            else localPlayer.PlayerOpenWinnerPanal();
         }
     }
     internal void PlayerOpenWinnerPanal()

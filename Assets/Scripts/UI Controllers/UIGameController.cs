@@ -107,10 +107,6 @@ public class UIGameController : MonoBehaviour
         //timeToAnswer = Player.localPlayer.PlayerGetTimeToAnswer();
     }
 
-    void Start() {
-        SidePanalController.instance.TintAllSlotsButOne(TurnManager.instance.cardChooser);
-    }
-
     // Update is called once per frame
     void Update()
     {
@@ -299,6 +295,7 @@ public class UIGameController : MonoBehaviour
             allCatagories[k].gameObject.GetComponent<Image>().sprite = singleCatagory;
 
         }
+        SidePanalController.instance.TintAllSlotsButOne(TurnManager.instance.cardChooser);
     }
     public void OpenDoubleJeopardyPanal()
     {
@@ -316,6 +313,7 @@ public class UIGameController : MonoBehaviour
         {
             allCatagories[k].gameObject.GetComponent<Image>().sprite = doubleCatagory;
         }
+        SidePanalController.instance.TintAllSlotsButOne(TurnManager.instance.cardChooser);
     }
     public void OpenDailyDoublePanal(bool isMyTurn)
     {
@@ -356,12 +354,6 @@ public class UIGameController : MonoBehaviour
         finalJeopardyContinueButton.SetActive(isMyTurn);
         // change gameControllerInstance.currentCorrectAnswer = finalAnswer;
         // change gameControllerInstance.currentQuestion = finalQuestion;
-        if (localPlayer.isHost)
-        {
-            finalQuestion = jsonToCScript.finalRoot.Questions[0].question;
-            finalAnswer = jsonToCScript.finalRoot.Questions[0].Answer;
-            localPlayer.PlayerSetQuestionAndAnswer(finalQuestion, finalAnswer);
-        }
         isFinalJeopardyNow = true;
         amountChoserText.text = "$0";
         eligibleToPlay = isMyTurn;
@@ -470,7 +462,10 @@ public class UIGameController : MonoBehaviour
             // same as submited wrong
             // localPlayer.hasAnswered = true;
             // once you set the buttons to active there is no way to go farward, so open the next screen after a few seconds
-            if(localPlayer.isHost) {
+            if(isFinalJeopardyNow && localPlayer.isHost == false) {
+                localPlayer.PlayerSumbited("");
+            }
+            if(!isFinalJeopardyNow && localPlayer.isHost) {
                 localPlayer.PlayerHostDecided(false);
                 hostDecision = 0;
                 hostPauseBtn.interactable = false;
