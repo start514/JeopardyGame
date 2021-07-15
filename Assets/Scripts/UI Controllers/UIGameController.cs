@@ -148,6 +148,7 @@ public class UIGameController : MonoBehaviour
         remeiningQuestions.text = questionsLeft + "/30";
         Debug.Log("Slot Amount = " + slot.amout);
         localPlayer.PlayerSetCurrenctQuestionAmount(slot.amout);
+        localPlayer.PlayerSetQuestionsLeft(localPlayer.uiGame.questionsLeft - 1);
         localPlayer.PlayerSetQuestionAndAnswer(slot.question, slot.answer);
         localPlayer.PlayerGreyOutSlotForEveryone(slot.slotIndex);
         if (slot.dailyDouble)
@@ -198,7 +199,7 @@ public class UIGameController : MonoBehaviour
             localPlayer.isBuzzing = false;
         }
     }
-    public void OpenClientQuesionPanel()
+    public void OpenClientQuesionPanel(bool eligibleToPlay = true)
     {
         // all players except host have x time to buzz in
         Debug.Log("opened Question panal");
@@ -212,13 +213,14 @@ public class UIGameController : MonoBehaviour
             // the player doesnt need to buzz in to answer, it happens automaticaly
             // change tint
             localPlayer.TintAllSlotsButOne(localPlayer.playerIndex);
-            answerInput.SetEnable(true);
+            answerInput.SetEnable(eligibleToPlay);
             submitButton.gameObject.SetActive(true);
-            submitButton.SetEnable(true);
+            submitButton.SetEnable(eligibleToPlay);
             buzzButton.gameObject.SetActive(false);
-            StartTimerCoroutine(true);
-            localPlayer.PlayerStartTimerForHost(true);
-
+            if(eligibleToPlay) {
+                StartTimerCoroutine(true);
+                localPlayer.PlayerStartTimerForHost(true);
+            }
         }
         else
         {
@@ -333,13 +335,13 @@ public class UIGameController : MonoBehaviour
         // he wagers in and clicks this button
         // open question panal just for me
         OpenClientQuesionPanel();
-        localPlayer.PlayerOpenCorrectAnswerPanalToAll(true);
+        localPlayer.PlayerOpenQuestionPanalToAll(true);
 
     }
     public void FinalJeopardyContunieButton()
     {
         OpenClientQuesionPanel();
-        localPlayer.PlayerOpenCorrectAnswerPanalToAll(true);
+        localPlayer.PlayerOpenQuestionPanalToAll(true);
     }
     public void OpenFinalJeopardyPanal(bool isMyTurn)
     {
@@ -397,7 +399,6 @@ public class UIGameController : MonoBehaviour
             // once you set the buttons to active there is no way to go farward, so open the next screen after a few seconds
             localPlayer.PlayerDidntBuzz();
             if(localPlayer.isHost) {
-                localPlayer.PlayerSetQuestionsLeft((localPlayer.uiGame.questionsLeft - 1));
                 localPlayer.uiGame.everyoneAnswered = true;
                 hostPauseBtn.interactable = false;
                 hostContinueButton.SetEnable(true);

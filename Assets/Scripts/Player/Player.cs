@@ -896,7 +896,6 @@ public class Player : NetworkBehaviour
         }
         if(isDouble) {
             localPlayer.PlayerSetIsDoubleJeopardy(true);
-            localPlayer.PlayerSetQuestionsLeft(30);
             localPlayer.PlayerPlaceDailyDouble();
             CmdOpenDoubleJeopardyPanal(localPlayer.matchID);
         }
@@ -991,17 +990,17 @@ public class Player : NetworkBehaviour
         else if(!localPlayer.hasAnswered)
             localPlayer.uiGame.OpenClientQuesionPanel();
     }
-    internal void PlayerOpenQuestionPanalToAll()
+    internal void PlayerOpenQuestionPanalToAll(bool eligibility = false)
     {
-        CmdOpenQuestionPanalToAll(localPlayer.matchID);
+        CmdOpenQuestionPanalToAll(localPlayer.matchID, eligibility);
     }
     [Command]
-    void CmdOpenQuestionPanalToAll(string matchID)
+    void CmdOpenQuestionPanalToAll(string matchID, bool eligibility)
     {
-        RpcOpenQuestionPanalToAll(matchID);
+        RpcOpenQuestionPanalToAll(matchID, eligibility);
     }
     [ClientRpc]
-    void RpcOpenQuestionPanalToAll(string matchID)
+    void RpcOpenQuestionPanalToAll(string matchID, bool eligibility)
     {
         if(localPlayer.matchID != matchID) return;
         SidePanalController.instance.UntintAllExceptAnswered();
@@ -1009,8 +1008,8 @@ public class Player : NetworkBehaviour
         if (localPlayer.isHost)
             // change what should happen to host when players have time to buzz in
             localPlayer.uiGame.OpenHostQuesionPanel();
-        else
-            localPlayer.uiGame.OpenClientQuesionPanel();
+        else if(!eligibility || !localPlayer.uiGame.eligibleToPlay)
+            localPlayer.uiGame.OpenClientQuesionPanel(false);
     }
 
     internal void PlayerOpenHostQuestionPanal()
@@ -1057,25 +1056,24 @@ public class Player : NetworkBehaviour
         else
             localPlayer.uiGame.OpenClientAnswerPanel();
     }
-    internal void PlayerOpenCorrectAnswerPanalToAll(bool eligibility = false)
+    internal void PlayerOpenCorrectAnswerPanalToAll()
     {
-        CmdOpenCorrectAnswerPanalToAll(localPlayer.matchID, eligibility);
+        CmdOpenCorrectAnswerPanalToAll(localPlayer.matchID);
     }
     [Command]
-    void CmdOpenCorrectAnswerPanalToAll(string matchID, bool eligibility)
+    void CmdOpenCorrectAnswerPanalToAll(string matchID)
     {
-        RpcOpenCorrectAnswerPanalToAll(matchID, eligibility);
+        RpcOpenCorrectAnswerPanalToAll(matchID);
     }
     [ClientRpc]
-    void RpcOpenCorrectAnswerPanalToAll(string matchID, bool eligibility)
+    void RpcOpenCorrectAnswerPanalToAll(string matchID)
     {
         if(localPlayer.matchID != matchID) return;
         if (localPlayer.isHost)
         {
             // localPlayer.uiGame.OpenHostQuesionPanel();
         }
-        else if(!eligibility || !localPlayer.uiGame.eligibleToPlay)
-            localPlayer.uiGame.OpenClientCorrectAnswerPanel();
+        else localPlayer.uiGame.OpenClientCorrectAnswerPanel();
     }
     
     public void PlayerOpenFinalJeopardyPanalToAll()
@@ -1597,7 +1595,6 @@ public class Player : NetworkBehaviour
         if(localPlayer.matchID != matchID) return;
         if (localPlayer.playerIndex == whoAnswered)
         {
-            localPlayer.PlayerSetQuestionsLeft((localPlayer.uiGame.questionsLeft - 1));
             // need to call this on the player that has submited only
             Debug.Log("Answer was declared correct");
             //A correct response earns the dollar value of the question and the opportunity to select the next question from the board.
@@ -1621,9 +1618,11 @@ public class Player : NetworkBehaviour
             //change later
             //PlayerGiveTurnTo(localPlayer.playerIndex, true);
         } else if(localPlayer.isHost) {
+            if (localPlayer.uiGame.isDailyDoubleNow) {
+                localPlayer.PlayerOpenCorrectAnswerPanalToAll();
+            }
             if (everyoneAnswered) //set everyoneAnswered as true so that continue button will show slots panel to all
             {
-                localPlayer.PlayerSetQuestionsLeft((localPlayer.uiGame.questionsLeft - 1));
                 localPlayer.uiGame.everyoneAnswered = true;
                 PlayerOpenCorrectAnswerPanalToAll();
             }
