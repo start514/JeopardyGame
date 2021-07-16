@@ -46,13 +46,11 @@ public class SyncListMatch : SyncList<Match> { }
 public class MatchMaker : NetworkBehaviour
 {
     public static MatchMaker instance;
-    public UILobbyController uiLobby;
     // all of the matches (games) currently available and running
     public SyncListMatch allGames = new SyncListMatch();
     // all of the ids that are being used 
     public SyncList<string> allGamesIDs = new SyncList<string>();
     [SerializeField]
-    private GameObject turnManagerPrefab;
     public void Awake()
     {
         if (instance != null && instance != this)

@@ -46,19 +46,7 @@ public class Player : NetworkBehaviour
         {
             this.playerID = CreateRandomID();
             CmdUpdatePlayerId(this.playerID);
-            this.uiLobby = GameObject.Find("UI Lobby Controller")?.GetComponent<UILobbyController>();
             this.playerAmount = 0;
-            if (isClient && this.uiLobby != null && this.uiLobby.lobbyPanal.activeSelf)
-            {
-                this.uiLobby.ClearGameContainer();
-                CmdUpdateGameRoomList();
-            }
-            // for testing purpeses, if we are startubg from the game and not the lobby
-            else
-            {
-                this.uiGame = GameObject.Find("UI Game Controller")?.GetComponent<UIGameController>();
-                StartUIIfConnected.instance.ActivateUI();
-            }
         }
     }
     public void UpdateGameRoomList() {

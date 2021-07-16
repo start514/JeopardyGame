@@ -7,10 +7,6 @@ using Mirror;
 
 public class NetworkLobbyController : NetworkBehaviour
 {
-
-    [SerializeField] NetworkManager networkManager;
-    public GameObject transferDataToGamePrefab;
-    string id;
     public UILobbyController uiLobby;
     // Start is called before the first frame update
     void Start()

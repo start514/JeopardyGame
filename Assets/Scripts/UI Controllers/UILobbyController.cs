@@ -56,6 +56,7 @@ public class UILobbyController : MonoBehaviour
     {
         if(Player.localPlayer!=null) {
             Player.localPlayer.uiLobby = this;
+            Player.localPlayer.ClearGameContainer();
             Player.localPlayer.UpdateGameRoomList();
         }
         // DontDestroyOnLoad(this);
@@ -264,17 +265,14 @@ public class UILobbyController : MonoBehaviour
     public void SetJoinContainerColor()
     {
         ParticipentConteiner[] containers = joinParticipentContent.GetComponentsInChildren<ParticipentConteiner>();
-        Debug.Log("numberOfJoinContainers = " + containers.Length);
         for (int i = 0; i < containers.Length; i++)
         {
             if (i % 2 == 0)
             {
-                Debug.Log("White");
                 containers[i].gameObject.GetComponent<Image>().color = Color.white;
             }
             else
             {
-                Debug.Log("Grey");
                 containers[i].gameObject.GetComponent<Image>().color = greyColor;
             }
         }
@@ -282,17 +280,14 @@ public class UILobbyController : MonoBehaviour
     public void SetHostContainerColor()
     {
         ParticipentConteiner[] containers = hostParticipentContent.GetComponentsInChildren<ParticipentConteiner>();
-        Debug.Log("numberOfHostContainers = " + containers.Length);
         for (int i = 0; i < containers.Length; i++)
         {
             if (i % 2 == 0)
             {
-                Debug.Log("White");
                 containers[i].gameObject.GetComponent<Image>().color = Color.white;
             }
             else
             {
-                Debug.Log("Grey");
                 containers[i].gameObject.GetComponent<Image>().color = greyColor;
             }
         }
