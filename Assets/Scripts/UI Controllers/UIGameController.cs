@@ -139,11 +139,14 @@ public class UIGameController : MonoBehaviour
         }
     }
 
+    public void setCurrentCategory(string name) {
+        clientAnswerCatagotyTxt.text = name;
+        clientQuestionCatagotyTxt.text = name;
+        hostCatagotyTxt.text = name;
+    }
     public void QuestionClicked(AmountSlot slot)
     {
-        clientAnswerCatagotyTxt.text = slot.catagoryName;
-        clientQuestionCatagotyTxt.text = slot.catagoryName;
-        hostCatagotyTxt.text = slot.catagoryName;
+        localPlayer.PlayerSetCurrentCategory(slot.catagoryName);
         clientQuestionAmountTxt.text = "$" + currentQuestionAmount;
         remeiningQuestions.text = questionsLeft + "/30";
         Debug.Log("Slot Amount = " + slot.amout);

@@ -1256,6 +1256,19 @@ public class Player : NetworkBehaviour
         localPlayer.uiGame.remeiningQuestions.text = left + "/30";
         Debug.LogError("Question left has changed to: " + localPlayer.uiGame.questionsLeft);
     }
+    // question category
+    internal void PlayerSetCurrentCategory(string name) {
+        CmdSetCurrentCategory(name, localPlayer.matchID);
+    }
+    [Command]
+    void CmdSetCurrentCategory(string name, string matchID) {
+        RpcSetCurrentCategory(name, matchID);
+    }
+    [ClientRpc]
+    void RpcSetCurrentCategory(string name, string matchID) {
+        if(localPlayer.matchID != matchID) return;
+        localPlayer.uiGame.setCurrentCategory(name);
+    }
     // question amount
     internal void PlayerSetCurrenctQuestionAmount(int amount)
     {
