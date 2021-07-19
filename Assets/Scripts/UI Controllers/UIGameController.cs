@@ -215,7 +215,7 @@ public class UIGameController : MonoBehaviour
         {
             // the player doesnt need to buzz in to answer, it happens automaticaly
             // change tint
-            localPlayer.TintAllSlotsButOne(localPlayer.playerIndex);
+            if(localPlayer.uiGame.eligibleToPlay) localPlayer.TintAllSlotsButOne(localPlayer.playerIndex);
             answerInput.SetEnable(eligibleToPlay);
             submitButton.gameObject.SetActive(true);
             submitButton.SetEnable(eligibleToPlay);
@@ -338,12 +338,14 @@ public class UIGameController : MonoBehaviour
         // he wagers in and clicks this button
         // open question panal just for me
         OpenClientQuesionPanel();
+        eligibleToPlay = true;
         localPlayer.PlayerOpenQuestionPanalToAll(true);
 
     }
     public void FinalJeopardyContunieButton()
     {
         OpenClientQuesionPanel();
+        eligibleToPlay = true;
         localPlayer.PlayerOpenQuestionPanalToAll(true);
     }
     public void OpenFinalJeopardyPanal(bool isMyTurn)

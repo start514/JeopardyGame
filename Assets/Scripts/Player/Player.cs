@@ -885,6 +885,7 @@ public class Player : NetworkBehaviour
         if(isDouble) {
             localPlayer.PlayerSetIsDoubleJeopardy(true);
             localPlayer.PlayerPlaceDailyDouble();
+            localPlayer.PlayerSetQuestionsLeft(30);
             CmdOpenDoubleJeopardyPanal(localPlayer.matchID);
         }
     }
@@ -991,7 +992,7 @@ public class Player : NetworkBehaviour
     void RpcOpenQuestionPanalToAll(string matchID, bool eligibility)
     {
         if(localPlayer.matchID != matchID) return;
-        SidePanalController.instance.UntintAllExceptAnswered();
+        if(!eligibility) SidePanalController.instance.UntintAllExceptAnswered();
         // make sure to open after updating cuurent question, answer, amount
         if (localPlayer.isHost)
             // change what should happen to host when players have time to buzz in

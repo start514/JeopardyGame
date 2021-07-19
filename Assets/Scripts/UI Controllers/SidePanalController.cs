@@ -36,15 +36,13 @@ public class SidePanalController : MonoBehaviour
         {
             //tint selected player index card
             playerSlotsArry.playerSlots[i].GetComponent<PlayerSlot>().tint.SetActive(i != PlayerNumWhoBuzzed);
-            //activate/deactivate if slot is mine
-            if(i == Player.localPlayer.playerIndex) {
-                //if "but one" is me
-                if(i == PlayerNumWhoBuzzed)
-                    Player.localPlayer.uiGame.ActivateSlots();
-                else
-                    Player.localPlayer.uiGame.DeactivateSlots();
-            }
         }
+        //activate/deactivate if slot is not host
+        //if "but one" is me
+        if(PlayerNumWhoBuzzed >= 0 && Player.localPlayer.playerIndex == PlayerNumWhoBuzzed)
+            Player.localPlayer.uiGame.ActivateSlots();
+        else
+            Player.localPlayer.uiGame.DeactivateSlots();
     }
     public void UntintAllExceptAnswered()
     {
