@@ -1218,7 +1218,7 @@ public class Player : NetworkBehaviour
     void RpcSetIsDoubleJeopardy(bool doubleJeopardy, string matchID)
     {
         if(localPlayer.matchID != matchID) return;
-        localPlayer.uiGame.isDailyDoubleNow = doubleJeopardy;
+        localPlayer.uiGame.isDoubleJeopardyNow = doubleJeopardy;
     }
     // final jeopardy
     internal void PlayerSetIsFinalJeopardy(bool finalJeopardy)

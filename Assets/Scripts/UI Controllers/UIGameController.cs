@@ -44,7 +44,7 @@ public class UIGameController : MonoBehaviour
     internal Coroutine buzzTimer, submitTimer, backToBoard;
     internal string finalQuestion, finalAnswer;
     public string currentQuestion, currentCorrectAnswer, currentInputAnswer;
-    public bool isDailyDoubleNow = false, haveAllPlayersAnswered = false, isSecondBoardNow = false, isFinalJeopardyNow = false;
+    public bool isDoubleJeopardyNow = false, isDailyDoubleNow = false, haveAllPlayersAnswered = false, isSecondBoardNow = false, isFinalJeopardyNow = false;
     public int currentQuestionAmount, questionsLeft = 30, currentPlayerIndex = -1;
     public JsonToC jsonToCScript;
     public int openAnswerDelay = 0, closeAnswerDelay = 6;
@@ -205,7 +205,7 @@ public class UIGameController : MonoBehaviour
     public void OpenClientQuesionPanel(bool eligibleToPlay = true)
     {
         // all players except host have x time to buzz in
-        Debug.Log("opened Question panal");
+        Debug.LogError($"opened Question panal - {isDailyDoubleNow} - {isFinalJeopardyNow}");
         //wiring the qestion text 
         clientQuestionText.text = currentQuestion;
         clientQuestionAmountTxt.text = "$" + currentQuestionAmount.ToString();
@@ -227,6 +227,7 @@ public class UIGameController : MonoBehaviour
         }
         else
         {
+            Debug.LogError("OpenClientQuesionPanal");
             buzzButton.gameObject.SetActive(true);
             buzzButton.SetEnable(true);
             submitButton.gameObject.SetActive(false);
