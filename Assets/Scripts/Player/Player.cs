@@ -994,9 +994,10 @@ public class Player : NetworkBehaviour
         if(localPlayer.matchID != matchID) return;
         if(!eligibility) SidePanalController.instance.UntintAllExceptAnswered();
         // make sure to open after updating cuurent question, answer, amount
-        if (localPlayer.isHost)
+        if (localPlayer.isHost) {
             // change what should happen to host when players have time to buzz in
             if(!localPlayer.uiGame.hostQuestionPanel.activeSelf) localPlayer.uiGame.OpenHostQuesionPanel();
+        }
         else if(!eligibility || !localPlayer.uiGame.eligibleToPlay)
             localPlayer.uiGame.OpenClientQuesionPanel(false);
     }
