@@ -996,7 +996,7 @@ public class Player : NetworkBehaviour
         // make sure to open after updating cuurent question, answer, amount
         if (localPlayer.isHost)
             // change what should happen to host when players have time to buzz in
-            localPlayer.uiGame.OpenHostQuesionPanel();
+            if(!localPlayer.uiGame.hostQuestionPanel.activeSelf) localPlayer.uiGame.OpenHostQuesionPanel();
         else if(!eligibility || !localPlayer.uiGame.eligibleToPlay)
             localPlayer.uiGame.OpenClientQuesionPanel(false);
     }
