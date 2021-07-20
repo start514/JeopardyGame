@@ -379,6 +379,9 @@ public class UIGameController : MonoBehaviour
     #region CLIENT METODS
     public void PlaceDailyDouble(int spot)
     {
+        foreach(var slot in allSlots) {
+            slot.dailyDouble = false;
+        }
         allSlots[spot].dailyDouble = true;
         whereIsDailyDouble.text = "Daily double is in slot number: " + (spot + 1);
         Debug.LogError("Daily double is in the " + (spot + 1) + " slot");
