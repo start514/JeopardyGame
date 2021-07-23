@@ -10,6 +10,6 @@ public class WinnerPanalController : MonoBehaviour
 
     public void PlayAgainButton()
     {
-        SceneManager.LoadScene("Start", LoadSceneMode.Additive);
+        SceneManager.LoadScene("Lobby", LoadSceneMode.Additive);
     }
 }
