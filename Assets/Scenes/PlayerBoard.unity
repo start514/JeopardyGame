@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.37311947, g: 0.38074005, b: 0.35872722, a: 1}
+  m_IndirectSpecularColor: {r: 0.3731193, g: 0.38073996, b: 0.35872698, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -3331,7 +3331,7 @@ PrefabInstance:
     - target: {fileID: 3058834101225121319, guid: 556fed887c624ee479ea15394aa1ac72,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -15
+      value: -15.000015
       objectReference: {fileID: 0}
     - target: {fileID: 3058834101225121319, guid: 556fed887c624ee479ea15394aa1ac72,
         type: 3}
@@ -3736,7 +3736,7 @@ PrefabInstance:
     - target: {fileID: 3058834101225121319, guid: 556fed887c624ee479ea15394aa1ac72,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -15
+      value: -15.000015
       objectReference: {fileID: 0}
     - target: {fileID: 3058834101225121319, guid: 556fed887c624ee479ea15394aa1ac72,
         type: 3}
@@ -4420,6 +4420,7 @@ MonoBehaviour:
   currentQuestion: 
   currentCorrectAnswer: 
   currentInputAnswer: 
+  isDoubleJeopardyNow: 0
   isDailyDoubleNow: 0
   haveAllPlayersAnswered: 0
   isSecondBoardNow: 0
@@ -8379,7 +8380,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1416967781
 RectTransform:
   m_ObjectHideFlags: 0
@@ -8954,7 +8955,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1483030702
 RectTransform:
   m_ObjectHideFlags: 0
