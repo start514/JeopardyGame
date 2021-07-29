@@ -12,9 +12,11 @@ public class AutoConnect : MonoBehaviour
     void Start()
     {
         #if UNITY_SERVER
-        PlayFabMultiplayerAgentAPI.Start(); 
-        PlayFabMultiplayerAgentAPI.ReadyForPlayers();
-        PlayFabMultiplayerAgentAPI.SendHeartBeatRequest();
+        if(gameObject.GetComponent<NetworkManager>().networkAddress != "localhost") {
+            PlayFabMultiplayerAgentAPI.Start(); 
+            PlayFabMultiplayerAgentAPI.ReadyForPlayers();
+            PlayFabMultiplayerAgentAPI.SendHeartBeatRequest();
+        }
         
         #else
         

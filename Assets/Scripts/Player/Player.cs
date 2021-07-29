@@ -1799,6 +1799,7 @@ public class Player : NetworkBehaviour
                 localPlayer.isSumbiting = true;
                 localPlayer.uiGame.CantSumbit();
             }
+            localPlayer.uiGame.hostPauseImg.SetActive(true);
         }
         else
         {
@@ -1869,6 +1870,7 @@ public class Player : NetworkBehaviour
                 localPlayer.uiGame.CanBuzz();
 
             }
+            localPlayer.uiGame.hostPauseImg.SetActive(false);
 
         }
         localPlayer.uiGame.isPaused = false;

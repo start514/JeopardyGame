@@ -332,6 +332,10 @@ public class UIGameController : MonoBehaviour
         amountChoser.SetActive(isMyTurn);
         dailyDoubleContinueButton.SetActive(isMyTurn);
         eligibleToPlay = isMyTurn;
+        if(!isMyTurn) dailyPanel.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, -150);
+        else dailyPanel.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 0);
+        amountChoserText.text = "$0";
+        currentQuestionAmount = 0;
     }
     public void DailyDoubleContunieButton()
     {
@@ -364,7 +368,10 @@ public class UIGameController : MonoBehaviour
         // change gameControllerInstance.currentQuestion = finalQuestion;
         isFinalJeopardyNow = true;
         amountChoserText.text = "$0";
+        currentQuestionAmount = 0;
         eligibleToPlay = isMyTurn;
+        if(!isMyTurn) finalPanal.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, -150);
+        else finalPanal.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 0);
     }
     public void OpenWinnerPanel(int winnerAmount, string winnerName)
     {
@@ -746,6 +753,6 @@ public class UIGameController : MonoBehaviour
     }
 
     void OnGUI() {
-        GUI.Label(new Rect(0, 100, Screen.width, Screen.height), "Final Jeopardy Participants: " + finalJeopardyParticipants);
+        // GUI.Label(new Rect(0, 100, Screen.width, Screen.height), "Final Jeopardy Participants: " + finalJeopardyParticipants);
     }
 }
