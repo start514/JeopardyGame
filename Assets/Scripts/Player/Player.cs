@@ -219,7 +219,7 @@ public class Player : NetworkBehaviour
     [ClientRpc]
     void RpcPlayerLeaveGame(bool isHost, string playerName, string playerID, string matchID, int playerIndex) {
         if(localPlayer == null) return;
-        if(localPlayer.matchID != matchID) return;
+        if(localPlayer.matchID != matchID || matchID == "" || matchID == null) return;
         if(isHost && localPlayer.playerID != playerID) {
             Toast.instance.showToast("The host has left the game", 3);
             SceneManager.LoadScene("Lobby");
@@ -290,8 +290,8 @@ public class Player : NetworkBehaviour
             //CmdUpdateMatchChecker(new Guid());
             localPlayer.matchID = null;
             CmdUpdateMatchID(localPlayer.matchID);
-            localPlayer.uiLobby.hostGamePanal.SetActive(false);
-            localPlayer.uiLobby.lobbyPanal.SetActive(true);
+            localPlayer.uiLobby?.hostGamePanal.SetActive(false);
+            localPlayer.uiLobby?.lobbyPanal.SetActive(true);
         }
         else
         {
@@ -420,7 +420,7 @@ public class Player : NetworkBehaviour
     [TargetRpc]
     void TargetCmdAddJoinContainerToPlayersWhoAlreadyJoined(NetworkConnection target, string id, int color, string playerId, string playerNameToAdd)
     {
-        localPlayer.uiLobby.AddJoinParticipentConteiner(id, false, playerNameToAdd, color, playerId);
+        localPlayer.uiLobby?.AddJoinParticipentConteiner(id, false, playerNameToAdd, color, playerId);
 
     }
 
@@ -428,18 +428,18 @@ public class Player : NetworkBehaviour
     void TargetAddJoinContainerLocally(string id, bool host, string playerName, int color, string playerId, int joined, int maxGameSize, int index)
     {
         Debug.Log(playerName + "'s color = " + color);
-        localPlayer.uiLobby.AddJoinParticipentConteiner(id, host, playerName, color, playerId);
+        localPlayer.uiLobby?.AddJoinParticipentConteiner(id, host, playerName, color, playerId);
         //to get zero based index, minus 2 to exclude host player
         //if this is last container to add, show join panel
-        if(joined - 1 == index) localPlayer.uiLobby.OpenJoinPanalWithId(joined, maxGameSize);
+        if(joined - 1 == index) localPlayer.uiLobby?.OpenJoinPanalWithId(joined, maxGameSize);
     }
 
     [TargetRpc]
     void TargetAddJoinContainerLocallyWithIF(string id, int color, int joined, int maxGameSize, bool onlyMe)
     {
-        localPlayer.uiLobby.AddJoinParticipentConteinerWithInput(id, color, localPlayer.playerID);
+        localPlayer.uiLobby?.AddJoinParticipentConteinerWithInput(id, color, localPlayer.playerID);
         //if i am only the participant, open join panel now
-        if(onlyMe) localPlayer.uiLobby.OpenJoinPanalWithId(joined, maxGameSize);
+        if(onlyMe) localPlayer.uiLobby?.OpenJoinPanalWithId(joined, maxGameSize);
 
     }
     public void PlayerCancelJoin(string id)
@@ -528,17 +528,17 @@ public class Player : NetworkBehaviour
 
         if (playerID == localPlayer.playerID)
         {//ready player is me
-            localPlayer.uiLobby.updateJoinPanelIAmReady();
+            localPlayer.uiLobby?.updateJoinPanelIAmReady();
         }
         else
         {//other player has ready button clicked
             if (localPlayer.isHost)
             {//i am host
-                localPlayer.uiLobby.updateHostPanelPlayerReady(gameFull, allReady);
+                localPlayer.uiLobby?.updateHostPanelPlayerReady(gameFull, allReady);
             }
             else
             {//i am joiner
-                localPlayer.uiLobby.updateJoinPanelPlayerReady(playerID);
+                localPlayer.uiLobby?.updateJoinPanelPlayerReady(playerID);
             }
         }
         Debug.LogError($"Player {playerID}/{localPlayer.playerID} ready", this);
@@ -617,7 +617,7 @@ public class Player : NetworkBehaviour
     #region CONTAINERS
     public void ClearGameContainer()
     {
-        localPlayer.uiLobby.ClearGameContainer();
+        localPlayer.uiLobby?.ClearGameContainer();
     }
     [Command]
     internal void CmdAddGameContainer(string id, string gameName, int maxPlayers, Guid guid)
@@ -630,7 +630,7 @@ public class Player : NetworkBehaviour
     private void RpcAddGameContainer(string id, string gameName, int maxPlayers)
     {
         Debug.Log("RpcAddGameContainer");
-        localPlayer.uiLobby.AddGameContainer(id, gameName, 1, maxPlayers);
+        localPlayer.uiLobby?.AddGameContainer(id, gameName, 1, maxPlayers);
         Debug.LogError(isServer + " Rpc AddGameContainer");
     }
     /*
@@ -656,10 +656,10 @@ public class Player : NetworkBehaviour
     [TargetRpc]
     void TargetPlayerLeaveGameFromLobby(NetworkConnection target)
     {
-        localPlayer.uiLobby.joinGamePanal.SetActive(false);
-        localPlayer.uiLobby.lobbyPanal.SetActive(true);
-        localPlayer.uiLobby.ClearHostContainers();
-        localPlayer.uiLobby.ClearJoinContainers();
+        localPlayer.uiLobby?.joinGamePanal?.SetActive(false);
+        localPlayer.uiLobby?.lobbyPanal?.SetActive(true);
+        localPlayer.uiLobby?.ClearHostContainers();
+        localPlayer.uiLobby?.ClearJoinContainers();
     }
 
     [Command]
@@ -684,7 +684,7 @@ public class Player : NetworkBehaviour
     private void TargetAddJoinParticipentContainer(NetworkConnection target, string id, int color, string playerId)
     {
         Debug.LogError(" target rpc adding host participent " + localPlayer.playerID);
-        localPlayer.uiLobby.AddJoinParticipentConteiner(id, localPlayer.isHost, "Player", color, playerId);
+        localPlayer.uiLobby?.AddJoinParticipentConteiner(id, localPlayer.isHost, "Player", color, playerId);
     }
     void DeleteJoinContainer(string id, string playerId)
     {
@@ -700,7 +700,7 @@ public class Player : NetworkBehaviour
     [TargetRpc]
     void TargetDeleteJoinContainer(NetworkConnection target, string id, string playerId)
     {
-        localPlayer.uiLobby.DeleteJoinParticipentContainer(id, playerID);
+        localPlayer.uiLobby?.DeleteJoinParticipentContainer(id, playerID);
     }
     [Command]
     void CmdAddHostContainer(string id, string playerId)
@@ -721,7 +721,7 @@ public class Player : NetworkBehaviour
     private void TargetAddHostParticipentContainer(NetworkConnection target, string id, int color, string playerId, string playerNameToAdd)
     {
         Debug.LogError(" target rpc adding host participent ");
-        localPlayer.uiLobby.AddHostParticipentContainer(id, playerNameToAdd, color, playerId);
+        localPlayer.uiLobby?.AddHostParticipentContainer(id, playerNameToAdd, color, playerId);
     }
     void DeleteParticipentContainer(string id, string playerId)
     {
@@ -738,9 +738,9 @@ public class Player : NetworkBehaviour
     void TargetDeleteParticipentContainer(NetworkConnection target, string id, string playerId)
     {
         if (localPlayer.isHost)
-            localPlayer.uiLobby.DeleteHostParticipentContainer(id, playerId);
+            localPlayer.uiLobby?.DeleteHostParticipentContainer(id, playerId);
         else
-            localPlayer.uiLobby.DeleteJoinParticipentContainer(id, playerId);
+            localPlayer.uiLobby?.DeleteJoinParticipentContainer(id, playerId);
     }
 
 
@@ -760,7 +760,7 @@ public class Player : NetworkBehaviour
     [TargetRpc]
     void TargetUpdateGameRoomList(string id, string gameName, int currentPlayers, int maxPlayers)
     {
-        localPlayer.uiLobby.AddGameContainer(id, gameName, currentPlayers, maxPlayers);
+        localPlayer.uiLobby?.AddGameContainer(id, gameName, currentPlayers, maxPlayers);
     }
 
     internal void CountParticipentContainers(string id)
@@ -776,6 +776,7 @@ public class Player : NetworkBehaviour
     [TargetRpc]
     void TargetCountParticipentContainers(NetworkConnection target, int current, int max)
     {
+        if(localPlayer.uiLobby == null) return;
         if (localPlayer.isHost == true)
             localPlayer.uiLobby.hostParticipentNumTxt.text = (current - 1) + " / " + max; // (current-1) -1 because we don't iclude the host as a participent
         else
@@ -800,7 +801,7 @@ public class Player : NetworkBehaviour
     [TargetRpc]
     void TargetUpdateMyJoinContainerName(NetworkConnection target, string thisplayerId, string playerName)
     {
-        localPlayer.uiLobby.UpdateJoinContainerName(thisplayerId, playerName);
+        localPlayer.uiLobby?.UpdateJoinContainerName(thisplayerId, playerName);
         Debug.LogError("TargetUpdateMyJoinContainerName");
     }
     [Command]
@@ -821,7 +822,7 @@ public class Player : NetworkBehaviour
         if (localPlayer.isHost)
         {
             Debug.LogError("TargetUpdateMyHostContainerName");
-            localPlayer.uiLobby.UpdateHostContainerName(playerId, playerName);
+            localPlayer.uiLobby?.UpdateHostContainerName(playerId, playerName);
 
         }
     }
@@ -1355,6 +1356,31 @@ public class Player : NetworkBehaviour
             localPlayer.uiGame.hostAnswerer.text = who;
         }
     }
+    // current input answer
+    internal void PlayerUpdateHost(string who, string answer)
+    {
+        CmdUpdateHost(who, answer, localPlayer.matchID);
+    }
+    [Command]
+    void CmdUpdateHost(string who, string answer, string matchID)
+    {
+        RpcUpdateHost(who, answer, matchID);
+    }
+    [ClientRpc]
+    void RpcUpdateHost(string who, string answer, string matchID)
+    {
+        if(localPlayer.matchID != matchID) return;
+        // localPlayer.uiGame.currentInputAnswer = answer;
+        Debug.LogError("Current input answer hase been changed to: " + localPlayer.uiGame.currentInputAnswer);
+        if (localPlayer.isHost)
+        {
+            // localPlayer.uiGame.correctButton.SetEnable(true);
+            // localPlayer.uiGame.incorrectButton.SetEnable(true);
+            // localPlayer.uiGame.hostPauseBtn.interactable = false;
+            localPlayer.uiGame.hostInputAnswerTxt.text = answer;
+            if(who != "") localPlayer.uiGame.hostAnswerer.text = who;
+        }
+    }
     // current input answer amount
     internal void PlayerSetCurrentInputAnswerAmount(string who, string answer, int amount, int pidx)
     {
@@ -1546,7 +1572,7 @@ public class Player : NetworkBehaviour
             localPlayer.PlayerSetCurrentInputAnswerAmount(localPlayer.playerName, answer, localPlayer.uiGame.currentQuestionAmount, localPlayer.playerIndex);
         }
         else {
-            localPlayer.PlayerSetCurrentInputAnswer(localPlayer.playerName, answer);
+            localPlayer.PlayerSetCurrentInputAnswer(localPlayer.playerName + " answered", answer);
         }
     }
     public void PlayerAddAmountTo(int playerIndex, int amount) {

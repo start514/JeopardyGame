@@ -402,6 +402,8 @@ public class UIGameController : MonoBehaviour
             // change tint
             localPlayer.TintAllSlotsButOne(localPlayer.playerIndex);
             localPlayer.PlayerBuzzedIn();
+        
+            localPlayer.PlayerUpdateHost(localPlayer.playerName + " buzzed", "waiting for answer...");
             localPlayer.PlayerSetHasAnswered(true);
             localPlayer.PlayerSetNowAnswering(localPlayer.playerIndex);
             StartTimerCoroutine(true);
@@ -483,6 +485,7 @@ public class UIGameController : MonoBehaviour
                 localPlayer.PlayerSumbited("");
             }
             if(!isFinalJeopardyNow && localPlayer.isHost) {
+                localPlayer.PlayerUpdateHost("", "Timed Out");
                 localPlayer.PlayerHostDecided(false);
                 hostDecision = 0;
                 hostPauseBtn.interactable = false;
